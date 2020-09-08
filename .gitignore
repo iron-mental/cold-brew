@@ -114,6 +114,6 @@ dist
 # custom
 public/*
 
-config/config.json
+config
 
 # End of https://www.toptal.com/developers/gitignore/api/node
