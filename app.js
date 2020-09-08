@@ -7,6 +7,7 @@ var router = require('./router');
 app.use(express.static('public'));
 app.use(router);
 
-var conf = require('./config/app.json');
+const port = process.env.PORT || 3000;
+
 var server = http.createServer(app);
-server.listen(conf.PORT);
+server.listen(port);

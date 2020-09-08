@@ -114,7 +114,6 @@ dist
 # custom
 public/*
 
-config/mysql.json
-config/push.json
+config/config.json
 
 # End of https://www.toptal.com/developers/gitignore/api/node
