@@ -2,7 +2,7 @@ const { info } = require('console');
 let fs = require('fs');
 let winston = require('winston');
 
-const logDir = __dirname + './../logs';
+const logDir = __dirname + '/../logs';
 
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
