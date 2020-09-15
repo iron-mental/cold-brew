@@ -112,7 +112,6 @@ dist
 .vscode-test
 
 # custom
-static/*
 .env
 
 
