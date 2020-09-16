@@ -15,13 +15,6 @@ router
   .route('/:id')
   .get((err, req, res, next) => {
     // console.log(`/v1/users/:id [get], req: ${req.params.id}`);
-    try {
-      q = 1;
-      b = 'se';
-      max = q * b;
-    } catch {
-      throw err;
-    }
   })
   .post((req, res, next) => {
     console.log(`/v1/users/:id [post], req: ${req.params.id}`);
