@@ -5,8 +5,6 @@ var usersRouter = require('./users');
 var authRouter = require('./auth');
 
 /* routing */
-router.use('/users', usersRouter);
-
 router.use('/auth', authRouter);
 
 module.exports = router;
