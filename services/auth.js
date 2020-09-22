@@ -1,7 +1,11 @@
 var authDao = require('../dao/auth');
 
-const signup = async (userData, next) => {
-  return await authDao.signup(userData, next);
+const signup = async (body, next) => {
+  return await authDao.signup(body, next);
 };
 
-module.exports = { signup };
+const withdraw = async (uid, next) => {
+  return await authDao.withdraw(uid, next);
+};
+
+module.exports = { signup, withdraw };

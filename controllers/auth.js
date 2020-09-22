@@ -2,12 +2,12 @@ var authService = require('../services/auth');
 
 const signup = async (req, res, next) => {
   rows = await authService.signup(req.body, next);
-  // 스터디 목록 데이터 요청하는 API로 리 다이렉션해야함
   return res.status(201).json({ message: '리디렉션으로 변경예정' });
 };
 
 const withdraw = async (req, res, next) => {
-  console.log(req.body);
+  rows = await authService.withdraw(req.body, next);
+  return res.status(200).json({ message: 'success' });
 };
 
 module.exports = { signup, withdraw };

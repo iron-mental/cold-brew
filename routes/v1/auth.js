@@ -5,6 +5,6 @@ const authValid = require('../../utils/validators/auth');
 const authController = require('../../controllers/auth');
 
 router.post('/signup', authValid.signup, authController.signup);
-router.delete('/withdraw', authController.withdraw);
+router.delete('/withdraw', authValid.withdraw, authController.withdraw);
 
 module.exports = router;
