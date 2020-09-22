@@ -16,4 +16,13 @@ let signup = [
   },
 ];
 
-module.exports = { signup };
+let withdraw = [
+  check('uid').isAlphanumeric().withMessage('Invalid uid'),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) next({ status: 422, message: errors.errors });
+    next();
+  },
+];
+
+module.exports = { signup, withdraw };
