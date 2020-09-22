@@ -7,8 +7,10 @@ let signup = [
     .normalizeEmail()
     .withMessage('Invalid email address'),
   check('nickname')
+    .isAlphanumeric()
+    .withMessage('Invalid nickname')
     .isLength({ min: 2, max: 8 })
-    .withMessage('Invalid nickname'),
+    .withMessage('lengthError nickname'),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) next({ status: 422, message: errors.errors });
