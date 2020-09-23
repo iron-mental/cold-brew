@@ -5,7 +5,6 @@ const signup = async (body, next) => {
   const sql = 'insert into user set ?';
   try {
     const [rows] = await conn.query(sql, body);
-    if (!rows.affectedRows) throw { sqlMessage: '처리결과없음' };
     return rows;
   } catch (err) {
     throw next({ status: 400, message: err.sqlMessage });
@@ -19,7 +18,6 @@ const withdraw = async (body, next) => {
   const sql = `delete from user where ?`;
   try {
     const [rows] = await conn.query(sql, body);
-    if (!rows.affectedRows) throw { sqlMessage: '처리결과없음' };
     return rows;
   } catch (err) {
     throw next({ status: 400, message: err.sqlMessage });
