@@ -61,6 +61,10 @@ const userUpdate = async (req, res, next) => {
   try {
     await paramSchema.validateAsync(req.paramSchema);
     await bodySchema.validateAsync(req.body);
+    if (!req.body) {
+      console.log('req.body.length: ', req.body.length);
+      next({ status: 422, message: '수정할 파라미터가 없습니다' });
+    }
     next();
   } catch (err) {
     const error = { status: 422, message: err.details[0].message };
@@ -72,7 +76,8 @@ const checkNickname = async (req, res, next) => {
   const paramSchema = Joi.object({
     nickname: Joi.string() //
       .min(2)
-      .max(8),
+      .max(8)
+      .required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
