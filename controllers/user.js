@@ -11,7 +11,9 @@ const userDetail = async (req, res) => {
 };
 
 const userUpdate = async (req, res) => {
-  await userService.checkNickname({ nickname: req.body.nickname });
+  if (req.body.nickname) {
+    await userService.checkNickname({ nickname: req.body.nickname });
+  }
   const data = await userService.userUpdate(req.params, req.body);
   return res.json(data);
 };

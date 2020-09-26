@@ -8,6 +8,7 @@ const signup = async body => {
       const [rows] = await conn.query(sql, body);
       return rows;
     } catch (err) {
+      console.error('err: ', err.sqlMessage);
       throw { status: 500, message: 'DB Query Error' };
     } finally {
       conn.release();
@@ -28,14 +29,14 @@ const userDetail = async params => {
         'SELECT id, nickname, email, image, introduce, location, career_title, career_contents, sns_github, sns_linkedin, sns_web, email_verified, created_at FROM user WHERE ?';
       let [rows] = await conn.query(userSQL, params);
       result = rows;
-
       const projectSQL =
         'SELECT title, contents,sns_github, sns_appstore, sns_playstore FROM project WHERE ?';
       [rows] = await conn.query(projectSQL, { user_id: result[0].id });
       result[0].project = rows;
       return result;
     } catch (err) {
-      throw { status: 500, message: 'DB Query Error' };
+      console.error('err: ', err);
+      throw { status: 404, message: '조회된 사용자가 없습니다' }; // 상단쿼리 결과 없을 시
     } finally {
       conn.release();
     }
@@ -51,13 +52,15 @@ const userUpdate = async (params, body) => {
   try {
     const conn = await pool.getConnection();
     try {
-      let sql = 'UPDATE user SET ? WHERE ? ';
+      let sql = 'UPDATE user SET ? WHERE ? '; // 수정
       await conn.query(sql, [body, params]);
+
       sql =
         'SELECT nickname, email, image, introduce, location, career_title, career_contents, sns_github, sns_linkedin, sns_web, email_verified, created_at FROM user WHERE ?';
       const [rows] = await conn.query(sql, params);
       return rows;
     } catch (err) {
+      console.error('err: ', err.sqlMessage);
       throw { status: 500, message: 'DB Query Error' };
     } finally {
       conn.release();
@@ -71,7 +74,6 @@ const userUpdate = async (params, body) => {
 };
 
 const checkNickname = async params => {
-  console.log('params: ', params);
   try {
     const conn = await pool.getConnection();
     try {
@@ -79,6 +81,7 @@ const checkNickname = async params => {
       const [rows] = await conn.query(sql, params);
       return rows;
     } catch (err) {
+      console.error('err: ', err.sqlMessage);
       throw { status: 500, message: 'DB Query Error' };
     } finally {
       conn.release();
@@ -99,6 +102,7 @@ const withdraw = async params => {
       const [rows] = await conn.query(sql, params);
       return rows;
     } catch (err) {
+      console.error('err: ', err.sqlMessage);
       throw { status: 400, message: 'DB Query Error' };
     } finally {
       conn.release();

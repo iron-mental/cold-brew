@@ -15,9 +15,9 @@ const signup = async body => {
 // 상세 조회
 const userDetail = async params => {
   let rows = await userDao.userDetail(params);
-  if (!rows) {
+  if (!rows[0]) {
     throw {
-      status: 400,
+      status: 404,
       message: '조회된 사용자가 없습니다',
     };
   }
@@ -29,9 +29,9 @@ const userDetail = async params => {
 // 수정
 const userUpdate = async (params, body) => {
   let rows = await userDao.userUpdate(params, body);
-  if (!rows) {
+  if (!rows[0]) {
     throw {
-      status: 400,
+      status: 404,
       message: '조회된 사용자가 없습니다',
     };
   }
@@ -55,8 +55,8 @@ const withdraw = async params => {
   const rows = await userDao.withdraw(params);
   if (!rows.affectedRows) {
     throw {
-      status: 400,
-      message: 'no result',
+      status: 404,
+      message: '조회된 사용자가 없습니다',
     };
   }
 };
