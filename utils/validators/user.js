@@ -47,6 +47,7 @@ const userUpdate = async (req, res, next) => {
     email: Joi.string() //
       .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
     nickname: Joi.string() //
+      .alphanum()
       .min(2)
       .max(8),
     introduce: Joi.string(),
@@ -75,6 +76,7 @@ const userUpdate = async (req, res, next) => {
 const checkNickname = async (req, res, next) => {
   const paramSchema = Joi.object({
     nickname: Joi.string() //
+      .alphanum()
       .min(2)
       .max(8)
       .required(),
