@@ -2,7 +2,7 @@ const userService = require('../services/user');
 
 const signup = async (req, res) => {
   await userService.signup(req.body);
-  return res.status(201).json({ message: '회원가입 성공' });
+  return res.status(201).json({ message: '회원가입 되었습니다' });
 };
 
 const userDetail = async (req, res) => {
@@ -25,7 +25,7 @@ const checkNickname = async (req, res) => {
 
 const withdraw = async (req, res) => {
   await userService.withdraw(req.params);
-  return res.json({ message: 'success' });
+  return res.json({ message: '삭제되었습니다' });
 };
 
 module.exports = { signup, userDetail, userUpdate, checkNickname, withdraw };

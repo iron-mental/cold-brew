@@ -102,8 +102,14 @@ const withdraw = async params => {
       const [rows] = await conn.query(sql, params);
       return rows;
     } catch (err) {
-      console.error('err: ', err.sqlMessage);
-      throw { status: 400, message: 'DB Query Error' };
+      console.error('DAO err: ', err);
+      if (err.errno === 1451) {
+        throw {
+          status: 400,
+          message: '해당 사용자와 의존성있는 데이터가 존재합니다',
+        };
+      }
+      throw { status: 400, message: '사용자x?' };
     } finally {
       conn.release();
     }
