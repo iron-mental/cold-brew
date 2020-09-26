@@ -1,11 +1,11 @@
-var createError = require('http-errors');
-var express = require('express');
-var cookieParser = require('cookie-parser');
-var morgan = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 
-var v1Router = require('./routes/v1');
+const v1Router = require('./routes/v1');
 
-var app = express();
+const app = express();
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -26,7 +26,17 @@ app.use(function (err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   res.status(err.status || 500);
-  res.json({ message: err.message });
+  return res.json({ message: err.message });
 });
+
+// app.use( handleDatabaseError(error, req, res, next) =>{
+//   if (error instanceof MysqlError) {
+//     res.status(503).json({
+//       type: "MysqlError",
+//       message: error.message,
+//     })
+//   }
+//   next(error)
+// })
 
 module.exports = app;

@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
-    "test": "mocha ./test/sign.test.js"
+    "start": "nodemon ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -14,6 +13,7 @@
     "express-validator": "^6.6.1",
     "firebase-admin": "^9.2.0",
     "http-errors": "~1.6.3",
+    "joi": "^17.2.1",
     "morgan": "~1.9.1",
     "mysql2": "^2.1.0",
     "pm2": "^4.4.1",
