@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const signup = async (req, res, next) => {
-  const signupSchema = Joi.object({
+  const bodySchema = Joi.object({
     uid: Joi.string() //
       .alphanum()
       .required(),
@@ -14,7 +14,68 @@ const signup = async (req, res, next) => {
       .required(),
   });
   try {
-    await signupSchema.validateAsync(req.body);
+    await bodySchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    const error = { status: 422, message: err.details[0].message };
+    next(error);
+  }
+};
+
+const userDetail = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    uid: Joi.string() //
+      .alphanum()
+      .required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    const error = { status: 422, message: err.details[0].message };
+    next(error);
+  }
+};
+
+const userUpdate = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    uid: Joi.string() //
+      .alphanum()
+      .required(),
+  });
+  const bodySchema = Joi.object({
+    email: Joi.string() //
+      .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
+    nickname: Joi.string() //
+      .min(2)
+      .max(8),
+    introduce: Joi.string(),
+    location: Joi.string(),
+    location_sigungu: Joi.string(),
+    career_title: Joi.string(),
+    career_contents: Joi.string(),
+    sns_git: Joi.string(),
+    sns_linked: Joi.string(),
+    sns_web: Joi.string(),
+  });
+  try {
+    await paramSchema.validateAsync(req.paramSchema);
+    await bodySchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    const error = { status: 422, message: err.details[0].message };
+    next(error);
+  }
+};
+
+const checkNickname = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    nickname: Joi.string() //
+      .min(2)
+      .max(8),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
     const error = { status: 422, message: err.details[0].message };
@@ -23,13 +84,13 @@ const signup = async (req, res, next) => {
 };
 
 const withdraw = async (req, res, next) => {
-  const signupSchema = Joi.object({
+  const paramSchema = Joi.object({
     uid: Joi.string() //
       .alphanum()
       .required(),
   });
   try {
-    await signupSchema.validateAsync(req.params);
+    await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
     const error = { status: 422, message: err.details[0].message };
@@ -37,4 +98,4 @@ const withdraw = async (req, res, next) => {
   }
 };
 
-module.exports = { signup, withdraw };
+module.exports = { signup, userDetail, userUpdate, checkNickname, withdraw };
