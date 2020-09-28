@@ -30,8 +30,7 @@ const login = async body => {
 
 // 상세 조회
 const detail = async params => {
-  const { id } = params;
-  let rows = await userDao.detail(id);
+  let rows = await userDao.detail(params);
   if (!rows[0]) {
     throw {
       status: 404,
