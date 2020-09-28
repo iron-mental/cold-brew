@@ -21,16 +21,17 @@ const signup = async body => {
   }
 };
 
-const userDetail = async params => {
+const detail = async params => {
   try {
     const conn = await pool.getConnection();
     try {
       const userSQL =
-        'SELECT id, nickname, email, image, introduce, location, career_title, career_contents, sns_github, sns_linkedin, sns_web, email_verified, created_at FROM user WHERE ?';
+        'SELECT id, nickname, email, image, introduce, location, career_title, career_contents, sns_github, sns_linkedin, sns_web, emailVerified, created_at FROM user WHERE ?';
       let [rows] = await conn.query(userSQL, params);
       result = rows;
+
       const projectSQL =
-        'SELECT title, contents,sns_github, sns_appstore, sns_playstore FROM project WHERE ?';
+        'SELECT id, title, contents,sns_github, sns_appstore, sns_playstore FROM project WHERE ?';
       [rows] = await conn.query(projectSQL, { user_id: result[0].id });
       result[0].project = rows;
       return result;
@@ -48,7 +49,7 @@ const userDetail = async params => {
   }
 };
 
-const userUpdate = async (params, body) => {
+const update = async (params, body) => {
   try {
     const conn = await pool.getConnection();
     try {
@@ -56,7 +57,7 @@ const userUpdate = async (params, body) => {
       await conn.query(sql, [body, params]);
 
       sql =
-        'SELECT nickname, email, image, introduce, location, career_title, career_contents, sns_github, sns_linkedin, sns_web, email_verified, created_at FROM user WHERE ?';
+        'SELECT nickname, email, image, introduce, location, career_title, career_contents, sns_github, sns_linkedin, sns_web, emailVerified, created_at FROM user WHERE ?';
       const [rows] = await conn.query(sql, params);
       return rows;
     } catch (err) {
@@ -73,12 +74,34 @@ const userUpdate = async (params, body) => {
   }
 };
 
-const checkNickname = async params => {
+// const checkNickname = async params => {
+//   try {
+//     const conn = await pool.getConnection();
+//     try {
+//       const sql = 'SELECT nickname FROM user WHERE ?';
+//       const [rows] = await conn.query(sql, params);
+//       return rows;
+//     } catch (err) {
+//       console.error('err: ', err.sqlMessage);
+//       throw { status: 500, message: 'DB Query Error' };
+//     } finally {
+//       conn.release();
+//     }
+//   } catch (err) {
+//     if (err.status) {
+//       throw err;
+//     }
+//     throw { status: 500, message: 'DB Connection Error' };
+//   }
+// };
+
+// 중복체크 통합
+const check = async body => {
   try {
     const conn = await pool.getConnection();
     try {
-      const sql = 'SELECT nickname FROM user WHERE ?';
-      const [rows] = await conn.query(sql, params);
+      const sql = 'SELECT id FROM user WHERE ?';
+      const [rows] = await conn.query(sql, body);
       return rows;
     } catch (err) {
       console.error('err: ', err.sqlMessage);
@@ -94,19 +117,19 @@ const checkNickname = async params => {
   }
 };
 
-const withdraw = async params => {
+const withdraw = async (id, email) => {
   try {
     const conn = await pool.getConnection();
     try {
-      const sql = `DELETE FROM user WHERE ?`;
-      const [rows] = await conn.query(sql, params);
+      const sql = `DELETE FROM user WHERE id = ? and email = ?`;
+      const [rows] = await conn.query(sql, [id, email]);
       return rows;
     } catch (err) {
       console.error('DAO err: ', err);
       if (err.errno === 1451) {
         throw {
           status: 400,
-          message: '해당 사용자와 의존성있는 데이터가 존재합니다',
+          message: '해당 사용자에게 종속되어있는 데이터가 존재합니다',
         };
       }
       throw { status: 400, message: '사용자x?' };
@@ -121,4 +144,11 @@ const withdraw = async params => {
   }
 };
 
-module.exports = { signup, userDetail, userUpdate, checkNickname, withdraw };
+module.exports = {
+  signup,
+  detail,
+  update,
+  // checkNickname,
+  withdraw,
+  check,
+};
