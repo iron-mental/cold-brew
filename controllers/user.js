@@ -26,14 +26,13 @@ const update = async (req, res) => {
   return res.json(data);
 };
 
-// const checkNickname = async (req, res) => {
-//   await userService.checkNickname(req.params);
-//   return res.json({ message: '사용 가능한 닉네임입니다' });
-// };
+const checkNickname = async (req, res) => {
+  await userService.checkNickname(req.params);
+  return res.json({ message: '사용 가능한 닉네임입니다' });
+};
 
-// 중복체크 통합
-const check = async (req, res) => {
-  await userService.check(req.query);
+const checkEmail = async (req, res) => {
+  await userService.checkEmail(req.params);
   return res.json({ message: '사용 가능합니다' });
 };
 
@@ -47,7 +46,7 @@ module.exports = {
   login,
   detail,
   update,
-  // checkNickname,
+  checkNickname,
+  checkEmail,
   withdraw,
-  check,
 };

@@ -56,24 +56,24 @@ const update = async (params, updateData) => {
   return rows;
 };
 
-// // 중복 체크
-// const checkNickname = async params => {
-//   const rows = await userDao.checkNickname(params);
-//   if (rows.length) {
-//     throw {
-//       status: 400,
-//       message: '중복된 닉네임이 존재합니다',
-//     };
-//   }
-// };
+// 닉네임 중복체크
+const checkNickname = async params => {
+  const rows = await userDao.checkNickname(params);
+  if (rows.length) {
+    throw {
+      status: 400,
+      message: '중복된 닉네임이 존재합니다',
+    };
+  }
+};
 
-// 중복체크 통합
-const check = async checkValue => {
-  const tmp = await userDao.check(checkValue);
+// 이메일 중복체크
+const checkEmail = async checkValue => {
+  const tmp = await userDao.checkEmail(checkValue);
   if (tmp.length) {
     throw {
       status: 400,
-      message: `중복된 데이터가 존재합니다`,
+      message: `중복된 이메일이 존재합니다`,
     };
   }
   return tmp;
@@ -99,7 +99,7 @@ module.exports = {
   login,
   detail,
   update,
-  // checkNickname,
+  checkNickname,
+  checkEmail,
   withdraw,
-  check,
 };

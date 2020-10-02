@@ -74,34 +74,35 @@ const update = async (params, body) => {
   }
 };
 
-// const checkNickname = async params => {
-//   try {
-//     const conn = await pool.getConnection();
-//     try {
-//       const sql = 'SELECT nickname FROM user WHERE ?';
-//       const [rows] = await conn.query(sql, params);
-//       return rows;
-//     } catch (err) {
-//       console.error('err: ', err.sqlMessage);
-//       throw { status: 500, message: 'DB Query Error' };
-//     } finally {
-//       conn.release();
-//     }
-//   } catch (err) {
-//     if (err.status) {
-//       throw err;
-//     }
-//     throw { status: 500, message: 'DB Connection Error' };
-//   }
-// };
-
-// 중복체크 통합
-const check = async body => {
+const checkNickname = async params => {
+  console.log('params: ', params);
   try {
     const conn = await pool.getConnection();
     try {
-      const sql = 'SELECT id FROM user WHERE ?';
-      const [rows] = await conn.query(sql, body);
+      const sql = 'SELECT * FROM user WHERE ?';
+      const [rows] = await conn.query(sql, params);
+      return rows;
+    } catch (err) {
+      console.error('err: ', err.sqlMessage);
+      throw { status: 500, message: 'DB Query Error' };
+    } finally {
+      conn.release();
+    }
+  } catch (err) {
+    if (err.status) {
+      throw err;
+    }
+    throw { status: 500, message: 'DB Connection Error' };
+  }
+};
+
+const checkEmail = async params => {
+  console.log('params: ', params);
+  try {
+    const conn = await pool.getConnection();
+    try {
+      const sql = 'SELECT * FROM user WHERE ?';
+      const [rows] = await conn.query(sql, params);
       return rows;
     } catch (err) {
       console.error('err: ', err.sqlMessage);
@@ -148,7 +149,7 @@ module.exports = {
   signup,
   detail,
   update,
-  // checkNickname,
+  checkNickname,
+  checkEmail,
   withdraw,
-  check,
 };
