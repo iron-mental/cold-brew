@@ -16,8 +16,7 @@ const signup = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    const error = { status: 422, message: err.details[0].message };
-    next(error);
+    next({ status: 422, message: err.details[0].message });
   }
 };
 
@@ -33,8 +32,7 @@ const login = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    const error = { status: 422, message: err.details[0].message };
-    next(error);
+    next({ status: 422, message: err.details[0].message });
   }
 };
 
@@ -47,8 +45,7 @@ const detail = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    const error = { status: 422, message: err.details[0].message };
-    next(error);
+    next({ status: 422, message: err.details[0].message });
   }
 };
 
@@ -79,44 +76,36 @@ const update = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    const error = { status: 422, message: err.details[0].message };
-    next(error);
+    next({ status: 422, message: err.details[0].message });
   }
 };
 
-// const checkNickname = async (req, res, next) => {
-//   const paramSchema = Joi.object({
-//     nickname: Joi.string() //
-//       .min(2)
-//       .max(8)
-//       .required(),
-//   }).min(1);
-//   try {
-//     await paramSchema.validateAsync(req.params);
-//     next();
-//   } catch (err) {
-//     const error = { status: 422, message: err.details[0].message };
-//     next(error);
-//   }
-// };
-
-// 중복체크 통합
-const check = async (req, res, next) => {
-  const querySchema = Joi.object({
+const checkNickname = async (req, res, next) => {
+  const paramSchema = Joi.object({
     nickname: Joi.string() //
       .min(2)
-      .max(8),
-    email: Joi.string() //
-      .email(),
-  })
-    .min(1)
-    .max(1);
+      .max(8)
+      .required(),
+  }).min(1);
   try {
-    await querySchema.validateAsync(req.query);
+    await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    const error = { status: 422, message: err.details[0].message };
-    next(error);
+    next({ status: 422, message: err.details[0].message });
+  }
+};
+
+const checkEmail = async (req, res, next) => {
+  const querySchema = Joi.object({
+    email: Joi.string() //
+      .email()
+      .required(),
+  }).min(1);
+  try {
+    await querySchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    next({ status: 422, message: err.details[0].message });
   }
 };
 
@@ -139,8 +128,7 @@ const withdraw = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    const error = { status: 422, message: err.details[0].message };
-    next(error);
+    next({ status: 422, message: err.details[0].message });
   }
 };
 
@@ -149,7 +137,7 @@ module.exports = {
   login,
   detail,
   update,
-  // checkNickname,
+  checkNickname,
+  checkEmail,
   withdraw,
-  check,
 };
