@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 
 const v1Router = require('./routes/v1');
+const errorHandler = require('./utils/errors/handler');
 
 const app = express();
 
@@ -20,7 +21,7 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -32,15 +33,5 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   return res.json({ message: err.message });
 });
-
-// app.use( handleDatabaseError(error, req, res, next) =>{
-//   if (error instanceof MysqlError) {
-//     res.status(503).json({
-//       type: "MysqlError",
-//       message: error.message,
-//     })
-//   }
-//   next(error)
-// })
 
 module.exports = app;
