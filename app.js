@@ -4,7 +4,6 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 
 const v1Router = require('./routes/v1');
-const errorHandler = require('./utils/errors/handler');
 
 const app = express();
 
