@@ -6,10 +6,7 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const uid = await userService.login(req.body); // 로그인
-  const data = await userService.userDetail({ uid }); // 성공시 유저 디테일 검색해서 전달
-  const now = new Date();
-  console.log(now.toLocaleString());
+  const data = await userService.login(req.body);
   return res.json(data);
 };
 
