@@ -36,7 +36,7 @@ const login = async (req, res, next) => {
   }
 };
 
-const detail = async (req, res, next) => {
+const userDetail = async (req, res, next) => {
   const paramSchema = Joi.object({
     id: Joi.number() //
       .required(),
@@ -49,15 +49,13 @@ const detail = async (req, res, next) => {
   }
 };
 
-const update = async (req, res, next) => {
+const userUpdate = async (req, res, next) => {
   const paramSchema = Joi.object({
     id: Joi.number() //
       .required(),
   }).min(1);
 
   const bodySchema = Joi.object({
-    email: Joi.string() //
-      .email(),
     nickname: Joi.string() //
       .min(2)
       .max(8),
@@ -135,8 +133,8 @@ const withdraw = async (req, res, next) => {
 module.exports = {
   signup,
   login,
-  detail,
-  update,
+  userDetail,
+  userUpdate,
   checkNickname,
   checkEmail,
   withdraw,
