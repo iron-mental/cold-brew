@@ -1,7 +1,6 @@
 const { format } = require('date-fns');
 
 const userDao = require('../dao/user');
-const userFirebase = require('../dao/firebase');
 
 // 회원가입
 const signup = async ({ email, password, nickname }) => {
@@ -15,9 +14,11 @@ const signup = async ({ email, password, nickname }) => {
   return createUser;
 };
 
-// 로그인 -FB
+// 로그인
 const login = async ({ email, password }) => {
-  return await userFirebase.login(email, password);
+  const rows = await userDao.login(email, password);
+  rows[0].created_at = format(rows[0].created_at, 'yyyy-MM-dd HH:mm:ss');
+  return rows[0];
 };
 
 // 상세 조회
@@ -30,10 +31,10 @@ const userDetail = async ({ id }) => {
     };
   }
   rows[0].created_at = format(rows[0].created_at, 'yyyy-MM-dd HH:mm:ss');
-  return rows;
+  return rows[0];
 };
 
-// 수정 -FB(이메일만!)
+// 수정 - (이메일, 이미지, 비밀번호 제외)
 const userUpdate = async ({ id }, updateData) => {
   let rows = await userDao.userUpdate(id, updateData);
   if (!rows[0]) {
@@ -42,9 +43,8 @@ const userUpdate = async ({ id }, updateData) => {
       message: '조회된 사용자가 없습니다',
     };
   }
-  rows = await userDao.userDetail({ id });
   rows[0].created_at = format(rows[0].created_at, 'yyyy-MM-dd HH:mm:ss');
-  return rows;
+  return rows[0];
 };
 
 // 닉네임 중복체크
@@ -70,10 +70,9 @@ const checkEmail = async ({ email }) => {
   return tmp;
 };
 
-// 탈퇴 -FB
+// 회원탈퇴
 const withdraw = async ({ id }, { email, password }) => {
-  await userFirebase.withdraw(email, password); // FB 삭제
-  const rows = await userDao.withdraw(id, email); // DB 삭제
+  const rows = await userDao.withdraw(id, email, password); // FB 삭제
   if (!rows.affectedRows) {
     throw {
       status: 404,
