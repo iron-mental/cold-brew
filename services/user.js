@@ -3,34 +3,26 @@ const { format } = require('date-fns');
 const userDao = require('../dao/user');
 const userFirebase = require('../dao/firebase');
 
-// 회원가입 -FB
-const signup = async body => {
-  const createUser = await userFirebase.signup(body.email, body.password); // FB 가입
-  createUser.nickname = body.nickname;
-
-  const rows = await userDao.signup(createUser); // DB 가입
-  if (!rows.affectedRows) {
+// 회원가입
+const signup = async ({ email, password, nickname }) => {
+  const createUser = await userDao.signup(email, password, nickname); // FB 가입
+  if (!createUser.affectedRows) {
     throw {
       status: 400,
       message: 'no result',
     };
   }
-
-  delete createUser.uid;
-  createUser.id = rows.insertId;
-
   return createUser;
 };
 
 // 로그인 -FB
-const login = async body => {
-  const { email, password } = body;
+const login = async ({ email, password }) => {
   return await userFirebase.login(email, password);
 };
 
 // 상세 조회
-const detail = async params => {
-  let rows = await userDao.detail(params);
+const userDetail = async ({ id }) => {
+  let rows = await userDao.userDetail(id);
   if (!rows[0]) {
     throw {
       status: 404,
@@ -42,23 +34,22 @@ const detail = async params => {
 };
 
 // 수정 -FB(이메일만!)
-const update = async (params, updateData) => {
-  const { id } = params;
-  let rows = await userDao.update(id, updateData);
+const userUpdate = async ({ id }, updateData) => {
+  let rows = await userDao.userUpdate(id, updateData);
   if (!rows[0]) {
     throw {
       status: 404,
       message: '조회된 사용자가 없습니다',
     };
   }
-  rows = await userDao.detail({ id });
+  rows = await userDao.userDetail({ id });
   rows[0].created_at = format(rows[0].created_at, 'yyyy-MM-dd HH:mm:ss');
   return rows;
 };
 
 // 닉네임 중복체크
-const checkNickname = async params => {
-  const rows = await userDao.checkNickname(params);
+const checkNickname = async ({ nickname }) => {
+  const rows = await userDao.checkNickname(nickname);
   if (rows.length) {
     throw {
       status: 400,
@@ -68,8 +59,8 @@ const checkNickname = async params => {
 };
 
 // 이메일 중복체크
-const checkEmail = async checkValue => {
-  const tmp = await userDao.checkEmail(checkValue);
+const checkEmail = async ({ email }) => {
+  const tmp = await userDao.checkEmail(email);
   if (tmp.length) {
     throw {
       status: 400,
@@ -80,10 +71,7 @@ const checkEmail = async checkValue => {
 };
 
 // 탈퇴 -FB
-const withdraw = async (params, body) => {
-  const { id } = params;
-  const { email, password } = body;
-
+const withdraw = async ({ id }, { email, password }) => {
   await userFirebase.withdraw(email, password); // FB 삭제
   const rows = await userDao.withdraw(id, email); // DB 삭제
   if (!rows.affectedRows) {
@@ -97,8 +85,8 @@ const withdraw = async (params, body) => {
 module.exports = {
   signup,
   login,
-  detail,
-  update,
+  userDetail,
+  userUpdate,
   checkNickname,
   checkEmail,
   withdraw,

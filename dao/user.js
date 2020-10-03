@@ -1,27 +1,33 @@
-const pool = require('./db');
+const firebase = require('firebase');
 
-const signup = async body => {
+const pool = require('./db');
+const config = require('../configs/config');
+
+firebase.initializeApp(config.firebase);
+
+const signup = async (email, password, nickname) => {
+  const { uid, emailVerified } = await firebase
+    .auth()
+    .createUserWithEmailAndPassword(email, password)
+    .then(userCredential => {
+      return userCredential.user;
+    })
+    .catch(error => {
+      throw { status: 400, message: 'Firebase Error: ' + error.message };
+    });
   try {
     const conn = await pool.getConnection();
-    try {
-      const sql = 'INSERT INTO user SET ?';
-      const [rows] = await conn.query(sql, body);
-      return rows;
-    } catch (err) {
-      console.error('err: ', err.sqlMessage);
-      throw { status: 500, message: 'DB Query Error' };
-    } finally {
-      conn.release();
-    }
+    const sql = 'INSERT INTO user SET ?';
+    const [rows] = await conn.query(sql, { uid, email, emailVerified, nickname });
+    conn.release();
+    return rows;
   } catch (err) {
-    if (err.status) {
-      throw err;
-    }
-    throw { status: 500, message: 'DB Connection Error' };
+    conn.release();
+    throw { status: 500, message: 'DB Error' };
   }
 };
 
-const detail = async params => {
+const userDetail = async params => {
   try {
     const conn = await pool.getConnection();
     try {
@@ -30,8 +36,7 @@ const detail = async params => {
       let [rows] = await conn.query(userSQL, params);
       result = rows;
 
-      const projectSQL =
-        'SELECT id, title, contents,sns_github, sns_appstore, sns_playstore FROM project WHERE ?';
+      const projectSQL = 'SELECT id, title, contents,sns_github, sns_appstore, sns_playstore FROM project WHERE ?';
       [rows] = await conn.query(projectSQL, { user_id: result[0].id });
       result[0].project = rows;
       return result;
@@ -49,7 +54,7 @@ const detail = async params => {
   }
 };
 
-const update = async (params, body) => {
+const userUpdate = async (params, body) => {
   try {
     const conn = await pool.getConnection();
     try {
@@ -75,7 +80,6 @@ const update = async (params, body) => {
 };
 
 const checkNickname = async params => {
-  console.log('params: ', params);
   try {
     const conn = await pool.getConnection();
     try {
@@ -97,7 +101,6 @@ const checkNickname = async params => {
 };
 
 const checkEmail = async params => {
-  console.log('params: ', params);
   try {
     const conn = await pool.getConnection();
     try {
@@ -147,8 +150,8 @@ const withdraw = async (id, email) => {
 
 module.exports = {
   signup,
-  detail,
-  update,
+  userDetail,
+  userUpdate,
   checkNickname,
   checkEmail,
   withdraw,
