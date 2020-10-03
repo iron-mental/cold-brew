@@ -24,27 +24,27 @@ const login = async ({ email, password }) => {
 // 상세 조회
 const userDetail = async ({ id }) => {
   let rows = await userDao.userDetail(id);
-  if (!rows[0]) {
+  if (!rows.length) {
     throw {
       status: 404,
       message: '조회된 사용자가 없습니다',
     };
   }
   rows[0].created_at = format(rows[0].created_at, 'yyyy-MM-dd HH:mm:ss');
-  return rows[0];
+  return rows;
 };
 
 // 수정 - (이메일, 이미지, 비밀번호 제외)
 const userUpdate = async ({ id }, updateData) => {
   let rows = await userDao.userUpdate(id, updateData);
-  if (!rows[0]) {
+  if (!rows.length) {
     throw {
       status: 404,
       message: '조회된 사용자가 없습니다',
     };
   }
   rows[0].created_at = format(rows[0].created_at, 'yyyy-MM-dd HH:mm:ss');
-  return rows[0];
+  return rows;
 };
 
 // 닉네임 중복체크
@@ -60,8 +60,8 @@ const checkNickname = async ({ nickname }) => {
 
 // 이메일 중복체크
 const checkEmail = async ({ email }) => {
-  const tmp = await userDao.checkEmail(email);
-  if (tmp.length) {
+  const rows = await userDao.checkEmail(email);
+  if (rows.length) {
     throw {
       status: 400,
       message: `중복된 이메일이 존재합니다`,
@@ -72,13 +72,7 @@ const checkEmail = async ({ email }) => {
 
 // 회원탈퇴
 const withdraw = async ({ id }, { email, password }) => {
-  const rows = await userDao.withdraw(id, email, password); // FB 삭제
-  if (!rows.affectedRows) {
-    throw {
-      status: 404,
-      message: '조회된 사용자가 없습니다',
-    };
-  }
+  await userDao.withdraw(id, email, password);
 };
 
 module.exports = {
