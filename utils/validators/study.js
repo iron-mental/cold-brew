@@ -6,7 +6,6 @@ const createStudy = async (req, res, next) => {
     category: Joi.string().required(),
     title: Joi.string().required(),
     introduce: Joi.string().required(),
-    image: Joi.string().required(),
     progress: Joi.string().required(),
     studyTime: Joi.string().required(),
     location: Joi.string().required(),
