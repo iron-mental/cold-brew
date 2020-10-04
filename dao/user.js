@@ -45,12 +45,12 @@ const login = async (email, password) => {
   try {
     const conn = await pool.getConnection();
     const userSQL =
-      'SELECT nickname, email, image, introduce, location, career_title, career_contents, sns_github, sns_linkedin, sns_web, emailVerified, created_at FROM user WHERE ?';
+      'SELECT id, nickname, email, image, introduce, location, careerTitle, careerContents, snsGithub, snsLinkedin, snsWeb, emailVerified, createdAt FROM user WHERE ?';
     let [rows] = await conn.query(userSQL, { uid });
     userData = rows;
 
     const projectSQL =
-      'SELECT title, contents, sns_github, sns_appstore, sns_playstore FROM project WHERE (SELECT id FROM user WHERE ?)';
+      'SELECT title, contents, snsGithub, snsAppstore, snsPlaystore FROM project WHERE (SELECT id FROM user WHERE ?)';
     const [projects] = await conn.query(projectSQL, { uid });
     userData[0].project = projects;
     await conn.release();
@@ -66,13 +66,13 @@ const userDetail = async id => {
   try {
     const conn = await pool.getConnection();
     const userSQL =
-      'SELECT nickname, email, image, introduce, location, career_title, career_contents, sns_github, sns_linkedin, sns_web, emailVerified, created_at FROM user WHERE ?';
+      'SELECT nickname, email, image, introduce, location, careerTitle, careerContents, snsGithub, snsLinkedin, snsWeb, emailVerified, createdAt FROM user WHERE ?';
     let [rows] = await conn.query(userSQL, { id });
     userData = rows;
 
     const projectSQL =
-      'SELECT p.title, p.contents, p.sns_github, p.sns_appstore, p.sns_playstore FROM project AS p LEFT JOIN user ON user.id = p.user_id WHERE ?';
-    const [projects] = await conn.query(projectSQL, { user_id: id });
+      'SELECT p.title, p.contents, p.snsGithub, p.snsAppstore, p.snsPlaystore FROM project AS p LEFT JOIN user ON user.id = p.userId WHERE ?';
+    const [projects] = await conn.query(projectSQL, { userId: id });
     userData[0].project = projects;
     await conn.release();
     return userData;
@@ -89,13 +89,13 @@ const userUpdate = async (id, updateData) => {
     await conn.query(sql, [updateData, { id }]);
 
     const userSQL =
-      'SELECT nickname, email, image, introduce, location, career_title, career_contents, sns_github, sns_linkedin, sns_web, emailVerified, created_at FROM user WHERE ?';
+      'SELECT nickname, email, image, introduce, location, careerTitle, careerContents, snsGithub, snsLinkedin, snsWeb, emailVerified, createdAt FROM user WHERE ?';
     let [rows] = await conn.query(userSQL, { id });
     userData = rows;
 
     const projectSQL =
-      'SELECT p.title, p.contents, p.sns_github, p.sns_appstore, p.sns_playstore FROM project AS p LEFT JOIN user ON user.id = p.user_id WHERE ?';
-    const [projects] = await conn.query(projectSQL, { user_id: id });
+      'SELECT p.title, p.contents, p.snsGithub, p.snsAppstore, p.snsPlaystore FROM project AS p LEFT JOIN user ON user.id = p.userId WHERE ?';
+    const [projects] = await conn.query(projectSQL, { userId: id });
     userData[0].project = projects;
     await conn.release();
     return userData;
@@ -148,7 +148,7 @@ const withdraw = async (id, email, password) => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        var user = firebase.auth().currentUser;
+        let user = firebase.auth().currentUser;
         user.delete();
       })
       .catch(function (error) {

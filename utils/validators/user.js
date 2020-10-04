@@ -61,12 +61,12 @@ const userUpdate = async (req, res, next) => {
       .max(8),
     introduce: Joi.string(),
     location: Joi.string(),
-    location_sigungu: Joi.string(),
-    career_title: Joi.string(),
-    career_contents: Joi.string(),
-    sns_git: Joi.string(),
-    sns_linked: Joi.string(),
-    sns_web: Joi.string(),
+    locationSigungu: Joi.string(),
+    careerTitle: Joi.string(),
+    careerContents: Joi.string(),
+    snsGit: Joi.string(),
+    snsLinked: Joi.string(),
+    snsWeb: Joi.string(),
   }).min(1);
 
   try {
