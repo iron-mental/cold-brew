@@ -2,7 +2,7 @@ const userService = require('../services/user');
 
 const signup = async (req, res) => {
   await userService.signup(req.body);
-  return res.status(201).json({ message: '회원가입 성공' });
+  return res.status(201).json({ message: '회원가입 되었습니다' });
 };
 
 const login = async (req, res) => {
@@ -16,9 +16,6 @@ const userDetail = async (req, res) => {
 };
 
 const userUpdate = async (req, res) => {
-  if (req.body.nickname) {
-    await userService.checkNickname({ nickname: req.body.nickname });
-  }
   const data = await userService.userUpdate(req.params, req.body);
   return res.json(data);
 };
