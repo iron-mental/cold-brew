@@ -1,14 +1,12 @@
-var createError = require('http-errors');
-var express = require('express');
-var cookieParser = require('cookie-parser');
-var morgan = require('morgan');
-// var { stream, logger } = require('./configs/winston');
+const createError = require('http-errors');
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 
-var v1Router = require('./routes/v1');
+const v1Router = require('./routes/v1');
 
-var app = express();
+const app = express();
 
-// app.use(morgan('combined', { stream }));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -22,14 +20,17 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
+  if (!err.status) {
+    console.error(err);
+  }
+
   res.status(err.status || 500);
-  res.render('error');
+  return res.json({ message: err.message });
 });
 
 module.exports = app;
