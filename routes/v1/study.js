@@ -10,14 +10,34 @@ const router = express.Router();
 
 const upload = multer({
   storage: multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: (req, file, cb) => {
       cb(null, path.join(__dirname, '../../public/images/study'));
     },
-    filename: function (req, file, cb) {
+    filename: (req, file, cb) => {
       cb(null, file.originalname);
     },
   }),
-});
+  fileFilter: (req, file, cb) => {
+    const extension = path.extname(file.originalname).toLowerCase();
+    if (extension !== '.jpg' && extension !== '.jpeg') {
+      console.error('Extension Error: ', extension);
+      cb({ status: 422, message: 'Extension error' });
+    }
+    cb(null, true);
+  },
+}).single('image');
 
-router.post('/', upload.single('image'), studyValid.createStudy, asyncWrap(studyController.createStudy)); // 스터디 추가
+router.post(
+  '/',
+  (req, res, next) => {
+    upload(req, res, err => {
+      if (err) {
+        next(err);
+      }
+      next();
+    });
+  },
+  studyValid.createStudy,
+  asyncWrap(studyController.createStudy)
+); // 스터디 추가
 module.exports = router;
