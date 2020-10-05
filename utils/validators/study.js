@@ -12,9 +12,9 @@ const createStudy = async (req, res, next) => {
     locationSigungu: Joi.string().required(),
     locationRo: Joi.string().required(),
     locationDetail: Joi.string().required(),
-    snsNotion: Joi.string().required(),
-    snsEvernote: Joi.string().required(),
-    snsWeb: Joi.string().required(),
+    snsNotion: Joi.string(),
+    snsEvernote: Joi.string(),
+    snsWeb: Joi.string(),
   });
   try {
     await bodySchema.validateAsync(req.body);
