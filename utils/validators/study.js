@@ -24,4 +24,16 @@ const createStudy = async (req, res, next) => {
   }
 };
 
-module.exports = { createStudy };
+const studyDetail = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    id: Joi.number().required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    next({ status: 422, message: err.details[0].message });
+  }
+};
+
+module.exports = { createStudy, studyDetail };

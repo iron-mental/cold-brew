@@ -24,4 +24,38 @@ const createStudy = async (userId, createData) => {
   }
 };
 
-module.exports = { createStudy };
+const studyDetail = async studyId => {
+  let data = {};
+  try {
+    const conn = await pool.getConnection();
+    const studySql = `SELECT category, title, introduce, image, progress, studyTime, location, locationDetail, snsNotion, snsEvernote, snsWeb
+      FROM study 
+      WHERE ?`;
+    const [study] = await conn.query(studySql, { id: studyId });
+    data = study[0];
+
+    const participateSql = `SELECT u.image, u.nickname, p.leader
+      FROM user AS u
+      LEFT JOIN participate AS p
+      ON p.studyId = ?`;
+    const [participate] = await conn.query(participateSql, studyId);
+    data.participate = participate;
+
+    // if (방장이면) {
+    //   const applySql = `SELECT u.image, u.nickname, a.message
+    //   FROM user AS u
+    //   LEFT JOIN apply AS a
+    //   ON a.studyId = ?`;
+    //   const [apply] = await conn.query(applySql, studyId);
+    //   console.log('apply: ', apply);
+    //   data.apply = apply;
+    // }
+    conn.release();
+    return data;
+  } catch (err) {
+    console.error('err: ', err);
+    throw { status: 500, message: 'DB Error' };
+  }
+};
+
+module.exports = { createStudy, studyDetail };

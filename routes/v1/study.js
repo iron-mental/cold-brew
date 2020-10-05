@@ -40,4 +40,6 @@ router.post(
   studyValid.createStudy,
   asyncWrap(studyController.createStudy)
 ); // 스터디 추가
+
+router.get('/:id', studyValid.studyDetail, asyncWrap(studyController.studyDetail)); // 상세조회
 module.exports = router;
