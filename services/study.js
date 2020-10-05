@@ -5,7 +5,7 @@ const createStudy = async createData => {
   const { userId } = createData;
   delete createData.userId;
 
-  const newStudy = await studyDao.createStudy(userId, createData); // FB 가입
+  const newStudy = await studyDao.createStudy(userId, createData);
   if (!newStudy.affectedRows) {
     throw { status: 400, message: 'no result' };
   }
