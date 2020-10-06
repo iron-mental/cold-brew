@@ -13,10 +13,10 @@ const createStudy = async (userId, createData, filePath) => {
 
     const participateSQL = 'INSERT INTO participate SET ?'; // participate insert
     const participateData = { userId, studyId: insertId, leader: true };
-    const [participateRows] = await conn.query(participateSQL, participateData);
+    await conn.query(participateSQL, participateData);
 
     await conn.commit();
-    return participateRows;
+    return createRows;
   } catch (err) {
     console.error('err: ', err);
     await conn.rollback();
@@ -34,7 +34,7 @@ const studyDetail = async studyId => {
   let data = {};
   try {
     const conn = await pool.getConnection();
-    const studySql = `SELECT category, title, introduce, image, progress, studyTime, location, locationDetail, snsNotion, snsEvernote, snsWeb
+    const studySql = `SELECT id, category, title, introduce, image, progress, studyTime, location, locationDetail, snsNotion, snsEvernote, snsWeb
       FROM study 
       WHERE ?`;
     const [studyRows] = await conn.query(studySql, { id: studyId });
