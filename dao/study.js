@@ -40,12 +40,16 @@ const studyDetail = async studyId => {
     const [studyRows] = await conn.query(studySql, { id: studyId });
     data = studyRows[0];
 
-    const participateSql = `SELECT u.image, u.nickname, p.leader
+    const participateSql = `SELECT p.id, u.image, u.nickname, p.leader
       FROM user AS u
       LEFT JOIN participate AS p
       ON p.studyId = ?`;
     const [participateRows] = await conn.query(participateSql, studyId);
     data.participate = participateRows;
+
+    const noticeSql = `SELECT id, title, contents, pin, createdAt FROM notice`;
+    const [noticeRows] = await conn.query(noticeSql, { studyId });
+    data.notice = noticeRows;
 
     // if (방장이면) {
     //   const applySql = `SELECT u.image, u.nickname, a.message
@@ -53,7 +57,6 @@ const studyDetail = async studyId => {
     //   LEFT JOIN apply AS a
     //   ON a.studyId = ?`;
     //   const [apply] = await conn.query(applySql, studyId);
-    //   console.log('apply: ', apply);
     //   data.apply = apply;
     // }
     conn.release();

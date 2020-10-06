@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { format } = require('date-fns');
 
 const studyDao = require('../dao/study');
 
@@ -18,6 +19,9 @@ const studyDetail = async ({ studyId }) => {
   const rows = await studyDao.studyDetail(studyId);
   if (!rows.title) {
     throw { status: 404, message: '조회된 스터디가 없습니다' };
+  }
+  for (let item of rows.notice) {
+    item.createdAt = format(item.createdAt, 'yyyy-MM-dd HH:mm:ss');
   }
   return rows;
 };
