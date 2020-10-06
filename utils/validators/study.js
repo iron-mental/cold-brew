@@ -26,7 +26,7 @@ const createStudy = async (req, res, next) => {
 
 const studyDetail = async (req, res, next) => {
   const paramSchema = Joi.object({
-    id: Joi.number().required(),
+    studyId: Joi.number().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -36,4 +36,31 @@ const studyDetail = async (req, res, next) => {
   }
 };
 
-module.exports = { createStudy, studyDetail };
+const studyUpdate = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    studyId: Joi.number().required(),
+  });
+  const bodySchema = Joi.object({
+    category: Joi.string(),
+    title: Joi.string(),
+    introduce: Joi.string(),
+    progress: Joi.string(),
+    studyTime: Joi.string(),
+    location: Joi.string(),
+    locationSigungu: Joi.string(),
+    locationRo: Joi.string(),
+    locationDetail: Joi.string(),
+    snsNotion: Joi.string(),
+    snsEvernote: Joi.string(),
+    snsWeb: Joi.string(),
+  }).min(1);
+  try {
+    await paramSchema.validateAsync(req.params);
+    await bodySchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    next({ status: 422, message: err.details[0].message });
+  }
+};
+
+module.exports = { createStudy, studyDetail, studyUpdate };
