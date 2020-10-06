@@ -11,6 +11,7 @@ const createStudy = async (createData, filePath) => {
   if (!newStudy.affectedRows) {
     throw { status: 400, message: 'no result' };
   }
+  return newStudy;
 };
 
 const studyDetail = async ({ studyId }) => {
