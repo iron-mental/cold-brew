@@ -6,8 +6,8 @@ const studyPath = '/images/study';
 
 const createStudy = async (req, res) => {
   req.body.image = path.join(studyPath, req.file.uploadedFile.basename);
-  const newStudy = await studyService.createStudy(req.body, req.file.path);
-  return res.redirect(`/v1/study/${newStudy.insertId}`, 303);
+  await studyService.createStudy(req.body, req.file.path);
+  return res.status(201).json({ message: '스터디 생성 성공' });
 };
 
 const studyDetail = async (req, res) => {
@@ -17,8 +17,6 @@ const studyDetail = async (req, res) => {
 
 const studyUpdate = async (req, res) => {
   req.body.image = path.join(studyPath, req.file.uploadedFile.basename);
-  req.file._tmpPath = req.file.path;
-
   await studyService.studyUpdate(req.params, req.body, req.file);
   return res.redirect(`/v1/study/${req.params.studyId}`, 303);
 };
