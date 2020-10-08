@@ -1,12 +1,9 @@
-const fs = require('fs');
-
 const pool = require('./db');
 
 const createStudy = async (userId, createData, filePath) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-
     const createSQL = 'INSERT INTO study SET ?'; // study insert
     const [createRows] = await conn.query(createSQL, createData);
     const { insertId } = createRows;
@@ -18,72 +15,94 @@ const createStudy = async (userId, createData, filePath) => {
     await conn.commit();
     return createRows;
   } catch (err) {
-    console.error('err: ', err);
     await conn.rollback();
-    // 이미지 삭제
-    fs.unlink(filePath, err => {
-      console.error('err: ', err);
-    });
     throw { status: 500, message: err.sqlMessage };
   } finally {
     await conn.release();
   }
 };
 
-const studyDetail = async studyId => {
-  let data = {};
+const getStudy = async studyId => {
   try {
     const conn = await pool.getConnection();
-    const studySql = `SELECT id, category, title, introduce, image, progress, studyTime, location, locationDetail, snsNotion, snsEvernote, snsWeb
-      FROM study 
-      WHERE ?`;
-    const [studyRows] = await conn.query(studySql, { id: studyId });
-    data = studyRows[0];
-
-    const participateSql = `SELECT p.id, u.image, u.nickname, p.leader
-      FROM user AS u
-      LEFT JOIN participate AS p
-      ON p.studyId = ?`;
-    const [participateRows] = await conn.query(participateSql, studyId);
-    data.participate = participateRows;
-
-    const noticeSql = `SELECT id, title, contents, pin, createdAt FROM notice`;
-    const [noticeRows] = await conn.query(noticeSql, { studyId });
-    data.notice = noticeRows;
-
-    // if (방장이면) {
-    //   const applySql = `SELECT u.image, u.nickname, a.message
-    //   FROM user AS u
-    //   LEFT JOIN apply AS a
-    //   ON a.studyId = ?`;
-    //   const [apply] = await conn.query(applySql, studyId);
-    //   data.apply = apply;
-    // }
+    const studySql = `SELECT s.id as studyId, s.category, s.title, s.introduce, s.image, s.progress, s.studyTime, s.location, s.locationDetail, s.snsNotion, s.snsEvernote, s.snsWeb, p.leader
+    FROM participate AS p
+    LEFT JOIN study AS s
+    ON p.studyId = s.id
+    WHERE s.id = ?`;
+    const [studyRows] = await conn.query(studySql, studyId);
     conn.release();
-    return data;
+    return studyRows;
   } catch (err) {
-    console.error('err: ', err);
     throw { status: 500, message: err.sqlMessage };
   }
 };
 
-const studyUpdate = async (studyId, updateData, filePath) => {
+const getNoticeList = async studyId => {
   try {
     const conn = await pool.getConnection();
+    const noticeSql = `SELECT id as noticeId, title, contents, pin, createdAt FROM notice WHERE ?`;
+    const [noticeRows] = await conn.query(noticeSql, { studyId });
+    conn.release();
+    return noticeRows;
+  } catch (err) {
+    throw { status: 500, message: err.sqlMessage };
+  }
+};
 
+const getParticipateList = async studyId => {
+  try {
+    const conn = await pool.getConnection();
+    const participateSql = `SELECT u.id as userId, u.image, u.nickname, p.leader
+    FROM user AS u
+    LEFT JOIN participate AS p
+    ON p.studyId = ?`;
+    const [participateRows] = await conn.query(participateSql, studyId);
+    conn.release();
+    return participateRows;
+  } catch (err) {
+    throw { status: 500, message: err.sqlMessage };
+  }
+};
+
+const getApplyList = async studyId => {
+  try {
+    const conn = await pool.getConnection();
+    const applySql = `SELECT u.id as userId, u.image, a.message
+      FROM apply AS a
+      LEFT JOIN user AS u
+      ON a.studyId = studyId
+      WHERE studyId = ?`;
+    const [apply] = await conn.query(applySql, studyId);
+    conn.release();
+    return apply;
+  } catch (err) {
+    throw { status: 500, message: err.sqlMessage };
+  }
+};
+
+const getImage = async studyId => {
+  try {
+    const conn = await pool.getConnection();
     const imageSQL = 'SELECT image FROM study WHERE ?';
     const [imageRows] = await conn.query(imageSQL, { id: studyId });
-
-    const updateSQL = 'UPDATE study SET ? WHERE ?';
-    const [updateRows] = await conn.query(updateSQL, [updateData, { id: studyId }]);
-
     conn.release();
-    return [updateRows, imageRows[0].image];
+    return imageRows;
   } catch (err) {
-    console.error(err);
-    fs.unlink(filePath, err => {}); // _tmp 파일 삭제
     throw { status: 500, message: err.sqlMessage };
   }
 };
 
-module.exports = { createStudy, studyDetail, studyUpdate };
+const studyUpdate = async (studyId, updateData) => {
+  try {
+    const conn = await pool.getConnection();
+    const updateSQL = 'UPDATE study SET ? WHERE ?';
+    const [updateRows] = await conn.query(updateSQL, [updateData, { id: studyId }]);
+    conn.release();
+    return updateRows;
+  } catch (err) {
+    throw { status: 500, message: err.sqlMessage };
+  }
+};
+
+module.exports = { createStudy, getStudy, getNoticeList, getApplyList, getParticipateList, getImage, studyUpdate };
