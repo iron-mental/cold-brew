@@ -6,10 +6,10 @@ const studyDao = require('../dao/study');
 
 // 스터디 생성
 const createStudy = async (createData, filePath) => {
-  var { userId } = createData;
+  const { userId } = createData;
   delete createData.userId;
   try {
-    await studyDao.createStudy(userId, createData, filePath);
+    await studyDao.createStudy(userId, createData);
   } catch (err) {
     fs.unlink(filePath, err => {});
     throw err;
@@ -37,15 +37,10 @@ const studyDetail = async ({ studyId }) => {
 const studyUpdate = async ({ studyId }, updateData, { destination, uploadedFile, path: _tmpPath }) => {
   try {
     const previousPath = await studyDao.getImage(studyId);
-    if (!previousPath.length) {
-      throw { status: 404, message: '조회된 스터디가 없습니다' };
-    }
-
     const rows = await studyDao.studyUpdate(studyId, updateData);
-    if (!rows.affectedRows) {
+    if (previousPath.length === 0 || rows.affectedRows === 0) {
       throw { status: 404, message: '조회된 스터디가 없습니다' };
     }
-
     const oldImagePath = path.join(destination, path.basename(previousPath[0].image));
     const newPath = path.join(destination, uploadedFile.basename);
     fs.rename(_tmpPath, newPath, err => {});
