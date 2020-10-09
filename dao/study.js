@@ -1,6 +1,6 @@
 const pool = require('./db');
 
-const createStudy = async (userId, createData, filePath) => {
+const createStudy = async (userId, createData) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
@@ -25,11 +25,11 @@ const createStudy = async (userId, createData, filePath) => {
 const getStudy = async studyId => {
   try {
     const conn = await pool.getConnection();
-    const studySql = `SELECT s.id as studyId, s.category, s.title, s.introduce, s.image, s.progress, s.studyTime, s.location, s.locationDetail, s.snsNotion, s.snsEvernote, s.snsWeb, p.leader
-    FROM participate AS p
-    LEFT JOIN study AS s
+    const studySql = `SELECT s.id, p.userId AS leaderId, s.category, s.title, s.introduce, s.image, s.progress, s.studyTime, s.location, s.locationDetail, s.snsNotion, s.snsEvernote, s.snsWeb
+    FROM study AS s
+    JOIN participate AS p
     ON p.studyId = s.id
-    WHERE s.id = ?`;
+    WHERE s.id = ? and p.leader = 1`;
     const [studyRows] = await conn.query(studySql, studyId);
     conn.release();
     return studyRows;
@@ -41,7 +41,7 @@ const getStudy = async studyId => {
 const getNoticeList = async studyId => {
   try {
     const conn = await pool.getConnection();
-    const noticeSql = `SELECT id as noticeId, title, contents, pin, createdAt FROM notice WHERE ?`;
+    const noticeSql = `SELECT id, title, contents, pined, createdAt FROM notice WHERE ?`;
     const [noticeRows] = await conn.query(noticeSql, { studyId });
     conn.release();
     return noticeRows;
@@ -53,10 +53,10 @@ const getNoticeList = async studyId => {
 const getParticipateList = async studyId => {
   try {
     const conn = await pool.getConnection();
-    const participateSql = `SELECT u.id as userId, u.image, u.nickname, p.leader
-    FROM user AS u
-    LEFT JOIN participate AS p
-    ON p.studyId = ?`;
+    const participateSql = `SELECT p.id, u.id as userId, u.nickname, u.image, p.leader
+    FROM participate AS p
+    INNER JOIN user AS u
+    ON p.userId = u.id`;
     const [participateRows] = await conn.query(participateSql, studyId);
     conn.release();
     return participateRows;
@@ -68,11 +68,10 @@ const getParticipateList = async studyId => {
 const getApplyList = async studyId => {
   try {
     const conn = await pool.getConnection();
-    const applySql = `SELECT u.id as userId, u.image, a.message
+    const applySql = `SELECT a.id, u.id as userId, u.image, a.message
       FROM apply AS a
-      LEFT JOIN user AS u
-      ON a.studyId = studyId
-      WHERE studyId = ?`;
+      INNER JOIN user AS u
+      ON u.id = a.userId`;
     const [apply] = await conn.query(applySql, studyId);
     conn.release();
     return apply;
