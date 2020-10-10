@@ -5,16 +5,15 @@ const noticeDao = require('../dao/notice');
 const createNotice = async ({ studyId }, createData) => {
   createData.studyId = studyId;
   const newNotice = await noticeDao.createNotice(createData);
-  if (!newNotice.affectedRows) {
-    throw { status: 400, message: 'no result' };
+  if (newNotice.affectedRows === 0) {
+    throw { status: 400, message: '공지사항 작성에 실패했습니다' };
   }
-  return newNotice;
 };
 
-const noticeDetail = async ({ studyId, noticeId }, res) => {
+const noticeDetail = async ({ studyId, noticeId }) => {
   const noticeData = await noticeDao.noticeDetail(studyId, noticeId);
-  if (!noticeData.length) {
-    throw { status: 400, message: 'no result' };
+  if (noticeData.length === 0) {
+    throw { status: 400, message: '조회 결과가 없습니다' };
   }
   for (const item of noticeData) {
     item.createdAt = format(item.createdAt, 'yyyy-MM-dd HH:mm:ss');
@@ -23,7 +22,15 @@ const noticeDetail = async ({ studyId, noticeId }, res) => {
   return noticeData;
 };
 
+const noticeUpdate = async ({ studyId, noticeId }, updateData) => {
+  const rows = await noticeDao.noticeUpdate(studyId, noticeId, updateData);
+  if (rows.affectedRows === 0) {
+    throw { status: 400, message: '공지사항 작성에 실패했습니다' };
+  }
+};
+
 module.exports = {
   createNotice,
   noticeDetail,
+  noticeUpdate
 };
