@@ -15,10 +15,9 @@ const noticeDetail = async ({ studyId, noticeId }) => {
   if (noticeData.length === 0) {
     throw { status: 400, message: '조회 결과가 없습니다' };
   }
-  for (const item of noticeData) {
-    item.createdAt = format(item.createdAt, 'yyyy-MM-dd HH:mm:ss');
-    item.updatedAt = format(item.updatedAt, 'yyyy-MM-dd HH:mm:ss');
-  }
+  
+  noticeData[0].createdAt = format(noticeData[0].createdAt, 'yyyy-MM-dd HH:mm:ss');
+  noticeData[0].updatedAt = format(noticeData[0].updatedAt, 'yyyy-MM-dd HH:mm:ss');
   return noticeData;
 };
 
