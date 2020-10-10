@@ -28,16 +28,29 @@ const noticeUpdate = async (studyId, noticeId, updateData) => {
   try {
     const conn = await pool.getConnection(); 
     const updateSQL = 'UPDATE notice SET ? WHERE studyId = ? and id = ?';
-    const [detailRows] = await conn.query(updateSQL, [updateData, studyId, noticeId]);
+    const [updateRows] = await conn.query(updateSQL, [updateData, studyId, noticeId]);
     await conn.release();
-    return detailRows;
+    return updateRows;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw {status: 500, message: err.sqlMessage };
   }
 };
+
+const noticeDelete = async (studyId, noticeId) =>{
+  try{
+    const conn = await pool.getConnection();
+    const deleteSQL = 'DELETE FROM notice WHERE studyId = ? and id = ?'
+    const [deleteRows] = await conn.query(deleteSQL, [studyId, noticeId]);
+    await conn.release();
+    return deleteRows;
+  }catch (err){
+    throw {status: 500, message: err.sqlMessage}
+  }
+}
 
 module.exports = {
   createNotice,
   noticeDetail,
-  noticeUpdate
+  noticeUpdate,
+  noticeDelete
 };

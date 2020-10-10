@@ -29,8 +29,16 @@ const noticeUpdate = async ({ studyId, noticeId }, updateData) => {
   }
 };
 
+const noticeDelete = async ({ studyId, noticeId }) => {
+  const rows = await noticeDao.noticeDelete(studyId, noticeId);
+  if (rows.length === 0) {
+    throw { status: 400, message: '삭제에 실패했습니다' };
+  }
+};
+
 module.exports = {
   createNotice,
   noticeDetail,
-  noticeUpdate
+  noticeUpdate,
+  noticeDelete
 };

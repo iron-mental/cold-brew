@@ -50,8 +50,22 @@ const noticeUpdate = async (req, res, next) => {
   }
 };
 
+const noticeDelete = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    studyId: Joi.number().required(),
+    noticeId: Joi.number().required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    next({ status: 422, message: err.details[0].message });
+  }
+};
+
 module.exports = {
   createNotice,
   noticeDetail,
-  noticeUpdate
+  noticeUpdate,
+  noticeDelete
 };
