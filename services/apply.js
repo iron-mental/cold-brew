@@ -16,8 +16,8 @@ const applyDetail = async ({ study_id, apply_id }) => {
     throw { status: 400, message: '조회 결과가 없습니다' };
   }
 
-  applyData[0].create_at = format(applyData[0].create_at, 'yyyy-MM-dd HH:mm:ss');
-  // 정책 마련 후 rejectedAt도 수정
+  applyData[0].created_at = format(applyData[0].created_at, 'yyyy-MM-dd HH:mm:ss');
+  // 정책 마련 후 rejected_at도 수정
   return applyData;
 };
 
