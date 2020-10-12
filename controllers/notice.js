@@ -2,7 +2,7 @@ const noticeService = require('../services/notice');
 
 const createNotice = async (req, res) => {
   await noticeService.createNotice(req.params, req.body);
-  return res.json({ message: '작성 완료' });
+  return res.status(201).json({ message: '작성 완료' });
 };
 
 const noticeDetail = async (req, res) => {
