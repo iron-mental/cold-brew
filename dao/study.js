@@ -1,6 +1,6 @@
 const pool = require('./db');
 
-const createStudy = async (userId, createData) => {
+const createStudy = async (user_id, createData) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
@@ -9,7 +9,7 @@ const createStudy = async (userId, createData) => {
     const { insertId } = createRows;
 
     const participateSQL = 'INSERT INTO participate SET ?'; // participate insert
-    const participateData = { userId, studyId: insertId, leader: true };
+    const participateData = { user_id, study_id: insertId, leader: true };
     await conn.query(participateSQL, participateData);
 
     await conn.commit();
@@ -22,15 +22,15 @@ const createStudy = async (userId, createData) => {
   }
 };
 
-const getStudy = async studyId => {
+const getStudy = async (study_id) => {
   try {
     const conn = await pool.getConnection();
-    const studySql = `SELECT s.id, p.userId AS leaderId, s.category, s.title, s.introduce, s.image, s.progress, s.studyTime, s.location, s.locationDetail, s.snsNotion, s.snsEvernote, s.snsWeb
+    const studySql = `SELECT s.id, p.user_id AS leader_id, s.category, s.title, s.introduce, s.image, s.progress, s.study_time, s.location, s.location_detail, s.sns_notion, s.sns_evernote, s.sns_web
     FROM study AS s
     JOIN participate AS p
-    ON p.studyId = s.id
+    ON p.study_id = s.id
     WHERE s.id = ? and p.leader = 1`;
-    const [studyRows] = await conn.query(studySql, studyId);
+    const [studyRows] = await conn.query(studySql, study_id);
     conn.release();
     return studyRows;
   } catch (err) {
@@ -38,11 +38,11 @@ const getStudy = async studyId => {
   }
 };
 
-const getNoticeList = async studyId => {
+const getNoticeList = async (study_id) => {
   try {
     const conn = await pool.getConnection();
-    const noticeSql = `SELECT id, title, contents, pined, createdAt FROM notice WHERE ?`;
-    const [noticeRows] = await conn.query(noticeSql, { studyId });
+    const noticeSql = `SELECT id, title, contents, pined, created_at FROM notice WHERE ?`;
+    const [noticeRows] = await conn.query(noticeSql, { study_id });
     conn.release();
     return noticeRows;
   } catch (err) {
@@ -50,14 +50,15 @@ const getNoticeList = async studyId => {
   }
 };
 
-const getParticipateList = async studyId => {
+const getParticipateList = async (study_id) => {
   try {
     const conn = await pool.getConnection();
-    const participateSql = `SELECT p.id, u.id as userId, u.nickname, u.image, p.leader
+    const participateSql = `SELECT p.id, u.id as user_id, u.nickname, u.image, p.leader
     FROM participate AS p
     INNER JOIN user AS u
-    ON p.userId = u.id`;
-    const [participateRows] = await conn.query(participateSql, studyId);
+    ON p.user_id = u.id
+    WHERE p.study_id = ?`;
+    const [participateRows] = await conn.query(participateSql, study_id);
     conn.release();
     return participateRows;
   } catch (err) {
@@ -65,14 +66,15 @@ const getParticipateList = async studyId => {
   }
 };
 
-const getApplyList = async studyId => {
+const getApplyList = async (study_id) => {
   try {
     const conn = await pool.getConnection();
-    const applySql = `SELECT a.id, u.id as userId, u.image, a.message
+    const applySql = `SELECT a.id, u.id as user_id, u.image, a.message
       FROM apply AS a
       INNER JOIN user AS u
-      ON u.id = a.userId`;
-    const [apply] = await conn.query(applySql, studyId);
+      ON u.id = a.user_id
+      WHERE a.study_id = ?`;
+    const [apply] = await conn.query(applySql, study_id);
     conn.release();
     return apply;
   } catch (err) {
@@ -80,11 +82,11 @@ const getApplyList = async studyId => {
   }
 };
 
-const getImage = async studyId => {
+const getImage = async (study_id) => {
   try {
     const conn = await pool.getConnection();
     const imageSQL = 'SELECT image FROM study WHERE ?';
-    const [imageRows] = await conn.query(imageSQL, { id: studyId });
+    const [imageRows] = await conn.query(imageSQL, { id: study_id });
     conn.release();
     return imageRows;
   } catch (err) {
@@ -92,11 +94,11 @@ const getImage = async studyId => {
   }
 };
 
-const studyUpdate = async (studyId, updateData) => {
+const studyUpdate = async (study_id, updateData) => {
   try {
     const conn = await pool.getConnection();
     const updateSQL = 'UPDATE study SET ? WHERE ?';
-    const [updateRows] = await conn.query(updateSQL, [updateData, { id: studyId }]);
+    const [updateRows] = await conn.query(updateSQL, [updateData, { id: study_id }]);
     conn.release();
     return updateRows;
   } catch (err) {

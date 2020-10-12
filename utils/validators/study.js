@@ -2,19 +2,18 @@ const Joi = require('joi');
 
 const createStudy = async (req, res, next) => {
   const bodySchema = Joi.object({
-    userId: Joi.number().required(),
+    user_id: Joi.number().required(),
     category: Joi.string().required(),
     title: Joi.string().required(),
     introduce: Joi.string().required(),
     progress: Joi.string().required(),
-    studyTime: Joi.string().required(),
+    study_time: Joi.string().required(),
     location: Joi.string().required(),
-    locationSigungu: Joi.string(),
-    locationRo: Joi.string(),
-    locationDetail: Joi.string().required(),
-    snsNotion: Joi.string(),
-    snsEvernote: Joi.string(),
-    snsWeb: Joi.string(),
+    // location_last: Joi.string().required(),
+    location_detail: Joi.string().required(),
+    sns_notion: Joi.string(),
+    sns_evernote: Joi.string(),
+    sns_web: Joi.string(),
   });
   try {
     await bodySchema.validateAsync(req.body);
@@ -26,7 +25,7 @@ const createStudy = async (req, res, next) => {
 
 const studyDetail = async (req, res, next) => {
   const paramSchema = Joi.object({
-    studyId: Joi.number().required(),
+    study_id: Joi.number().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -38,21 +37,20 @@ const studyDetail = async (req, res, next) => {
 
 const studyUpdate = async (req, res, next) => {
   const paramSchema = Joi.object({
-    studyId: Joi.number().required(),
+    study_id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
     category: Joi.string(),
     title: Joi.string(),
     introduce: Joi.string(),
     progress: Joi.string(),
-    studyTime: Joi.string(),
+    study_time: Joi.string(),
     location: Joi.string(),
-    locationSigungu: Joi.string(),
-    locationRo: Joi.string(),
-    locationDetail: Joi.string(),
-    snsNotion: Joi.string(),
-    snsEvernote: Joi.string(),
-    snsWeb: Joi.string(),
+    location_last: Joi.string(),
+    location_detail: Joi.string(),
+    sns_notion: Joi.string(),
+    sns_evernote: Joi.string(),
+    sns_web: Joi.string(),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);
