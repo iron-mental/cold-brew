@@ -2,7 +2,7 @@ const Joi = require('joi');
 
 const createNotice = async (req, res, next) => {
   const paramSchema = Joi.object({
-    studyId: Joi.number().required(),
+    study_id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
     title: Joi.string().required(),
@@ -20,8 +20,8 @@ const createNotice = async (req, res, next) => {
 
 const noticeDetail = async (req, res, next) => {
   const paramSchema = Joi.object({
-    studyId: Joi.number().required(),
-    noticeId: Joi.number().required(),
+    study_id: Joi.number().required(),
+    notice_id: Joi.number().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -33,8 +33,8 @@ const noticeDetail = async (req, res, next) => {
 
 const noticeUpdate = async (req, res, next) => {
   const paramSchema = Joi.object({
-    studyId: Joi.number().required(),
-    noticeId: Joi.number().required(),
+    study_id: Joi.number().required(),
+    notice_id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
     title: Joi.string(),
@@ -52,8 +52,8 @@ const noticeUpdate = async (req, res, next) => {
 
 const noticeDelete = async (req, res, next) => {
   const paramSchema = Joi.object({
-    studyId: Joi.number().required(),
-    noticeId: Joi.number().required(),
+    study_id: Joi.number().required(),
+    notice_id: Joi.number().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -67,5 +67,5 @@ module.exports = {
   createNotice,
   noticeDetail,
   noticeUpdate,
-  noticeDelete
+  noticeDelete,
 };

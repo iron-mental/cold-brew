@@ -12,17 +12,17 @@ const noticeDetail = async (req, res) => {
 
 const noticeUpdate = async (req, res) => {
   await noticeService.noticeUpdate(req.params, req.body);
-  return res.redirect(`/v1/study/${req.params.studyId}/notice/${req.params.noticeId}`, 303);  
+  return res.redirect(`/v1/study/${req.params.studyId}/notice/${req.params.noticeId}`, 303);
 };
 
 const noticeDelete = async (req, res) => {
   await noticeService.noticeDelete(req.params);
-  return res.json({ message: '삭제 성공'});
+  return res.json({ message: '삭제 성공' });
 };
 
 module.exports = {
   createNotice,
   noticeDetail,
   noticeUpdate,
-  noticeDelete
+  noticeDelete,
 };

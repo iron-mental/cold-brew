@@ -1,6 +1,6 @@
 const pool = require('./db');
 
-const createNotice = async createData => {
+const createNotice = async (createData) => {
   try {
     const conn = await pool.getConnection();
     const createSQL = 'INSERT INTO notice SET ?';
@@ -12,11 +12,11 @@ const createNotice = async createData => {
   }
 };
 
-const noticeDetail = async (studyId, noticeId) => {
+const noticeDetail = async (study_id, notice_id) => {
   try {
     const conn = await pool.getConnection();
-    const detailSQL = 'SELECT * FROM notice WHERE studyId = ? and id = ?';
-    const [detailRows] = await conn.query(detailSQL, [studyId, noticeId]);
+    const detailSQL = 'SELECT * FROM notice WHERE study_id = ? and id = ?';
+    const [detailRows] = await conn.query(detailSQL, [study_id, notice_id]);
     await conn.release();
     return detailRows;
   } catch (err) {
@@ -24,33 +24,33 @@ const noticeDetail = async (studyId, noticeId) => {
   }
 };
 
-const noticeUpdate = async (studyId, noticeId, updateData) => {
+const noticeUpdate = async (study_id, notice_id, updateData) => {
   try {
-    const conn = await pool.getConnection(); 
-    const updateSQL = 'UPDATE notice SET ? WHERE studyId = ? and id = ?';
-    const [updateRows] = await conn.query(updateSQL, [updateData, studyId, noticeId]);
+    const conn = await pool.getConnection();
+    const updateSQL = 'UPDATE notice SET ? WHERE study_id = ? and id = ?';
+    const [updateRows] = await conn.query(updateSQL, [updateData, study_id, notice_id]);
     await conn.release();
     return updateRows;
   } catch (err) {
-    throw {status: 500, message: err.sqlMessage };
+    throw { status: 500, message: err.sqlMessage };
   }
 };
 
-const noticeDelete = async (studyId, noticeId) =>{
-  try{
+const noticeDelete = async (study_id, notice_id) => {
+  try {
     const conn = await pool.getConnection();
-    const deleteSQL = 'DELETE FROM notice WHERE studyId = ? and id = ?'
-    const [deleteRows] = await conn.query(deleteSQL, [studyId, noticeId]);
+    const deleteSQL = 'DELETE FROM notice WHERE study_id = ? and id = ?';
+    const [deleteRows] = await conn.query(deleteSQL, [study_id, notice_id]);
     await conn.release();
     return deleteRows;
-  }catch (err){
-    throw {status: 500, message: err.sqlMessage}
+  } catch (err) {
+    throw { status: 500, message: err.sqlMessage };
   }
-}
+};
 
 module.exports = {
   createNotice,
   noticeDetail,
   noticeUpdate,
-  noticeDelete
+  noticeDelete,
 };
