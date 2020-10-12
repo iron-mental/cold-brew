@@ -1,5 +1,3 @@
-const { format } = require('date-fns');
-
 const noticeDao = require('../dao/notice');
 
 const createNotice = async ({ study_id }, createData) => {
@@ -15,8 +13,6 @@ const noticeDetail = async ({ study_id, notice_id }) => {
   if (noticeData.length === 0) {
     throw { status: 400, message: '조회 결과가 없습니다' };
   }
-  noticeData[0].created_at = format(noticeData[0].created_at, 'yyyy-MM-dd HH:mm:ss');
-  noticeData[0].updated_at = format(noticeData[0].updated_at, 'yyyy-MM-dd HH:mm:ss');
   return noticeData;
 };
 
