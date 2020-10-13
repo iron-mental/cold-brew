@@ -2,10 +2,13 @@ const createError = require('http-errors');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
+const firebase = require('firebase');
 
 const v1Router = require('./routes/v1');
+const config = require('./configs/config');
 
 const app = express();
+firebase.initializeApp(config.firebase);
 
 app.use(morgan('dev'));
 app.use(express.json());
