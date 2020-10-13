@@ -16,8 +16,8 @@ const noticeDetail = async (study_id, notice_id) => {
   try {
     const conn = await pool.getConnection();
     const detailSQL = `SELECT id, study_id, title, contents, pined,
-      FROM_UNIXTIME(UNIX_TIMESTAMP(created_at),'%Y-%m-%d %H:%i:%s') as created_at,
-      FROM_UNIXTIME(UNIX_TIMESTAMP(updated_at),'%Y-%m-%d %H:%i:%s') as updated_at 
+      FROM_UNIXTIME(UNIX_TIMESTAMP(created_at),'%Y-%m-%d %H:%i:%s') AS created_at,
+      FROM_UNIXTIME(UNIX_TIMESTAMP(updated_at),'%Y-%m-%d %H:%i:%s') AS updated_at 
       FROM notice 
       WHERE study_id = ? AND id = ?`;
     const [detailRows] = await conn.query(detailSQL, [study_id, notice_id]);
