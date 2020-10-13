@@ -1,11 +1,11 @@
 const rowSplit = (userData, tags) => {
+  let count = 0;
   const items = {}; // make matching k-v
   const result = {}; // 메인 저장소 result
   for (const tag of tags) {
     items[tag] = tag.slice(0, 1).toUpperCase().concat('_');
     result[tag] = [];
   }
-  let count = 0;
 
   // rows FOR문
   for (const data of userData) {
@@ -23,7 +23,7 @@ const rowSplit = (userData, tags) => {
       } else {
         // items의 값과 매칭
         for (let name in items) {
-          if (key.slice(0, 2) === items[name]) {
+          if (key.slice(0, 2) === items[name] && data[key]) {
             tmp[name][key.slice(2)] = data[key];
           }
         }
@@ -32,7 +32,9 @@ const rowSplit = (userData, tags) => {
 
     //담은 변수들 result에 병합
     for (const name in items) {
-      result[name].push(tmp[name]);
+      if (Object.keys(tmp[name]).length) {
+        result[name].push(tmp[name]);
+      }
     }
     count += 1;
   }
@@ -80,3 +82,13 @@ result: {
   name: 'kang'
 
 */
+
+// let count = 0;
+// const object1 = {
+//   a: 'somestring',
+//   b: 42,
+// };
+
+// for (const [key, value] of Object.entries(object1)) {
+//   console.log(`${key}: ${value}`);
+// }
