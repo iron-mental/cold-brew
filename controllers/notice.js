@@ -7,7 +7,7 @@ const createNotice = async (req, res) => {
 
 const noticeDetail = async (req, res) => {
   const noticeData = await noticeService.noticeDetail(req.params);
-  return res.json(noticeData);
+  return res.status(200).json(noticeData);
 };
 
 const noticeUpdate = async (req, res) => {
@@ -17,7 +17,7 @@ const noticeUpdate = async (req, res) => {
 
 const noticeDelete = async (req, res) => {
   await noticeService.noticeDelete(req.params);
-  return res.json({ message: '삭제 성공' });
+  return res.t - status(200).json({ message: '삭제 성공' });
 };
 
 module.exports = {
