@@ -12,7 +12,7 @@ const applyDetail = async (req, res) => {
 
 const applyUpdate = async (req, res) => {
   await applyService.applyUpdate(req.params, req.body);
-  return res.redirect(`/v1/study/${req.params.study_id}/apply/${req.params.apply_id}`, 303);
+  return res.redirect(303, `/v1/study/${req.params.study_id}/apply/${req.params.apply_id}`);
 };
 
 const applyDelete = async (req, res) => {
