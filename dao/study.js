@@ -29,7 +29,7 @@ const getStudy = async (study_id) => {
     FROM study AS s
     JOIN participate AS p
     ON p.study_id = s.id
-    WHERE s.id = ? and p.leader = 1`;
+    WHERE s.id = ? AND p.leader = 1`;
     const [studyRows] = await conn.query(studySql, study_id);
     return studyRows;
   } catch (err) {
@@ -55,7 +55,7 @@ const getNoticeList = async (study_id) => {
 const getParticipateList = async (study_id) => {
   try {
     var conn = await pool.getConnection();
-    const participateSql = `SELECT p.id, u.id as user_id, u.nickname, u.image, p.leader
+    const participateSql = `SELECT p.id, u.id AS user_id, u.nickname, u.image, p.leader
     FROM participate AS p
     INNER JOIN user AS u
     ON p.user_id = u.id
@@ -72,7 +72,7 @@ const getParticipateList = async (study_id) => {
 const getApplyList = async (study_id) => {
   try {
     var conn = await pool.getConnection();
-    const applySql = `SELECT a.id, u.id as user_id, u.image, a.message
+    const applySql = `SELECT a.id, u.id AS user_id, u.image, a.message
       FROM apply AS a
       INNER JOIN user AS u
       ON u.id = a.user_id
