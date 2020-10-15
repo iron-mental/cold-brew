@@ -12,7 +12,7 @@ const createStudy = async (req, res) => {
 
 const studyDetail = async (req, res) => {
   const data = await studyService.studyDetail(req.params);
-  return res.json(data);
+  return res.status(200).json(data);
 };
 
 const studyUpdate = async (req, res) => {
