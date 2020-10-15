@@ -9,11 +9,11 @@ const createNotice = async ({ study_id }, createData) => {
 };
 
 const noticeDetail = async ({ study_id, notice_id }) => {
-  const noticeData = await noticeDao.noticeDetail(study_id, notice_id);
+  const noticeData = await noticeDao.getNotice(study_id, notice_id);
   if (noticeData.length === 0) {
     throw { status: 400, message: '조회 결과가 없습니다' };
   }
-  return noticeData;
+  return noticeData[0];
 };
 
 const noticeUpdate = async ({ study_id, notice_id }, updateData) => {

@@ -13,7 +13,7 @@ const createNotice = async (createData) => {
   }
 };
 
-const noticeDetail = async (study_id, notice_id) => {
+const getNotice = async (study_id, notice_id) => {
   try {
     var conn = await pool.getConnection();
     const detailSQL = `SELECT id, study_id, title, contents, pined,
@@ -58,7 +58,7 @@ const noticeDelete = async (study_id, notice_id) => {
 
 module.exports = {
   createNotice,
-  noticeDetail,
+  getNotice,
   noticeUpdate,
   noticeDelete,
 };
