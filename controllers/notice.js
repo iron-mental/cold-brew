@@ -12,7 +12,7 @@ const noticeDetail = async (req, res) => {
 
 const noticeUpdate = async (req, res) => {
   await noticeService.noticeUpdate(req.params, req.body);
-  return res.redirect(`/v1/study/${req.params.study_id}/notice/${req.params.notice_id}`, 303);
+  return res.redirect(303, `/v1/study/${req.params.study_id}/notice/${req.params.notice_id}`);
 };
 
 const noticeDelete = async (req, res) => {
