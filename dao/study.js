@@ -25,11 +25,19 @@ const createStudy = async (user_id, createData) => {
 const getStudy = async (study_id) => {
   try {
     var conn = await pool.getConnection();
-    const studySql = `SELECT s.id, p.user_id AS leader_id, s.category, s.title, s.introduce, s.image, s.progress, s.study_time, s.location, s.location_detail, s.sns_notion, s.sns_evernote, s.sns_web
-    FROM study AS s
-    JOIN participate AS p
-    ON p.study_id = s.id
-    WHERE s.id = ? AND p.leader = 1`;
+    const studySql = `
+      SELECT s.id, s.category, s.title ,s.introduce, s.image, s.progress, s.study_time, s.location, s.location_detail, s.sns_notion, s.sns_evernote, s.sns_web,
+      n.id AS N_id, n.title AS N_title, n.contents AS N_contents, n.pined AS N_pined, n.created_at AS N_created_at, n.updated_at AS N_updated_at,
+      p.id AS P_id, p.user_id AS P_user_id, u.nickname AS P_nickname, u.image AS P_image, p.leader AS P_leader
+
+      FROM study AS s
+      LEFT JOIN notice AS n
+      ON s.id = n.study_id
+      LEFT JOIN participate AS p
+      ON s.id = p.study_id
+      LEFT JOIN user AS u
+      ON u.id = p.user_id
+      WHERE s.id = ?`;
     const [studyRows] = await conn.query(studySql, study_id);
     return studyRows;
   } catch (err) {
@@ -55,11 +63,12 @@ const getNoticeList = async (study_id) => {
 const getParticipateList = async (study_id) => {
   try {
     var conn = await pool.getConnection();
-    const participateSql = `SELECT p.id, u.id AS user_id, u.nickname, u.image, p.leader
-    FROM participate AS p
-    INNER JOIN user AS u
-    ON p.user_id = u.id
-    WHERE p.study_id = ?`;
+    const participateSql = `
+      SELECT p.id, u.id AS user_id, u.nickname, u.image, p.leader
+      FROM participate AS p
+      INNER JOIN user AS u
+      ON p.user_id = u.id
+      WHERE p.study_id = ?`;
     const [participateRows] = await conn.query(participateSql, study_id);
     return participateRows;
   } catch (err) {
@@ -72,7 +81,8 @@ const getParticipateList = async (study_id) => {
 const getApplyList = async (study_id) => {
   try {
     var conn = await pool.getConnection();
-    const applySql = `SELECT a.id, u.id AS user_id, u.image, a.message
+    const applySql = `
+      SELECT a.id, u.id AS user_id, u.image, a.message
       FROM apply AS a
       INNER JOIN user AS u
       ON u.id = a.user_id
@@ -112,4 +122,12 @@ const studyUpdate = async (study_id, updateData) => {
   }
 };
 
-module.exports = { createStudy, getStudy, getNoticeList, getApplyList, getParticipateList, getImage, studyUpdate };
+module.exports = {
+  createStudy,
+  getStudy,
+  getNoticeList,
+  getApplyList,
+  getParticipateList,
+  getImage,
+  studyUpdate,
+};
