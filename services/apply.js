@@ -13,7 +13,7 @@ const applyDetail = async ({ study_id, apply_id }) => {
   if (applyData.length === 0) {
     throw { status: 400, message: '조회 결과가 없습니다' };
   }
-  return applyData;
+  return applyData[0];
 };
 
 const applyUpdate = async ({ study_id, apply_id }, updateData) => {
