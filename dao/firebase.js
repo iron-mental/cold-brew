@@ -2,22 +2,20 @@ const firebase = require('firebase');
 
 const pool = require('./db');
 
-const emailVerification = async (id, email, password) => {
-  let email_status = '';
+const alreadyCheck = async (id) => {
   try {
     var conn = await pool.getConnection();
     const emailSql = 'SELECT email_verified FROM user WHERE ?';
     const [emailRows] = await conn.query(emailSql, { id });
-    email_status = emailRows[0].email_verified;
+    return emailRows;
   } catch (err) {
     throw { status: 500, message: 'DB Error' };
   } finally {
     await conn.release();
   }
-  if (email_status === 1) {
-    throw { status: 400, message: '이미 인증된 사용자입니다' };
-  }
+};
 
+const emailVerification = async (email, password) => {
   await firebase
     .auth()
     .signInWithEmailAndPassword(email, password)
@@ -54,4 +52,4 @@ const emailVerificationProcess = async (email) => {
   }
 };
 
-module.exports = { emailVerification, emailVerificationProcess };
+module.exports = { alreadyCheck, emailVerification, emailVerificationProcess };
