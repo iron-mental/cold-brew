@@ -51,7 +51,7 @@ const signup = async (email, password, nickname) => {
 };
 
 const login = async (email, password) => {
-  const { uid, emailVerified: email_verified } = await firebase
+  const { uid } = await firebase
     .auth()
     .signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
@@ -62,7 +62,6 @@ const login = async (email, password) => {
     });
 
   try {
-    console.log('email_verified: ', email_verified);
     var conn = await pool.getConnection();
     const userSql = 'SELECT id FROM user WHERE ?';
     const [rows] = await conn.query(userSql, { uid });
@@ -102,7 +101,6 @@ const getImage = async (id) => {
     const [imageRows] = await conn.query(imageSQL, { id });
     return imageRows;
   } catch (err) {
-    console.error('Dao err: ', err);
     throw { status: 500, message: 'DB Error' };
   } finally {
     await conn.release();
