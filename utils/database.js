@@ -36,7 +36,8 @@ const rowSplit = (userData, tags = []) => {
 
     //담은 변수들 result에 병합
     for (const name in items) {
-      if (Object.keys(tmp[name]).length && resultedId[name].indexOf(tmp[name].id) === -1) {
+      // 하위 row의 길이체크, 이미 들어간 내용과 동일한지, 해당 row의 id가 null이 아닌지 체크
+      if (Object.keys(tmp[name]).length && resultedId[name].indexOf(tmp[name].id) === -1 && tmp[name].id !== null) {
         result[name].push(tmp[name]);
         resultedId[name].push(tmp[name].id);
       }
