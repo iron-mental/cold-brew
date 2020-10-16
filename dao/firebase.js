@@ -26,8 +26,8 @@ const emailVerification = async (email, password) => {
       };
       await user
         .sendEmailVerification(actionCodeSettings)
-        .then(function () {})
-        .catch(function (error) {
+        .then(() => {})
+        .catch((error) => {
           throw { status: 400, message: 'Firebase Error: ' + error.code };
         });
     })
@@ -52,4 +52,14 @@ const emailVerificationProcess = async (email) => {
   }
 };
 
-module.exports = { alreadyCheck, emailVerification, emailVerificationProcess };
+const resetPassword = async (email) => {
+  await firebase
+    .auth()
+    .sendPasswordResetEmail(email)
+    .then(() => {})
+    .catch((error) => {
+      throw { status: 400, message: error };
+    });
+};
+
+module.exports = { alreadyCheck, emailVerification, emailVerificationProcess, resetPassword };

@@ -12,16 +12,13 @@ router.post(
   asyncWrap(firebaseController.emailVerification)
 );
 
-// user가 이메일을 통해 링크를 누르면 여기서 트리거
-router.get('/parsing', (req, res, next) => {
-  return res.redirect(303, req.query.continueUrl);
-});
-
-// 실직적으로 처리하는 부분
+// DB 수정
 router.get(
   '/email-verification',
   firebaseValid.emailVerificationProcess,
   asyncWrap(firebaseController.emailVerificationProcess)
 );
+
+router.post('/reset-password/:email', firebaseValid.resetPassword, asyncWrap(firebaseController.resetPassword));
 
 module.exports = router;
