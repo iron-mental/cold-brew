@@ -1,4 +1,4 @@
-const rowSplit = (userData, tags) => {
+const rowSplit = (userData, tags = []) => {
   let count = 0;
   const items = {}; // make matching k-v
   const result = {}; // 메인 저장소 result
@@ -26,7 +26,8 @@ const rowSplit = (userData, tags) => {
       } else {
         // items의 값과 매칭
         for (let name in items) {
-          if (key.slice(0, 2) === items[name] && data[key]) {
+          // if (key.slice(0, 2) === items[name] && data[key]) { // null을 안받는 구문, 아니면 null이면 데이터를 변환하는것을 넣을까?
+          if (key.slice(0, 2) === items[name]) {
             tmp[name][key.slice(2)] = data[key];
           }
         }
@@ -35,7 +36,8 @@ const rowSplit = (userData, tags) => {
 
     //담은 변수들 result에 병합
     for (const name in items) {
-      if (Object.keys(tmp[name]).length && resultedId[name].indexOf(tmp[name].id)) {
+      // 하위 row의 길이체크, 이미 들어간 내용과 동일한지, 해당 row의 id가 null이 아닌지 체크
+      if (Object.keys(tmp[name]).length && resultedId[name].indexOf(tmp[name].id) === -1 && tmp[name].id !== null) {
         result[name].push(tmp[name]);
         resultedId[name].push(tmp[name].id);
       }
@@ -68,8 +70,6 @@ const userData = [
 ];
 const items = ['project', 'team'];
 const res = testFunction(userData, items);
-
-
 ## 결과 ##
 result: { 
   project:
@@ -84,7 +84,6 @@ result: {
   ],
   id: 1,
   name: 'kang'
-
 */
 
 // let count = 0;
