@@ -5,7 +5,7 @@ const uuidv4 = require('uuid').v4;
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, path.join(__dirname, '../public/images/study'));
+      cb(null, path.join(__dirname, '../public/images/'.concat(req.baseUrl.split('/').splice(-1)[0])));
     },
     filename: (req, file, cb) => {
       const basename = uuidv4();
