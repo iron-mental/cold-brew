@@ -7,15 +7,17 @@ const { rowSplit } = require('../utils/database');
 
 describe('rowSplit 테스트', () => {
   describe('태그 모두 입력', () => {
+    let result;
+    before(() => {
+      result = rowSplit(Data, ['project', 'apply']);
+    });
     it('tag로 받은 하위 데이터의 자료형이 Array, 각 tag의 개수가 예측한 값과 맞는지', (done) => {
-      const result = rowSplit(Data, ['project', 'apply']);
       result.should.be.an.instanceOf(Object).have.properties('project', 'apply');
       result.project.should.be.instanceOf(Array).and.have.lengthOf(3);
       result.apply.should.be.instanceOf(Array).and.have.lengthOf(1);
       done();
     });
     it('각 태그로 받은 하위 데이터의 누락 확인', (done) => {
-      const result = rowSplit(Data, ['project', 'apply']);
       Object.keys(result.project[0]).should.have.lengthOf(3);
       Object.keys(result.apply[0]).should.have.lengthOf(2);
       done();
@@ -23,14 +25,16 @@ describe('rowSplit 테스트', () => {
   });
 
   describe('태그 한개만 입력', () => {
+    let result;
+    before(() => {
+      result = rowSplit(Data, ['project']);
+    });
     it('하위 데이터의 자료형, 예상한 값과 맞는지', (done) => {
-      const result = rowSplit(Data, ['project']);
       result.should.be.an.instanceOf(Object).have.properties('project');
       result.project.should.be.instanceOf(Array).and.have.lengthOf(3);
       done();
     });
     it('각 태그로 받은 하위 데이터의 누락 확인', (done) => {
-      const result = rowSplit(Data, ['project']);
       Object.keys(result.project[0]).should.have.lengthOf(3);
       done();
     });
@@ -38,7 +42,7 @@ describe('rowSplit 테스트', () => {
 
   describe('태그 미 입력', () => {
     it('파라미터 미 입력시 에러 발생여부', (done) => {
-      const result = rowSplit(Data);
+      rowSplit(Data);
       done();
     });
   });
