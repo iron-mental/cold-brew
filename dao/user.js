@@ -62,7 +62,6 @@ const login = async (email, password) => {
     });
 
   try {
-    console.log('email_verified: ', email_verified);
     var conn = await pool.getConnection();
     const userSql = 'SELECT id FROM user WHERE ?';
     const [rows] = await conn.query(userSql, { uid });
