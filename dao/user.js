@@ -1,133 +1,122 @@
 const firebase = require('firebase');
 
 const pool = require('./db');
-const config = require('../configs/config');
 
-firebase.initializeApp(config.firebase);
+const checkNickname = async (nickname) => {
+  const conn = await pool.getConnection();
+  try {
+    const checkSql = 'SELECT nickname FROM user WHERE ?';
+    const [checkRows] = await conn.query(checkSql, { nickname });
+    return checkRows;
+  } catch (err) {
+    throw { status: 500, message: 'DB Error' };
+  } finally {
+    await conn.release();
+  }
+};
+
+const checkEmail = async (email) => {
+  const conn = await pool.getConnection();
+  try {
+    const checkSql = 'SELECT email FROM user WHERE ?';
+    const [checkRows] = await conn.query(checkSql, { email });
+    return checkRows;
+  } catch (err) {
+    throw { status: 500, message: 'DB Error' };
+  } finally {
+    await conn.release();
+  }
+};
 
 const signup = async (email, password, nickname) => {
   const { uid, emailVerified } = await firebase
     .auth()
     .createUserWithEmailAndPassword(email, password)
-    .then(userCredential => {
+    .then((userCredential) => {
       return userCredential.user;
     })
-    .catch(error => {
-      console.error('Firebase Error: ', error);
+    .catch((error) => {
       throw { status: 400, message: 'Firebase Error: ' + error.code };
     });
-
+  const conn = await pool.getConnection();
   try {
-    const conn = await pool.getConnection();
     const sql = 'INSERT INTO user SET ?';
-    const [rows] = await conn.query(sql, { uid, email, emailVerified, nickname });
-    await conn.release();
+    const [rows] = await conn.query(sql, { uid, email, email_verified: emailVerified, nickname });
     return rows;
   } catch (err) {
-    console.error('Dao err: ', err);
     throw { status: 500, message: 'DB Error' };
+  } finally {
+    await conn.release();
   }
 };
 
 const login = async (email, password) => {
-  const uid = await firebase
+  const { uid } = await firebase
     .auth()
     .signInWithEmailAndPassword(email, password)
-    .then(userCredential => {
-      return userCredential.user.uid;
+    .then((userCredential) => {
+      return userCredential.user;
     })
-    .catch(error => {
-      console.error('Firebase Error: ', error);
+    .catch((error) => {
       throw { status: 400, message: 'Firebase Error: ' + error.code };
     });
 
-  let userData = {};
+  const conn = await pool.getConnection();
   try {
-    const conn = await pool.getConnection();
-    const userSQL =
-      'SELECT id, nickname, email, image, introduce, location, careerTitle, careerContents, snsGithub, snsLinkedin, snsWeb, emailVerified, createdAt FROM user WHERE ?';
-    let [rows] = await conn.query(userSQL, { uid });
-    userData = rows;
-
-    const projectSQL =
-      'SELECT title, contents, snsGithub, snsAppstore, snsPlaystore FROM project WHERE (SELECT id FROM user WHERE ?)';
-    const [projects] = await conn.query(projectSQL, { uid });
-    userData[0].project = projects;
-    await conn.release();
-    return userData;
+    const userSql = 'SELECT id FROM user WHERE ?';
+    const [rows] = await conn.query(userSql, { uid });
+    return rows;
   } catch (err) {
-    console.error('Dao err: ', err);
     throw { status: 500, message: 'DB Error' };
+  } finally {
+    await conn.release();
   }
 };
 
-const userDetail = async id => {
-  let userData = {};
+const userDetail = async (id) => {
+  const conn = await pool.getConnection();
   try {
-    const conn = await pool.getConnection();
-    const userSQL =
-      'SELECT nickname, email, image, introduce, location, careerTitle, careerContents, snsGithub, snsLinkedin, snsWeb, emailVerified, createdAt FROM user WHERE ?';
-    let [rows] = await conn.query(userSQL, { id });
-    userData = rows;
-
-    const projectSQL =
-      'SELECT p.title, p.contents, p.snsGithub, p.snsAppstore, p.snsPlaystore FROM project AS p LEFT JOIN user ON user.id = p.userId WHERE ?';
-    const [projects] = await conn.query(projectSQL, { userId: id });
-    userData[0].project = projects;
-    await conn.release();
+    const userSql = `
+    SELECT u.id, u.nickname, u.email, u.image, u.introduce, u.location, u.career_title, u.career_contents, u.sns_github, u.sns_linkedin, u.sns_web, u.email_verified,
+    FROM_UNIXTIME(UNIX_TIMESTAMP(u.created_at), '%Y-%m-%d %H:%i:%s') AS created_at,
+    p.id AS P_id, p.title AS P_title, p.contents AS P_contents, p.sns_github AS P_sns_github, p.sns_appstore AS P_sns_appstore, p.sns_playstore AS P_sns_playstore,
+    FROM_UNIXTIME(UNIX_TIMESTAMP(p.created_at), '%Y-%m-%d %H:%i:%s') AS P_created_at
+    FROM user AS u
+    LEFT JOIN project AS p
+    ON u.id = p.user_id
+    WHERE u.id = ?`;
+    const [userData] = await conn.query(userSql, id);
     return userData;
   } catch (err) {
     throw { status: 500, message: 'DB Error' };
+  } finally {
+    await conn.release();
+  }
+};
+
+const getImage = async (id) => {
+  const conn = await pool.getConnection();
+  try {
+    const imageSQL = 'SELECT image FROM user WHERE ?';
+    const [imageRows] = await conn.query(imageSQL, { id });
+    return imageRows;
+  } catch (err) {
+    throw { status: 500, message: 'DB Error' };
+  } finally {
+    await conn.release();
   }
 };
 
 const userUpdate = async (id, updateData) => {
-  let userData = {};
+  const conn = await pool.getConnection();
   try {
-    const conn = await pool.getConnection();
-    let sql = 'UPDATE user SET ? WHERE ? ';
-    await conn.query(sql, [updateData, { id }]);
-
-    const userSQL =
-      'SELECT nickname, email, image, introduce, location, careerTitle, careerContents, snsGithub, snsLinkedin, snsWeb, emailVerified, createdAt FROM user WHERE ?';
-    let [rows] = await conn.query(userSQL, { id });
-    userData = rows;
-
-    const projectSQL =
-      'SELECT p.title, p.contents, p.snsGithub, p.snsAppstore, p.snsPlaystore FROM project AS p LEFT JOIN user ON user.id = p.userId WHERE ?';
-    const [projects] = await conn.query(projectSQL, { userId: id });
-    userData[0].project = projects;
-    await conn.release();
-    return userData;
+    const updateSql = 'UPDATE user SET ? WHERE ? ';
+    const [updateRows] = await conn.query(updateSql, [updateData, { id }]);
+    return updateRows;
   } catch (err) {
-    console.error('Dao err: ', err);
     throw { status: 500, message: 'DB Error' };
-  }
-};
-
-const checkNickname = async nickname => {
-  try {
-    const conn = await pool.getConnection();
-    const sql = 'SELECT * FROM user WHERE ?';
-    const [rows] = await conn.query(sql, { nickname });
+  } finally {
     await conn.release();
-    return rows;
-  } catch (err) {
-    console.error('Dao err: ', err);
-    throw { status: 500, message: 'DB Error' };
-  }
-};
-
-const checkEmail = async email => {
-  try {
-    const conn = await pool.getConnection();
-    const sql = 'SELECT * FROM user WHERE ?';
-    const [rows] = await conn.query(sql, { email });
-    await conn.release();
-    return rows;
-  } catch (err) {
-    console.error('Dao err: ', err);
-    throw { status: 500, message: 'DB Error' };
   }
 };
 
@@ -135,10 +124,9 @@ const withdraw = async (id, email, password) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-
-    const sql = `DELETE FROM user WHERE id = ? and email = ?`;
-    const [rows] = await conn.query(sql, [id, email]);
-    if (!rows.affectedRows) {
+    const withdrawSql = `DELETE FROM user WHERE ? AND ?`;
+    const [withdrawRows] = await conn.query(withdrawSql, [{ id }, { email }]);
+    if (!withdrawRows.affectedRows) {
       throw {
         status: 404,
         message: '조회된 사용자가 없습니다',
@@ -148,26 +136,20 @@ const withdraw = async (id, email, password) => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        let user = firebase.auth().currentUser;
+        const user = firebase.auth().currentUser;
         user.delete();
       })
       .catch(function (error) {
-        console.error('Firebase Error: ', error);
         throw { status: 400, message: 'Firebase Error: ' + error.code };
       });
-
     await conn.commit();
-    return rows;
+    return withdrawRows;
   } catch (err) {
     await conn.rollback();
-    console.error('Dao err: ', err);
     if (err.status) {
       throw err;
     } else if (err.errno === 1451) {
-      throw {
-        status: 400,
-        message: '해당 사용자에게 종속되어있는 데이터가 존재합니다',
-      };
+      throw { status: 400, message: '해당 사용자에게 종속되어있는 데이터가 존재합니다' };
     }
     throw { status: 500, message: 'DB Error' };
   } finally {
@@ -179,6 +161,7 @@ module.exports = {
   signup,
   login,
   userDetail,
+  getImage,
   userUpdate,
   checkNickname,
   checkEmail,

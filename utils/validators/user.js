@@ -2,15 +2,9 @@ const Joi = require('joi');
 
 const signup = async (req, res, next) => {
   const bodySchema = Joi.object({
-    email: Joi.string() //
-      .email()
-      .required(),
-    password: Joi.string() //
-      .required(),
-    nickname: Joi.string() //
-      .min(2)
-      .max(8)
-      .required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+    nickname: Joi.string().min(2).max(8).required(),
   }).min(1);
   try {
     await bodySchema.validateAsync(req.body);
@@ -22,11 +16,8 @@ const signup = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   const bodySchema = Joi.object({
-    email: Joi.string() //
-      .email()
-      .required(),
-    password: Joi.string() //
-      .required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
   }).min(1);
   try {
     await bodySchema.validateAsync(req.body);
@@ -38,8 +29,7 @@ const login = async (req, res, next) => {
 
 const userDetail = async (req, res, next) => {
   const paramSchema = Joi.object({
-    id: Joi.number() //
-      .required(),
+    id: Joi.string(),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);
@@ -51,26 +41,24 @@ const userDetail = async (req, res, next) => {
 
 const userUpdate = async (req, res, next) => {
   const paramSchema = Joi.object({
-    id: Joi.number() //
-      .required(),
+    id: Joi.number().required(),
   }).min(1);
 
   const bodySchema = Joi.object({
-    nickname: Joi.string() //
-      .min(2)
-      .max(8),
+    image: Joi.string(),
+    nickname: Joi.string().min(2).max(8),
     introduce: Joi.string(),
     location: Joi.string(),
-    locationSigungu: Joi.string(),
-    careerTitle: Joi.string(),
-    careerContents: Joi.string(),
-    snsGit: Joi.string(),
-    snsLinked: Joi.string(),
-    snsWeb: Joi.string(),
+    location_last: Joi.string(),
+    career_title: Joi.string(),
+    career_contents: Joi.string(),
+    sns_github: Joi.string(),
+    sns_linkedin: Joi.string(),
+    sns_web: Joi.string(),
   }).min(1);
 
   try {
-    await paramSchema.validateAsync(req.paramSchema);
+    await paramSchema.validateAsync(req.params);
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
@@ -80,10 +68,7 @@ const userUpdate = async (req, res, next) => {
 
 const checkNickname = async (req, res, next) => {
   const paramSchema = Joi.object({
-    nickname: Joi.string() //
-      .min(2)
-      .max(8)
-      .required(),
+    nickname: Joi.string().min(2).max(8).required(),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);

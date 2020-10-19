@@ -1,5 +1,3 @@
-const { format } = require('date-fns');
-
 const applyDao = require('../dao/apply');
 
 const createApply = async ({ study_id }, createData) => {
@@ -15,10 +13,7 @@ const applyDetail = async ({ study_id, apply_id }) => {
   if (applyData.length === 0) {
     throw { status: 400, message: '조회 결과가 없습니다' };
   }
-
-  applyData[0].created_at = format(applyData[0].created_at, 'yyyy-MM-dd HH:mm:ss');
-  // 정책 마련 후 rejected_at도 수정
-  return applyData;
+  return applyData[0];
 };
 
 const applyUpdate = async ({ study_id, apply_id }, updateData) => {
