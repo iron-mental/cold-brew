@@ -17,7 +17,7 @@ const noticeUpdate = async (req, res) => {
 
 const noticeDelete = async (req, res) => {
   await noticeService.noticeDelete(req.params);
-  return res.t - status(200).json({ message: '삭제되었습니다' });
+  return res.status(200).json({ message: '삭제되었습니다' });
 };
 
 module.exports = {
