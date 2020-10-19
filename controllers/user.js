@@ -1,4 +1,18 @@
+const path = require('path');
+
 const userService = require('../services/user');
+
+const STUDY_PATH = '/images/user';
+
+const checkNickname = async (req, res) => {
+  await userService.checkNickname(req.params);
+  return res.status(201).json({ message: '사용 가능한 닉네임입니다' });
+};
+
+const checkEmail = async (req, res) => {
+  await userService.checkEmail(req.params);
+  return res.status(201).json({ message: '사용 가능합니다' });
+};
 
 const signup = async (req, res) => {
   await userService.signup(req.body);
@@ -6,33 +20,24 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const data = await userService.login(req.body);
-  return res.json(data);
+  const id = await userService.login(req.body);
+  return res.redirect(303, `/v1/user/${id}`); // 추후 jwt 적용하면 수정
 };
 
 const userDetail = async (req, res) => {
-  const data = await userService.userDetail(req.params);
-  return res.json(data);
+  const userData = await userService.userDetail(req.params);
+  return res.status(200).json(userData);
 };
 
 const userUpdate = async (req, res) => {
-  const data = await userService.userUpdate(req.params, req.body);
-  return res.json(data);
-};
-
-const checkNickname = async (req, res) => {
-  await userService.checkNickname(req.params);
-  return res.json({ message: '사용 가능한 닉네임입니다' });
-};
-
-const checkEmail = async (req, res) => {
-  await userService.checkEmail(req.params);
-  return res.json({ message: '사용 가능합니다' });
+  req.body.image = path.join(STUDY_PATH, req.file.uploadedFile.basename);
+  await userService.userUpdate(req.params, req.body, req.file);
+  return res.redirect(303, `/v1/user/${req.params.id}`);
 };
 
 const withdraw = async (req, res) => {
   await userService.withdraw(req.params, req.body);
-  return res.json({ message: '삭제되었습니다' });
+  return res.status(200).json({ message: '삭제되었습니다' });
 };
 
 module.exports = {
