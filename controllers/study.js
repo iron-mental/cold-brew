@@ -16,8 +16,12 @@ const studyDetail = async (req, res) => {
 };
 
 const studyUpdate = async (req, res) => {
-  req.body.image = path.join(STUDY_PATH, req.file.uploadedFile.basename);
-  await studyService.studyUpdate(req.params, req.body, req.file);
+  if (req.file) {
+    req.body.image = path.join(STUDY_PATH, req.file.uploadedFile.basename);
+    await studyService.studyUpdate(req.params, req.body, req.file);
+  } else {
+    await studyService.studyUpdate(req.params, req.body);
+  }
   return res.redirect(303, `/v1/study/${req.params.study_id}`);
 };
 

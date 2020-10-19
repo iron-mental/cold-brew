@@ -29,20 +29,29 @@ const studyDetail = async ({ study_id }) => {
   return result;
 };
 
-const studyUpdate = async ({ study_id }, updateData, { destination, uploadedFile, path: _tmpPath }) => {
-  try {
-    const previousPath = await studyDao.getImage(study_id);
-    const rows = await studyDao.studyUpdate(study_id, updateData);
-    if (previousPath.length === 0 || rows.affectedRows === 0) {
+const studyUpdate = async ({ study_id }, updateData, filedata = null) => {
+  if (filedata) {
+    const { destination, uploadedFile, path: _tmpPath } = filedata;
+    try {
+      const previousPath = await studyDao.getImage(study_id);
+      const updateRows = await studyDao.studyUpdate(study_id, updateData);
+      if (previousPath.length === 0 || updateRows.affectedRows === 0) {
+        throw { status: 404, message: '조회된 스터디가 없습니다' };
+      }
+
+      const oldImagePath = path.join(destination, path.basename(previousPath[0].image));
+      const newPath = path.join(destination, uploadedFile.basename);
+      fs.rename(_tmpPath, newPath, (err) => {});
+      fs.unlink(oldImagePath, (err) => {});
+    } catch (err) {
+      fs.unlink(_tmpPath, (err) => {});
+      throw err;
+    }
+  } else {
+    const updateRows = await studyDao.studyUpdate(study_id, updateData);
+    if (updateRows.affectedRows === 0) {
       throw { status: 404, message: '조회된 스터디가 없습니다' };
     }
-    const oldImagePath = path.join(destination, path.basename(previousPath[0].image));
-    const newPath = path.join(destination, uploadedFile.basename);
-    fs.rename(_tmpPath, newPath, (err) => {});
-    fs.unlink(oldImagePath, (err) => {});
-  } catch (err) {
-    fs.unlink(_tmpPath, (err) => {}); // _tmp 파일 삭제
-    throw err;
   }
 };
 
