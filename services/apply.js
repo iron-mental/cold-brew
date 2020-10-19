@@ -25,7 +25,7 @@ const applyUpdate = async ({ study_id, apply_id }, updateData) => {
 
 const applyDelete = async ({ study_id, apply_id }) => {
   const rows = await applyDao.applyDelete(study_id, apply_id);
-  if (rows.length === 0) {
+  if (rows.affectedRows === 0) {
     throw { status: 400, message: '삭제에 실패했습니다' };
   }
 };
