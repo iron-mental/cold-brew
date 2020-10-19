@@ -29,7 +29,6 @@ const getStudy = async (study_id) => {
       SELECT s.id, s.category, s.title ,s.introduce, s.image, s.progress, s.study_time, s.location, s.location_detail, s.sns_notion, s.sns_evernote, s.sns_web,
       n.id AS N_id, n.title AS N_title, n.contents AS N_contents, n.pined AS N_pined, n.created_at AS N_created_at, n.updated_at AS N_updated_at,
       p.id AS P_id, p.user_id AS P_user_id, u.nickname AS P_nickname, u.image AS P_image, p.leader AS P_leader
-
       FROM study AS s
       LEFT JOIN notice AS n
       ON s.id = n.study_id
@@ -43,7 +42,7 @@ const getStudy = async (study_id) => {
   } catch (err) {
     throw { status: 500, message: err.sqlMessage };
   } finally {
-    conn.release();
+    await conn.release();
   }
 };
 
@@ -56,7 +55,7 @@ const getNoticeList = async (study_id) => {
   } catch (err) {
     throw { status: 500, message: err.sqlMessage };
   } finally {
-    conn.release();
+    await conn.release();
   }
 };
 
@@ -74,7 +73,7 @@ const getParticipateList = async (study_id) => {
   } catch (err) {
     throw { status: 500, message: err.sqlMessage };
   } finally {
-    conn.release();
+    await conn.release();
   }
 };
 
@@ -92,7 +91,7 @@ const getApplyList = async (study_id) => {
   } catch (err) {
     throw { status: 500, message: err.sqlMessage };
   } finally {
-    conn.release();
+    await conn.release();
   }
 };
 
@@ -105,7 +104,7 @@ const getImage = async (study_id) => {
   } catch (err) {
     throw { status: 500, message: err.sqlMessage };
   } finally {
-    conn.release();
+    await conn.release();
   }
 };
 
@@ -118,7 +117,7 @@ const studyUpdate = async (study_id, updateData) => {
   } catch (err) {
     throw { status: 500, message: err.sqlMessage };
   } finally {
-    conn.release();
+    await conn.release();
   }
 };
 
