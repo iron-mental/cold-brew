@@ -2,7 +2,7 @@ const path = require('path');
 
 const userService = require('../services/user');
 
-const STUDY_PATH = '/images/user';
+const USER_PATH = '/images/user';
 
 const checkNickname = async (req, res) => {
   await userService.checkNickname(req.params);
@@ -30,8 +30,12 @@ const userDetail = async (req, res) => {
 };
 
 const userUpdate = async (req, res) => {
-  req.body.image = path.join(STUDY_PATH, req.file.uploadedFile.basename);
-  await userService.userUpdate(req.params, req.body, req.file);
+  if (req.file) {
+    req.body.image = path.join(USER_PATH, req.file.uploadedFile.basename);
+    await userService.userUpdate(req.params, req.body, req.file);
+  } else {
+    await userService.userUpdate(req.params, req.body);
+  }
   return res.redirect(303, `/v1/user/${req.params.id}`);
 };
 
