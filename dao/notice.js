@@ -1,8 +1,8 @@
 const pool = require('./db');
 
 const createNotice = async (createData) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const createSQL = 'INSERT INTO notice SET ?';
     const [createRows] = await conn.query(createSQL, createData);
     return createRows;
@@ -14,8 +14,8 @@ const createNotice = async (createData) => {
 };
 
 const getNotice = async (study_id, notice_id) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const detailSQL = `SELECT id, study_id, title, contents, pined,
       FROM_UNIXTIME(UNIX_TIMESTAMP(created_at),'%Y-%m-%d %H:%i:%s') AS created_at,
       FROM_UNIXTIME(UNIX_TIMESTAMP(updated_at),'%Y-%m-%d %H:%i:%s') AS updated_at 
@@ -31,8 +31,8 @@ const getNotice = async (study_id, notice_id) => {
 };
 
 const noticeUpdate = async (study_id, notice_id, updateData) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const updateSQL = 'UPDATE notice SET ? WHERE study_id = ? AND id = ?';
     const [updateRows] = await conn.query(updateSQL, [updateData, study_id, notice_id]);
     return updateRows;
@@ -44,8 +44,8 @@ const noticeUpdate = async (study_id, notice_id, updateData) => {
 };
 
 const noticeDelete = async (study_id, notice_id) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const deleteSQL = 'DELETE FROM notice WHERE study_id = ? AND id = ?';
     const [deleteRows] = await conn.query(deleteSQL, [study_id, notice_id]);
     return deleteRows;
