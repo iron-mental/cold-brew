@@ -16,6 +16,9 @@ router.post('/', imageUpload, studyValid.createStudy, asyncWrap(studyController.
 router.get('/:study_id', studyValid.studyDetail, asyncWrap(studyController.studyDetail)); // 상세조회
 router.patch('/:study_id', imageUpload, studyValid.studyUpdate, asyncWrap(studyController.studyUpdate)); // 수정
 
+// StudyList
+router.get('/:category/:sort', studyValid.studyList, asyncWrap(studyController.studyList)); // 스터디 목록 조회
+
 // Notice
 router.post('/:study_id/notice', noticeValid.createNotice, asyncWrap(noticeController.createNotice)); // 공지 생성 (권한확인 추가할것)
 router.get('/:study_id/notice/:notice_id', noticeValid.noticeDetail, asyncWrap(noticeController.noticeDetail)); // 공지 조회

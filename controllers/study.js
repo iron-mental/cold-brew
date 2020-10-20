@@ -25,4 +25,13 @@ const studyUpdate = async (req, res) => {
   return res.redirect(303, `/v1/study/${req.params.study_id}`);
 };
 
-module.exports = { createStudy, studyDetail, studyUpdate };
+const myStudy = async (req, res) => {
+  const data = await studyService.myStudy(req.params);
+  return res.status(200).json(data);
+};
+
+const studyList = async (req, res) => {
+  const data = await studyService.studyList(req.params);
+  return res.status(200).json(data);
+};
+module.exports = { createStudy, studyDetail, studyUpdate, myStudy, studyList };

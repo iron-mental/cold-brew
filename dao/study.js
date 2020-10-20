@@ -92,10 +92,84 @@ const studyUpdate = async (study_id, updateData) => {
   }
 };
 
+const getMyStudy = async (user_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const myStudySql = `
+      SELECT s.id, s.title, s.location, s.image
+      FROM participate AS p
+      INNER JOIN study AS s
+      ON p.study_id = s.id
+      WHERE p.user_id = ?`;
+    const [myStudyRows] = await conn.query(myStudySql, user_id);
+    return myStudyRows;
+  } catch (err) {
+    throw { status: 500, message: err.sqlMessage };
+  } finally {
+    await conn.release();
+  }
+};
+
+const getStudyListByNew = async (category) => {
+  const conn = await pool.getConnection();
+  try {
+    const listSql = `
+      SELECT *, count(*) AS members
+      FROM (SELECT s.id AS id, s.title, s.introduce, s.image, s.location, u.image AS leader_image,
+      FROM_UNIXTIME(UNIX_TIMESTAMP(s.created_at), '%m-%d %H:%m:%s') AS created_at
+      FROM study AS s
+      LEFT JOIN participate AS p
+      ON s.id = p.study_id
+      LEFT JOIN user AS u
+      ON u.id = p.user_id
+      WHERE ?
+      ORDER BY p.leader DESC) AS T
+      GROUP BY id
+      ORDER BY created_at DESC
+      `;
+    const [listRows] = await conn.query(listSql, { category });
+    return listRows;
+  } catch (err) {
+    throw { status: 500, message: err.sqlMessage };
+  } finally {
+    await conn.release();
+  }
+};
+
+// 이번 주 회의때 location 논의 후 쿼리 구현 예정
+// const getStudyListByLength = async (category) => {
+//   const conn = await pool.getConnection();
+//   try {
+//     const listSql = `
+//       SELECT *, count(*) AS members
+//       FROM (SELECT s.id AS id, s.title, s.introduce, s.image, s.location, u.image AS leader_image,
+//       FROM_UNIXTIME(UNIX_TIMESTAMP(s.created_at), '%m-%d %H:%m:%s') AS created_at
+//       FROM study AS s
+//       LEFT JOIN participate AS p
+//       ON s.id = p.study_id
+//       LEFT JOIN user AS u
+//       ON u.id = p.user_id
+//       WHERE ?
+//       ORDER BY p.leader DESC) AS T
+//       GROUP BY id
+//       ORDER BY created_at DESC
+//       `;
+//     const [listRows] = await conn.query(listSql, { category });
+//     return listRows;
+//   } catch (err) {
+//     throw { status: 500, message: err.sqlMessage };
+//   } finally {
+//     await conn.release();
+//   }
+// };
+
 module.exports = {
   createStudy,
   getStudy,
   getApplyList,
   getImage,
   studyUpdate,
+  getMyStudy,
+  getStudyListByNew,
+  // getStudyListByLength,
 };
