@@ -23,11 +23,13 @@ const createStudy = async (user_id, createData) => {
 };
 
 const getStudy = async (study_id) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const studySql = `
       SELECT s.id, s.category, s.title ,s.introduce, s.image, s.progress, s.study_time, s.location, s.location_detail, s.sns_notion, s.sns_evernote, s.sns_web,
-      n.id AS N_id, n.title AS N_title, n.contents AS N_contents, n.pined AS N_pined, n.created_at AS N_created_at, n.updated_at AS N_updated_at,
+      n.id AS N_id, n.title AS N_title, n.contents AS N_contents, n.pined AS N_pined,
+      FROM_UNIXTIME(UNIX_TIMESTAMP(n.created_at), '%Y-%m-%d %H:%i:%s') AS N_created_at,
+      FROM_UNIXTIME(UNIX_TIMESTAMP(n.updated_at), '%Y-%m-%d %H:%i:%s') AS N_updated_at,
       p.id AS P_id, p.user_id AS P_user_id, u.nickname AS P_nickname, u.image AS P_image, p.leader AS P_leader
       FROM study AS s
       LEFT JOIN notice AS n
@@ -46,40 +48,9 @@ const getStudy = async (study_id) => {
   }
 };
 
-const getNoticeList = async (study_id) => {
-  try {
-    var conn = await pool.getConnection();
-    const noticeSql = `SELECT id, title, contents, pined, created_at FROM notice WHERE ?`;
-    const [noticeRows] = await conn.query(noticeSql, { study_id });
-    return noticeRows;
-  } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
-  } finally {
-    await conn.release();
-  }
-};
-
-const getParticipateList = async (study_id) => {
-  try {
-    var conn = await pool.getConnection();
-    const participateSql = `
-      SELECT p.id, u.id AS user_id, u.nickname, u.image, p.leader
-      FROM participate AS p
-      INNER JOIN user AS u
-      ON p.user_id = u.id
-      WHERE p.study_id = ?`;
-    const [participateRows] = await conn.query(participateSql, study_id);
-    return participateRows;
-  } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
-  } finally {
-    await conn.release();
-  }
-};
-
 const getApplyList = async (study_id) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const applySql = `
       SELECT a.id, u.id AS user_id, u.image, a.message
       FROM apply AS a
@@ -96,8 +67,8 @@ const getApplyList = async (study_id) => {
 };
 
 const getImage = async (study_id) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const imageSQL = 'SELECT image FROM study WHERE ?';
     const [imageRows] = await conn.query(imageSQL, { id: study_id });
     return imageRows;
@@ -109,8 +80,8 @@ const getImage = async (study_id) => {
 };
 
 const studyUpdate = async (study_id, updateData) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const updateSQL = 'UPDATE study SET ? WHERE ?';
     const [updateRows] = await conn.query(updateSQL, [updateData, { id: study_id }]);
     return updateRows;
@@ -124,9 +95,7 @@ const studyUpdate = async (study_id, updateData) => {
 module.exports = {
   createStudy,
   getStudy,
-  getNoticeList,
   getApplyList,
-  getParticipateList,
   getImage,
   studyUpdate,
 };
