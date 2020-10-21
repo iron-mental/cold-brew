@@ -26,8 +26,7 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
     if (ext !== '.jpg' && ext !== '.jpeg') {
-      console.error(`File extension Error: [${ext}] is not allow`);
-      cb(null, false);
+      cb({ status: 422, message: `File extension Error: [${ext}] is not allow` }, false);
     } else {
       cb(null, true);
     }
@@ -36,12 +35,11 @@ const upload = multer({
 
 const imageUpload = (req, res, next) => {
   upload(req, res, (err) => {
-    if (req.file) {
-      next();
-    } else if (err) {
-      next(err);
+    if (err) {
+      // 익스텐션 에러
+      return next(err);
     } else {
-      next({ status: 422, message: `File extension error` });
+      return next();
     }
   });
 };
