@@ -23,6 +23,12 @@ app.set('port', port);
 var server = http.createServer(app);
 
 /**
+ * Open chatting server
+ */
+const socketio = require('../socket');
+socketio.listen(server);
+
+/**
  * Listen on provided port, on all network interfaces.
  */
 
