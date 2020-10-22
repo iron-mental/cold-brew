@@ -6,6 +6,12 @@ const listen = (server) => {
 
   // 유저 접속 시 트리거 -> 앱 부팅 시
   terminal.on('connection', (socket) => {
+    // 첨에 접속할때 클라이언트는 user_id, nickname전달, 서버는 socket.nickname을 변경하고 DB에 socket.id와 user_id를 매핑하여 저장한다
+    socket.on('signup', (data) => {
+      // data 정보 mongoDB에 저장
+      socket.nickname = data.nickname;
+    });
+
     console.log('connected: ', socket.id);
     terminal.to(socket.id).emit('message', '-- 테스트 명령어 목록 --');
     terminal.to(socket.id).emit('message', '룸 입장: join/ (roomNumber)');
@@ -35,16 +41,29 @@ const listen = (server) => {
       const contents = msg.slice(division + 1);
       console.log('input: ', command, contents);
       if (command === 'message') {
+        socket.nickname = 'testNickname';
         const division = contents.indexOf('/');
         const room = contents.slice(0, division);
         const message = contents.slice(division + 1);
-        terminal.to(room).emit('message', message);
+        terminal.to(room).emit('message', socket.nickname.concat(': ', message));
       } else if (command === 'join') {
+        // console.log('terminal.clients(): ', terminal.clients());
+        // console.log('terminal.clients(1): ', terminal.clients('1'));
         socket.join(contents); // join
         terminal.to(contents).emit('message', `${socket.id}님이 입장했습니다`); // 해당 룸에만 메시지 전달
+        const tt = socket.adapter.rooms;
+        console.log('tt: ', tt[contents].sockets);
       } else if (command === 'leave') {
         socket.leave(contents); // leave
         terminal.to(contents).emit('message', `${socket.id}님이 퇴장했습니다`); // 해당 룸에만 메시지 전달
+      } else if (command === 'signup') {
+        // 첨에 접속할때 클라이언트는 user_id, nickname전달, 서버는 socket.nickname을 변경하고 DB에 socket.id와 user_id를 매핑하여 저장한다
+        console.log('data: ', contents);
+        console.log('datatype: ', typeof contents);
+        data = JSON.parse(contents);
+        socket.nickname = data.nickname;
+      } else if (command === 'close') {
+        socket.disconnect(contents);
       }
     });
 
