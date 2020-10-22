@@ -25,8 +25,16 @@ var server = http.createServer(app);
 /**
  * Open chatting server
  */
+
 const socketio = require('../socket');
 socketio.listen(server);
+
+/**
+ * Connect mongoDB serevr
+ */
+
+const mongo = require('../dao/mongo');
+mongo();
 
 /**
  * Listen on provided port, on all network interfaces.
