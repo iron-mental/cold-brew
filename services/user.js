@@ -1,8 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const userDao = require('../dao/user');
 const { rowSplit } = require('../utils/database');
+const userDao = require('../dao/user');
+const User = require('../models/user');
+const Chat = require('../models/chat');
 
 // 닉네임 중복체크
 const checkNickname = async ({ nickname }) => {
@@ -26,12 +28,10 @@ const signup = async ({ email, password, nickname }) => {
   if (emailCheckRows.length) {
     throw { status: 400, message: `중복된 이메일이 존재합니다` };
   }
-
   const nicknameCheckRows = await userDao.checkNickname(nickname);
   if (nicknameCheckRows.length) {
     throw { status: 400, message: '중복된 닉네임이 존재합니다' };
   }
-
   const createRows = await userDao.signup(email, password, nickname);
   if (createRows.affectedRows === 0) {
     throw { status: 400, message: 'no result' };
@@ -54,7 +54,6 @@ const userDetail = async ({ id }) => {
   if (userData.length === 0) {
     throw { status: 404, message: '조회된 사용자가 없습니다' };
   }
-  // return rowSplit(userData, ['project']);
   return rowSplit(userData, ['project']);
 };
 
@@ -66,6 +65,9 @@ const userUpdate = async ({ id }, updateData, { destination, uploadedFile, path:
       if (checkRows.length) {
         throw { status: 400, message: '중복된 닉네임이 존재합니다' };
       }
+      // 유저 닉네임 변경 시 user, chat 컬렉션에 존재하는 모든 닉네임도 변경
+      User.updateOne({ user_id: id }, { nickname: updateData.nickname }).exec();
+      Chat.updateMany({ user_id: id }, { nickname: updateData.nickname }).exec();
     }
 
     const previousPath = await userDao.getImage(id);
@@ -87,6 +89,9 @@ const userUpdate = async ({ id }, updateData, { destination, uploadedFile, path:
 
 // 회원탈퇴
 const withdraw = async ({ id }, { email, password }) => {
+  // 탈퇴 시 mongoDB - chat 컬렉션에 존재하는 모든 닉네임 -> (알수없음)으로 변경
+  User.remove({ user_id: id }).exec();
+  Chat.updateMany({ user_id: id }, { nickname: '(알수없음)' }).exec();
   await userDao.withdraw(id, email, password);
 };
 
