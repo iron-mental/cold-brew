@@ -20,33 +20,38 @@ const listen = (server) => {
       socket.nickname = userData.nickname;
 
       userData.socket_id = socket.id;
-      User.updateOne({ user_id: userData.user_id }, { userData }, { upsert: true }).exec();
+      User.updateOne({ user_id: userData.user_id }, userData, { upsert: true }).exec();
     });
 
     // 클라이언트가 스터디 생성 or 스터디 참여 시 발생시키는 이벤트
     socket.on('join', (joinData) => {
       // joinData = { room_number, room_name }
       socket.join(joinData.room_number); // join
-      terminal.to(joinData.room_number).emit('system-join', `${nickname}님이 입장했습니다`);
+      terminal.to(joinData.room_number).emit('system-join', `${socket.nickname}님이 입장했습니다`);
 
       Room.updateOne(
         { room_number: joinData.room_number },
-        { $push: { members: { user_id: socket.user_id } } },
+        { $pull: { members: { user_id: socket.user_id } } },
         (err, docs) => {
-          // 쿼리에 걸린게 없을 때
-          if (docs.nModified === 0) {
-            joinData.members = [memberData];
-            Room.create(joinData);
-          }
+          Room.updateOne(
+            { room_number: joinData.room_number },
+            { $push: { members: { user_id: socket.user_id } } },
+            (err, docs) => {
+              // 쿼리에 걸린게 없을 때
+              if (docs.nModified === 0) {
+                joinData.members = [{ user_id: socket.user_id }];
+                Room.create(joinData);
+              }
+            }
+          );
         }
       );
-
       Chat.create({
         room_number: joinData.room_number,
         user_id: 'system',
         nickname: 'system-join',
         message: `${socket.nickname}님이 입장했습니다`,
-        date: new Data().toString(),
+        date: new Date().toString(),
       });
     });
 
@@ -56,28 +61,31 @@ const listen = (server) => {
       socket.leave(leaveData.room_number); // join
       terminal.to(leaveData.room_number).emit('system-leave', `${socket.nickname}님이 퇴장했습니다`);
 
-      Room.updateOne({ room_number: joinData.room_number }, { $pull: { members: { user_id: socket.user_id } } }).exec();
+      Room.updateOne(
+        { room_number: leaveData.room_number },
+        { $pull: { members: { user_id: socket.user_id } } }
+      ).exec();
 
       Chat.create({
         room_number: leaveData.room_number,
         user_id: 'system',
         nickname: 'system-leave',
         message: `${socket.nickname}님이 퇴장했습니다`,
-        date: new Data().toString(),
+        date: new Date().toString(),
       });
     });
 
     // 채팅 이벤트를 받았을 때 처리
     socket.on('message', (chatData) => {
       // chatData = { room, msg }
-      terminal.to(chatData.room).emit('message', chatData.msg); // 해당 룸에만 메시지 전달
+      terminal.to(chatData.room).emit('message', `${socket.nickname}: ${chatData.msg}`); // 해당 룸에만 메시지 전달
 
       Chat.create({
         room_number: chatData.room,
         user_id: socket.user_id,
         nickname: socket.nickname,
         message: chatData.msg,
-        date: new Data().toString(),
+        date: new Date().toString(),
       });
     });
 
