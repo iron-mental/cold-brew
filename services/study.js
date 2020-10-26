@@ -30,7 +30,7 @@ const studyDetail = async ({ study_id }) => {
   return result;
 };
 
-const studyUpdate = async ({ study_id }, updateData, filedata = null) => {
+const studyUpdate = async ({ study_id }, updateData, filedata) => {
   if (filedata) {
     const { destination, uploadedFile, path: _tmpPath } = filedata;
     try {

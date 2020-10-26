@@ -18,10 +18,8 @@ const studyDetail = async (req, res) => {
 const studyUpdate = async (req, res) => {
   if (req.file) {
     req.body.image = path.join(STUDY_PATH, req.file.uploadedFile.basename);
-    await studyService.studyUpdate(req.params, req.body, req.file);
-  } else {
-    await studyService.studyUpdate(req.params, req.body);
   }
+  await studyService.studyUpdate(req.params, req.body, req.file);
   return res.redirect(303, `/v1/study/${req.params.study_id}`);
 };
 
