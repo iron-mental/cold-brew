@@ -1,4 +1,4 @@
-const Joi = require('Joi');
+const Joi = require('joi');
 
 const emailVerification = async (req, res, next) => {
   const paramSchema = Joi.object({
