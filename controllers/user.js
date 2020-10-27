@@ -32,10 +32,8 @@ const userDetail = async (req, res) => {
 const userUpdate = async (req, res) => {
   if (req.file) {
     req.body.image = path.join(USER_PATH, req.file.uploadedFile.basename);
-    await userService.userUpdate(req.params, req.body, req.file);
-  } else {
-    await userService.userUpdate(req.params, req.body);
   }
+  await userService.userUpdate(req.params, req.body, req.file);
   return res.redirect(303, `/v1/user/${req.params.id}`);
 };
 
