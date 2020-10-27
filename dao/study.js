@@ -27,7 +27,7 @@ const getStudy = async (study_id) => {
     var conn = await pool.getConnection();
     const studySql = `
       SELECT s.id, s.category, s.title ,s.introduce, s.image, s.progress, s.study_time, s.location, s.location_detail, s.sns_notion, s.sns_evernote, s.sns_web,
-      n.id AS N_id, n.title AS N_title, n.contents AS N_contents, n.pined AS N_pined, n.created_at AS N_created_at, n.updated_at AS N_updated_at,
+      n.id AS N_id, n.title AS N_title, n.contents AS N_contents, n.pinned AS N_pinned, n.created_at AS N_created_at, n.updated_at AS N_updated_at,
       p.id AS P_id, p.user_id AS P_user_id, u.nickname AS P_nickname, u.image AS P_image, p.leader AS P_leader
       FROM study AS s
       LEFT JOIN notice AS n
@@ -49,7 +49,7 @@ const getStudy = async (study_id) => {
 const getNoticeList = async (study_id) => {
   try {
     var conn = await pool.getConnection();
-    const noticeSql = `SELECT id, title, contents, pined, created_at FROM notice WHERE ?`;
+    const noticeSql = `SELECT id, title, contents, pinned, created_at FROM notice WHERE ?`;
     const [noticeRows] = await conn.query(noticeSql, { study_id });
     return noticeRows;
   } catch (err) {
