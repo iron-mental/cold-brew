@@ -17,7 +17,7 @@ app.use(cookieParser());
 
 app.use('/v1', v1Router);
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/../public'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -29,7 +29,6 @@ const fs = require('fs');
 app.use((err, req, res, next) => {
   if (req.file) {
     fs.unlink(req.file.path, (err) => {});
-    console.log('req.file.path: ', req.file.path);
   }
 
   // set locals, only providing error in development
