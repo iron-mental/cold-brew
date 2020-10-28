@@ -1,4 +1,5 @@
 const firebase = require('firebase');
+const admin = require('firebase-admin');
 
 const pool = require('./db');
 
@@ -174,16 +175,27 @@ const verifiedCheck = async (email) => {
 const emailVerificationProcess = async (email) => {
   const conn = await pool.getConnection();
   try {
-    const updateSql = 'UPDATE user SET ? WHERE ?';
-    await conn.query(updateSql, [{ email_verified: true }, { email }]);
-
     const uidSql = 'SELECT uid FROM user WHERE ?';
     const [uidRows] = await conn.query(uidSql, { email });
-    const uid = uidRows[0].uid;
-
-    // firebase uid -> 이메일 인증처리
-    // return checkRows;
+    const result = await admin
+      .auth()
+      .updateUser(uidRows[0].uid, {
+        emailVerified: true,
+      })
+      .then(async () => {
+        const updateSql = 'UPDATE user SET ? WHERE ?';
+        const [updateRows] = await conn.query(updateSql, [{ email_verified: true }, { email }]);
+        return updateRows;
+      })
+      .catch((err) => {
+        throw { status: 500, message: err };
+      });
+    return result;
   } catch (err) {
+    console.log('err: ', err);
+    if (err.status) {
+      throw err;
+    }
     throw { status: 500, message: 'DB Error' };
   } finally {
     await conn.release();
