@@ -55,7 +55,6 @@ const userDetail = async ({ id }) => {
   if (userData.length === 0) {
     throw { status: 404, message: '조회된 사용자가 없습니다' };
   }
-  // return rowSplit(userData, ['project']);
   return rowSplit(userData, ['project']);
 };
 
