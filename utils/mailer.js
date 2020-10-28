@@ -2,17 +2,9 @@ require('dotenv').config();
 
 const nodemailer = require('nodemailer');
 
-const config = {
-  service: process.env.MAILER_service,
-  host: process.env.MAILER_host,
-  port: process.env.MAILER_port,
-  auth: {
-    user: process.env.MAILER_auth_user,
-    pass: process.env.MAILER_auth_password,
-  },
-};
+const { mailer } = require('../configs/config');
 
-const transporter = nodemailer.createTransport(config);
+const transporter = nodemailer.createTransport(mailer);
 
 const sendVerifyEmail = async (email) => {
   try {
