@@ -3,6 +3,7 @@ const path = require('path');
 
 const userDao = require('../dao/user');
 const { rowSplit } = require('../utils/database');
+const { sendVerifyEmail } = require('../utils/mailer');
 
 // 닉네임 중복체크
 const checkNickname = async ({ nickname }) => {
@@ -90,6 +91,18 @@ const withdraw = async ({ id }, { email, password }) => {
   await userDao.withdraw(id, email, password);
 };
 
+const emailVerification = async ({ email }) => {
+  const verifyStatus = await userDao.verifiedCheck(email);
+  if (verifyStatus[0].email_verified === 1) {
+    throw { status: 400, message: `${email} 님은 이미 인증이 완료된 사용자입니다` };
+  }
+  await sendVerifyEmail(email);
+};
+
+const emailVerificationProcess = async ({ email }) => {
+  const userData = await userDao.emailVerificationProcess(email);
+};
+
 module.exports = {
   signup,
   login,
@@ -98,4 +111,6 @@ module.exports = {
   checkNickname,
   checkEmail,
   withdraw,
+  emailVerification,
+  emailVerificationProcess,
 };

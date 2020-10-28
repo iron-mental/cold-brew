@@ -115,6 +115,30 @@ const withdraw = async (req, res, next) => {
   }
 };
 
+const emailVerification = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    email: Joi.string().email().required(),
+  }).min(1);
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    next({ status: 422, message: err.details[0].message });
+  }
+};
+
+const emailVerificationProcess = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    email: Joi.string().email().required(),
+  }).min(1);
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    next({ status: 422, message: err.details[0].message });
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -123,4 +147,6 @@ module.exports = {
   checkNickname,
   checkEmail,
   withdraw,
+  emailVerification,
+  emailVerificationProcess,
 };

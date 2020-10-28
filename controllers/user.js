@@ -40,6 +40,16 @@ const withdraw = async (req, res) => {
   return res.status(200).json({ message: '삭제되었습니다' });
 };
 
+const emailVerification = async (req, res) => {
+  await userService.emailVerification(req.params);
+  return res.status(200).json({ message: '이메일 전송에 성공했습니다' });
+};
+
+const emailVerificationProcess = async (req, res) => {
+  await userService.emailVerificationProcess(req.params);
+  return res.status(200).send(`${req.params.email}님의 이메일인증이 완료되었습니다`);
+};
+
 module.exports = {
   signup,
   login,
@@ -48,4 +58,6 @@ module.exports = {
   checkNickname,
   checkEmail,
   withdraw,
+  emailVerification,
+  emailVerificationProcess,
 };

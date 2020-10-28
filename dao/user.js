@@ -3,8 +3,8 @@ const firebase = require('firebase');
 const pool = require('./db');
 
 const checkNickname = async (nickname) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const checkSql = 'SELECT nickname FROM user WHERE ?';
     const [checkRows] = await conn.query(checkSql, { nickname });
     return checkRows;
@@ -16,8 +16,8 @@ const checkNickname = async (nickname) => {
 };
 
 const checkEmail = async (email) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const checkSql = 'SELECT email FROM user WHERE ?';
     const [checkRows] = await conn.query(checkSql, { email });
     return checkRows;
@@ -38,8 +38,9 @@ const signup = async (email, password, nickname) => {
     .catch((error) => {
       throw { status: 400, message: 'Firebase Error: ' + error.code };
     });
+
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const sql = 'INSERT INTO user SET ?';
     const [rows] = await conn.query(sql, { uid, email, email_verified: emailVerified, nickname });
     return rows;
@@ -61,8 +62,8 @@ const login = async (email, password) => {
       throw { status: 400, message: 'Firebase Error: ' + error.code };
     });
 
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const userSql = 'SELECT id FROM user WHERE ?';
     const [rows] = await conn.query(userSql, { uid });
     return rows;
@@ -74,8 +75,8 @@ const login = async (email, password) => {
 };
 
 const userDetail = async (id) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const userSql = `
     SELECT u.id, u.nickname, u.email, u.image, u.introduce, u.location, u.career_title, u.career_contents, u.sns_github, u.sns_linkedin, u.sns_web, u.email_verified,
     FROM_UNIXTIME(UNIX_TIMESTAMP(u.created_at), '%Y-%m-%d %H:%i:%s') AS created_at,
@@ -95,8 +96,8 @@ const userDetail = async (id) => {
 };
 
 const getImage = async (id) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const imageSQL = 'SELECT image FROM user WHERE ?';
     const [imageRows] = await conn.query(imageSQL, { id });
     return imageRows;
@@ -108,8 +109,8 @@ const getImage = async (id) => {
 };
 
 const userUpdate = async (id, updateData) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const updateSql = 'UPDATE user SET ? WHERE ? ';
     const [updateRows] = await conn.query(updateSql, [updateData, { id }]);
     return updateRows;
@@ -157,6 +158,38 @@ const withdraw = async (id, email, password) => {
   }
 };
 
+const verifiedCheck = async (email) => {
+  const conn = await pool.getConnection();
+  try {
+    const checkSql = 'SELECT email_verified FROM user WHERE ?';
+    const [checkRows] = await conn.query(checkSql, { email });
+    return checkRows;
+  } catch (err) {
+    throw { status: 500, message: 'DB Error' };
+  } finally {
+    await conn.release();
+  }
+};
+
+const emailVerificationProcess = async (email) => {
+  const conn = await pool.getConnection();
+  try {
+    const updateSql = 'UPDATE user SET ? WHERE ?';
+    await conn.query(updateSql, [{ email_verified: true }, { email }]);
+
+    const uidSql = 'SELECT uid FROM user WHERE ?';
+    const [uidRows] = await conn.query(uidSql, { email });
+    const uid = uidRows[0].uid;
+
+    // firebase uid -> 이메일 인증처리
+    // return checkRows;
+  } catch (err) {
+    throw { status: 500, message: 'DB Error' };
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -166,4 +199,6 @@ module.exports = {
   checkNickname,
   checkEmail,
   withdraw,
+  verifiedCheck,
+  emailVerificationProcess,
 };
