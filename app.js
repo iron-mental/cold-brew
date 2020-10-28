@@ -3,12 +3,19 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const firebase = require('firebase');
+const admin = require('firebase-admin');
 
 const v1Router = require('./routes/v1');
 const config = require('./configs/config');
 
-const app = express();
 firebase.initializeApp(config.firebase);
+
+admin.initializeApp({
+  credential: admin.credential.cert(process.env.GOOGLE_APPLICATION_CREDENTIALS),
+  databaseURL: process.env.FIREBASE_databaseURL,
+});
+
+const app = express();
 
 app.use(morgan('dev'));
 app.use(express.json());
