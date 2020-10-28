@@ -1,5 +1,3 @@
-const { json } = require('express');
-
 require('dotenv').config();
 
 const rds = {
