@@ -99,7 +99,10 @@ const emailVerification = async ({ email }) => {
 };
 
 const emailVerificationProcess = async ({ email }) => {
-  const userData = await userDao.emailVerificationProcess(email);
+  const updateRows = await userDao.emailVerificationProcess(email);
+  if (updateRows.affectedRows === 0) {
+    throw { status: 404, message: '조회된 사용자가 없습니다' };
+  }
 };
 
 module.exports = {
