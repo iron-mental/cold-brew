@@ -1,5 +1,7 @@
 const applyDao = require('../dao/apply');
 
+const { rowSplit } = require('../utils/database');
+
 const createApply = async ({ study_id }, createData) => {
   createData.study_id = study_id;
   const newApply = await applyDao.createApply(createData);
@@ -13,7 +15,8 @@ const applyDetail = async ({ study_id, apply_id }) => {
   if (applyData.length === 0) {
     throw { status: 400, message: '조회 결과가 없습니다' };
   }
-  return applyData[0];
+  const result = rowSplit(applyData, ['project']);
+  return result;
 };
 
 const applyUpdate = async ({ study_id, apply_id }, updateData) => {
