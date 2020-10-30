@@ -20,8 +20,8 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  await userService.login(req.body);
-  return res.status(200).json({ message: '로그인 성공' }); // 추후 jwt 적용하면 수정
+  const id = await userService.login(req.body);
+  return res.status(200).json({ message: '로그인 성공', id }); // 추후 jwt 적용하면 수정
 };
 
 const userDetail = async (req, res) => {
