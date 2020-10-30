@@ -1,4 +1,5 @@
 const firebase = require('firebase');
+const admin = require('firebase-admin');
 
 const pool = require('./db');
 
@@ -38,6 +39,7 @@ const signup = async (email, password, nickname) => {
     .catch((error) => {
       throw { status: 400, message: 'Firebase Error: ' + error.code };
     });
+
   const conn = await pool.getConnection();
   try {
     const sql = 'INSERT INTO user SET ?';
@@ -160,6 +162,49 @@ const withdraw = async (id, email, password) => {
   }
 };
 
+const verifiedCheck = async (email) => {
+  const conn = await pool.getConnection();
+  try {
+    const checkSql = 'SELECT email_verified FROM user WHERE ?';
+    const [checkRows] = await conn.query(checkSql, { email });
+    return checkRows;
+  } catch (err) {
+    throw { status: 500, message: 'DB Error' };
+  } finally {
+    await conn.release();
+  }
+};
+
+const emailVerificationProcess = async (email) => {
+  const conn = await pool.getConnection();
+  try {
+    const uidSql = 'SELECT uid FROM user WHERE ?';
+    const [uidRows] = await conn.query(uidSql, { email });
+    const result = await admin
+      .auth()
+      .updateUser(uidRows[0].uid, {
+        emailVerified: true,
+      })
+      .then(async () => {
+        const updateSql = 'UPDATE user SET ? WHERE ?';
+        const [updateRows] = await conn.query(updateSql, [{ email_verified: true }, { email }]);
+        return updateRows;
+      })
+      .catch((err) => {
+        throw { status: 500, message: err };
+      });
+    return result;
+  } catch (err) {
+    console.log('err: ', err);
+    if (err.status) {
+      throw err;
+    }
+    throw { status: 500, message: 'DB Error' };
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -169,4 +214,6 @@ module.exports = {
   checkNickname,
   checkEmail,
   withdraw,
+  verifiedCheck,
+  emailVerificationProcess,
 };

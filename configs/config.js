@@ -1,5 +1,3 @@
-const { json } = require('express');
-
 require('dotenv').config();
 
 const rds = {
@@ -24,4 +22,14 @@ const firebase = {
   measurementId: process.env.FIREBASE_measurementId,
 };
 
-module.exports = { rds, firebase };
+const mailer = {
+  service: process.env.MAILER_service,
+  host: process.env.MAILER_host,
+  port: process.env.MAILER_port,
+  auth: {
+    user: process.env.MAILER_auth_user,
+    pass: process.env.MAILER_auth_password,
+  },
+};
+
+module.exports = { rds, firebase, mailer };

@@ -19,6 +19,7 @@ router.get('/:id', userValid.userDetail, asyncWrap(userController.userDetail)); 
 router.patch('/:id', imageUpload, userValid.userUpdate, asyncWrap(userController.userUpdate)); // 유저 정보수정
 router.delete('/:id', userValid.withdraw, asyncWrap(userController.withdraw)); // 회원 탈퇴
 
-router.get('/:user_id/study', studyValid.myStudy, asyncWrap(studyController.myStudy)); // 내 스터디 조회
+router.get('/emailVerify/:email', userValid.emailVerification, asyncWrap(userController.emailVerification)); // 이메일 인증 요청
+router.get('/emailVerify-process/:email', userValid.emailVerificationProcess, asyncWrap(userController.emailVerificationProcess)); // 이메일 인증 요청
 
 module.exports = router;
