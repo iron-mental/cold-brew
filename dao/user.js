@@ -51,7 +51,7 @@ const signup = async (email, password, nickname) => {
 };
 
 const login = async (email, password) => {
-  const { uid, emailVerified: email_verified } = await firebase
+  const { uid } = await firebase
     .auth()
     .signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
@@ -101,7 +101,6 @@ const getImage = async (id) => {
     const [imageRows] = await conn.query(imageSQL, { id });
     return imageRows;
   } catch (err) {
-    console.error('Dao err: ', err);
     throw { status: 500, message: 'DB Error' };
   } finally {
     await conn.release();
