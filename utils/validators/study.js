@@ -9,7 +9,7 @@ const createStudy = async (req, res, next) => {
     progress: Joi.string().required(),
     study_time: Joi.string().required(),
     location: Joi.string().required(),
-    // location_last: Joi.string().required(),
+    location_last: Joi.string().required(),
     location_detail: Joi.string().required(),
     sns_notion: Joi.string(),
     sns_evernote: Joi.string(),
@@ -61,4 +61,28 @@ const studyUpdate = async (req, res, next) => {
   }
 };
 
-module.exports = { createStudy, studyDetail, studyUpdate };
+const myStudy = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    user_id: Joi.number().required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    next({ status: 422, message: err.details[0].message });
+  }
+};
+
+const studyList = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    category: Joi.string().required(),
+    sort: Joi.string().required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    next({ status: 422, message: err.details[0].message });
+  }
+};
+module.exports = { createStudy, studyDetail, studyUpdate, myStudy, studyList };

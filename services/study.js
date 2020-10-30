@@ -3,6 +3,7 @@ const path = require('path');
 
 const { rowSplit } = require('../utils/database');
 const studyDao = require('../dao/study');
+const database = require('../utils/database');
 
 // 스터디 생성
 const createStudy = async (createData, filePath) => {
@@ -29,7 +30,7 @@ const studyDetail = async ({ study_id }) => {
   return result;
 };
 
-const studyUpdate = async ({ study_id }, updateData, filedata = null) => {
+const studyUpdate = async ({ study_id }, updateData, filedata) => {
   if (filedata) {
     const { destination, uploadedFile, path: _tmpPath } = filedata;
     try {
@@ -55,4 +56,27 @@ const studyUpdate = async ({ study_id }, updateData, filedata = null) => {
   }
 };
 
-module.exports = { createStudy, studyDetail, studyUpdate };
+const myStudy = async ({ user_id }) => {
+  const myStudyList = await studyDao.getMyStudy(user_id);
+  if (myStudyList.length === 0) {
+    throw { status: 404, message: '가입한 스터디가 없습니다' };
+  }
+  return myStudyList;
+};
+
+const studyList = async ({ category, sort }) => {
+  let data = '';
+  if (sort === 'new') {
+    data = await studyDao.getStudyListByNew(category);
+  } else if (sort === 'length') {
+    // data = await studyDao.getStudyListByLength(category);
+  } else {
+    throw { status: 404, message: 'sort 입력이 잘못되었습니다' };
+  }
+  if (data.length === 0) {
+    throw { status: 404, message: '해당 카테고리에 스터디가 없습니다' };
+  }
+  return data;
+};
+
+module.exports = { createStudy, studyDetail, studyUpdate, myStudy, studyList };
