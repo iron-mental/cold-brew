@@ -27,12 +27,10 @@ const signup = async ({ email, password, nickname }) => {
   if (emailCheckRows.length > 0) {
     throw { status: 400, message: `중복된 이메일이 존재합니다` };
   }
-
   const nicknameCheckRows = await userDao.checkNickname(nickname);
   if (nicknameCheckRows.length > 0) {
     throw { status: 400, message: '중복된 닉네임이 존재합니다' };
   }
-
   const createRows = await userDao.signup(email, password, nickname);
   if (createRows.affectedRows === 0) {
     throw { status: 400, message: 'no result' };
@@ -41,21 +39,21 @@ const signup = async ({ email, password, nickname }) => {
 
 // 로그인
 const login = async ({ email, password }) => {
-  const id = await userDao.login(email, password);
-  if (id.length === 0) {
+  const idRows = await userDao.login(email, password);
+  if (idRows.length === 0) {
     throw { status: 404, message: '조회된 사용자가 없습니다' };
   }
   // JwT 도입시 토큰을 발급할 부분 + 나중엔 login API에서 토큰을 내려줄 생각이라 임시로 user_id를 리턴합니다
-  return id[0].id;
+  return idRows[0].id;
 };
 
 // 상세 조회
 const userDetail = async ({ id }) => {
-  const userData = await userDao.userDetail(id);
-  if (userData.length === 0) {
+  const userDataRows = await userDao.userDetail(id);
+  if (userDataRows.length === 0) {
     throw { status: 404, message: '조회된 사용자가 없습니다' };
   }
-  return rowSplit(userData, ['project']);
+  return rowSplit(userDataRows, ['project']);
 };
 
 // 수정 - (이메일, 비밀번호 제외)
