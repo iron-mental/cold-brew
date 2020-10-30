@@ -8,7 +8,7 @@ const { sendVerifyEmail } = require('../utils/mailer');
 // 닉네임 중복체크
 const checkNickname = async ({ nickname }) => {
   const checkRows = await userDao.checkNickname(nickname);
-  if (checkRows.length) {
+  if (checkRows.length > 0) {
     throw { status: 400, message: '중복된 닉네임이 존재합니다' };
   }
 };
@@ -16,7 +16,7 @@ const checkNickname = async ({ nickname }) => {
 // 이메일 중복체크
 const checkEmail = async ({ email }) => {
   const checkRows = await userDao.checkEmail(email);
-  if (checkRows.length) {
+  if (checkRows.length > 0) {
     throw { status: 400, message: `중복된 이메일이 존재합니다` };
   }
 };
@@ -24,12 +24,12 @@ const checkEmail = async ({ email }) => {
 // 회원가입
 const signup = async ({ email, password, nickname }) => {
   const emailCheckRows = await userDao.checkEmail(email);
-  if (emailCheckRows.length) {
+  if (emailCheckRows.length > 0) {
     throw { status: 400, message: `중복된 이메일이 존재합니다` };
   }
 
   const nicknameCheckRows = await userDao.checkNickname(nickname);
-  if (nicknameCheckRows.length) {
+  if (nicknameCheckRows.length > 0) {
     throw { status: 400, message: '중복된 닉네임이 존재합니다' };
   }
 
@@ -59,29 +59,30 @@ const userDetail = async ({ id }) => {
 };
 
 // 수정 - (이메일, 비밀번호 제외)
-const userUpdate = async ({ id }, updateData, { destination, uploadedFile, path: _tmpPath }) => {
-  try {
-    if (updateData.nickname) {
-      const checkRows = await userDao.checkNickname(updateData.nickname);
-      if (checkRows.length) {
-        throw { status: 400, message: '중복된 닉네임이 존재합니다' };
-      }
+const userUpdate = async ({ id }, updateData, filedata) => {
+  if (updateData.nickname) {
+    const checkRows = await userDao.checkNickname(updateData.nickname);
+    if (checkRows.length) {
+      throw { status: 400, message: '중복된 닉네임이 존재합니다' };
     }
-
-    const previousPath = await userDao.getImage(id);
+  }
+  if (filedata) {
+    const { destination, uploadedFile, path: _tmpPath } = filedata;
     const updateRows = await userDao.userUpdate(id, updateData);
     if (updateRows.affectedRows === 0) {
       throw { status: 404, message: '조회된 사용자가 없습니다' };
     }
 
-    // 기존 이미지 삭제, _tmp 네이밍 변경
+    const previousPath = await userDao.getImage(id);
     const oldImagePath = path.join(destination, path.basename(previousPath[0].image || 'nullFileName'));
     const newPath = path.join(destination, uploadedFile.basename);
-    -fs.rename(_tmpPath, newPath, (err) => {});
-    -fs.unlink(oldImagePath, (err) => {});
-  } catch (err) {
-    fs.unlink(_tmpPath, (err) => {});
-    throw err;
+    fs.rename(_tmpPath, newPath, (err) => {});
+    fs.unlink(oldImagePath, (err) => {});
+  } else {
+    const updateRows = await userDao.userUpdate(id, updateData);
+    if (updateRows.affectedRows === 0) {
+      throw { status: 404, message: '조회된 사용자가 없습니다' };
+    }
   }
 };
 
