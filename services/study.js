@@ -3,7 +3,6 @@ const path = require('path');
 
 const { rowSplit } = require('../utils/database');
 const studyDao = require('../dao/study');
-const database = require('../utils/database');
 
 // 스터디 생성
 const createStudy = async (createData, filePath) => {

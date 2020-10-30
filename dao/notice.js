@@ -16,7 +16,7 @@ const createNotice = async (createData) => {
 const getNotice = async (study_id, notice_id) => {
   const conn = await pool.getConnection();
   try {
-    const detailSQL = `SELECT id, study_id, title, contents, pined,
+    const detailSQL = `SELECT id, study_id, title, contents, pinned,
       FROM_UNIXTIME(UNIX_TIMESTAMP(created_at),'%Y-%m-%d %H:%i:%s') AS created_at,
       FROM_UNIXTIME(UNIX_TIMESTAMP(updated_at),'%Y-%m-%d %H:%i:%s') AS updated_at 
       FROM notice 
