@@ -17,20 +17,20 @@ const applyDetail = async (study_id, apply_id) => {
   const conn = await pool.getConnection();
   try {
     const detailSQL = `
-    SELECT
-      a.id, a.user_id, a.study_id, a.message, a.rejected_status,
-      DATE_FORMAT(a.created_at, "%Y-%c-%d %H:%i:%s") created_at,
-      DATE_FORMAT(a.rejected_at, "%Y-%c-%d %H:%i:%s") rejected_at,
-      u.image, u.nickname, u.sns_github, u.sns_linkedin, u.sns_web,
-      p.id Pid, p.title Ptitle, p.contents Pcontents, p.sns_github Psns_github, p.sns_appstore Psns_appstore, p.sns_playstore Psns_playstore
-    FROM
-      apply a
-      LEFT JOIN user u
+      SELECT
+        a.id, a.user_id, a.study_id, a.message, a.rejected_status,
+        DATE_FORMAT(a.created_at, "%Y-%c-%d %H:%i:%s") created_at,
+        DATE_FORMAT(a.rejected_at, "%Y-%c-%d %H:%i:%s") rejected_at,
+        u.image, u.nickname, u.sns_github, u.sns_linkedin, u.sns_web,
+        p.id Pid, p.title Ptitle, p.contents Pcontents, p.sns_github Psns_github, p.sns_appstore Psns_appstore, p.sns_playstore Psns_playstore
+      FROM
+        apply a
+        LEFT JOIN user u
         ON u.id = a.user_id
-      LEFT JOIN project p
+        LEFT JOIN project p
         ON u.id = p.user_id
-    WHERE
-      a.study_id = ? AND a.id = ?`;
+      WHERE
+        a.study_id = ? AND a.id = ?`;
     const [detailRows] = await conn.query(detailSQL, [study_id, apply_id]);
     return detailRows;
   } catch (err) {
