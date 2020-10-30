@@ -30,4 +30,14 @@ const rowSplit = (rows, tags) => {
   return result;
 };
 
-module.exports = { rowSplit };
+const toBoolean = (rows, tags) => {
+  for (row of rows) {
+    for (tag of tags) {
+      row[tag] = Boolean(row[tag]);
+      row[tag] = Boolean(row[tag]);
+    }
+  }
+  return rows;
+};
+
+module.exports = { rowSplit, toBoolean };
