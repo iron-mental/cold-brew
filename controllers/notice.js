@@ -1,8 +1,9 @@
 const noticeService = require('../services/notice');
+const response = require('../utils/response');
 
 const createNotice = async (req, res) => {
   await noticeService.createNotice(req.params, req.body);
-  return res.status(201).json({ message: '작성 완료' });
+  response(res, '공지사항 작성 완료', 201);
 };
 
 const noticeDetail = async (req, res) => {
@@ -12,12 +13,12 @@ const noticeDetail = async (req, res) => {
 
 const noticeUpdate = async (req, res) => {
   await noticeService.noticeUpdate(req.params, req.body);
-  return res.redirect(303, `/v1/study/${req.params.study_id}/notice/${req.params.notice_id}`);
+  response(res, '공지사항 수정 완료', 200);
 };
 
 const noticeDelete = async (req, res) => {
   await noticeService.noticeDelete(req.params);
-  return res.status(200).json({ message: '삭제되었습니다' });
+  response(res, '공지사항 삭제 완료', 200);
 };
 
 module.exports = {
