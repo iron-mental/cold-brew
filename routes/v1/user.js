@@ -4,6 +4,8 @@ const { imageUpload } = require('../../utils/file');
 const asyncWrap = require('../../utils/errors/wrap');
 const userValid = require('../../utils/validators/user');
 const userController = require('../../controllers/user');
+const studyValid = require('../../utils/validators/study');
+const studyController = require('../../controllers/study');
 
 const router = express.Router();
 
@@ -16,4 +18,7 @@ router.post('/login', userValid.login, asyncWrap(userController.login)); // 로�
 router.get('/:id', userValid.userDetail, asyncWrap(userController.userDetail)); // 유저 상세조회
 router.patch('/:id', imageUpload, userValid.userUpdate, asyncWrap(userController.userUpdate)); // 유저 정보수정
 router.delete('/:id', userValid.withdraw, asyncWrap(userController.withdraw)); // 회원 탈퇴
+
+router.get('/:user_id/study', studyValid.myStudy, asyncWrap(studyController.myStudy)); // 내 스터디 조회
+
 module.exports = router;
