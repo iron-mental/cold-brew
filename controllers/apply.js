@@ -2,7 +2,7 @@ const applyService = require('../services/apply');
 
 const createApply = async (req, res) => {
   await applyService.createApply(req.params, req.body);
-  return res.status(200).json({ message: '스터디 신청 완료' });
+  return res.status(201).json({ message: '스터디 신청 완료' });
 };
 
 const applyDetail = async (req, res) => {
@@ -12,7 +12,7 @@ const applyDetail = async (req, res) => {
 
 const applyUpdate = async (req, res) => {
   await applyService.applyUpdate(req.params, req.body);
-  return res.redirect(303, `/v1/study/${req.params.study_id}/apply/${req.params.apply_id}`);
+  return res.status(200).json({ message: '가입신청 수정 성공' });
 };
 
 const applyDelete = async (req, res) => {

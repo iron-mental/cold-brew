@@ -6,12 +6,12 @@ const USER_PATH = '/images/user';
 
 const checkNickname = async (req, res) => {
   await userService.checkNickname(req.params);
-  return res.status(201).json({ message: '사용 가능한 닉네임입니다' });
+  return res.status(200).json({ message: '사용 가능한 닉네임입니다' });
 };
 
 const checkEmail = async (req, res) => {
   await userService.checkEmail(req.params);
-  return res.status(201).json({ message: '사용 가능합니다' });
+  return res.status(200).json({ message: '사용 가능합니다' });
 };
 
 const signup = async (req, res) => {
@@ -20,8 +20,8 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const id = await userService.login(req.body);
-  return res.redirect(303, `/v1/user/${id}`); // 추후 jwt 적용하면 수정
+  await userService.login(req.body);
+  return res.status(200).json({ message: '로그인 성공' }); // 추후 jwt 적용하면 수정
 };
 
 const userDetail = async (req, res) => {
@@ -34,7 +34,7 @@ const userUpdate = async (req, res) => {
     req.body.image = path.join(USER_PATH, req.file.uploadedFile.basename);
   }
   await userService.userUpdate(req.params, req.body, req.file);
-  return res.redirect(303, `/v1/user/${req.params.id}`);
+  return res.status(200).json({ message: '수정 되었습니다' });
 };
 
 const withdraw = async (req, res) => {

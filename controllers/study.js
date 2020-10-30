@@ -20,7 +20,7 @@ const studyUpdate = async (req, res) => {
     req.body.image = path.join(STUDY_PATH, req.file.uploadedFile.basename);
   }
   await studyService.studyUpdate(req.params, req.body, req.file);
-  return res.redirect(303, `/v1/study/${req.params.study_id}`);
+  return res.status(200).json({ message: '스터디 수정 성공' });
 };
 
 const myStudy = async (req, res) => {

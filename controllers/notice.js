@@ -12,7 +12,7 @@ const noticeDetail = async (req, res) => {
 
 const noticeUpdate = async (req, res) => {
   await noticeService.noticeUpdate(req.params, req.body);
-  return res.redirect(303, `/v1/study/${req.params.study_id}/notice/${req.params.notice_id}`);
+  return res.status(200).json({ message: '공지사항 수정 성공' });
 };
 
 const noticeDelete = async (req, res) => {
