@@ -27,7 +27,7 @@ const getStudy = async (study_id) => {
   try {
     const studySql = `
       SELECT s.id, s.category, s.title ,s.introduce, s.image, s.progress, s.study_time, s.location, s.location_detail, s.sns_notion, s.sns_evernote, s.sns_web,
-      n.id AS N_id, n.title AS N_title, n.contents AS N_contents, n.pined AS N_pined,
+      n.id AS N_id, n.title AS N_title, n.contents AS N_contents, n.pinned AS N_pinned,
       FROM_UNIXTIME(UNIX_TIMESTAMP(n.created_at), '%Y-%m-%d %H:%i:%s') AS N_created_at,
       FROM_UNIXTIME(UNIX_TIMESTAMP(n.updated_at), '%Y-%m-%d %H:%i:%s') AS N_updated_at,
       p.id AS P_id, p.user_id AS P_user_id, u.nickname AS P_nickname, u.image AS P_image, p.leader AS P_leader
