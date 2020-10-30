@@ -19,7 +19,7 @@ const noticeDetail = async ({ study_id, notice_id }) => {
 const noticeUpdate = async ({ study_id, notice_id }, updateData) => {
   const rows = await noticeDao.noticeUpdate(study_id, notice_id, updateData);
   if (rows.affectedRows === 0) {
-    throw { status: 400, message: '공지사항 수정에 실패했습니다' };
+    throw { status: 400, message: '해당 id를 가진 공지사항이 없습니다' };
   }
 };
 

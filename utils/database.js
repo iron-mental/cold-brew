@@ -10,7 +10,6 @@ const rowSplit = (rows, tags) => {
     keys[tag[0].toUpperCase()] = tag;
   });
 
-  // 메인 루프
   rows.forEach((row, idx) => {
     let tmp = tmpModel;
     for (const [key, value] of Object.entries(row)) {

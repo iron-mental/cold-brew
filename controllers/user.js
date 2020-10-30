@@ -2,7 +2,7 @@ const path = require('path');
 
 const userService = require('../services/user');
 
-const STUDY_PATH = '/images/user';
+const USER_PATH = '/images/user';
 
 const checkNickname = async (req, res) => {
   await userService.checkNickname(req.params);
@@ -30,7 +30,9 @@ const userDetail = async (req, res) => {
 };
 
 const userUpdate = async (req, res) => {
-  req.body.image = path.join(STUDY_PATH, req.file.uploadedFile.basename);
+  if (req.file) {
+    req.body.image = path.join(USER_PATH, req.file.uploadedFile.basename);
+  }
   await userService.userUpdate(req.params, req.body, req.file);
   return res.redirect(303, `/v1/user/${req.params.id}`);
 };
@@ -38,6 +40,16 @@ const userUpdate = async (req, res) => {
 const withdraw = async (req, res) => {
   await userService.withdraw(req.params, req.body);
   return res.status(200).json({ message: '삭제되었습니다' });
+};
+
+const emailVerification = async (req, res) => {
+  await userService.emailVerification(req.params);
+  return res.status(200).json({ message: '이메일 전송에 성공했습니다' });
+};
+
+const emailVerificationProcess = async (req, res) => {
+  await userService.emailVerificationProcess(req.params);
+  return res.status(200).send(`${req.params.email}님의 이메일인증이 완료되었습니다`);
 };
 
 module.exports = {
@@ -48,4 +60,6 @@ module.exports = {
   checkNickname,
   checkEmail,
   withdraw,
+  emailVerification,
+  emailVerificationProcess,
 };
