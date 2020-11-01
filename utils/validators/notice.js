@@ -5,9 +5,9 @@ const createNotice = async (req, res, next) => {
     study_id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
-    title: Joi.string().required(),
-    contents: Joi.string().required(),
-    pined: Joi.boolean().required(),
+    title: Joi.string().required().max(30),
+    contents: Joi.string().required().max(200),
+    pinned: Joi.boolean().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -37,9 +37,9 @@ const noticeUpdate = async (req, res, next) => {
     notice_id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
-    title: Joi.string(),
-    contents: Joi.string(),
-    pined: Joi.boolean(),
+    title: Joi.string().max(30),
+    contents: Joi.string().max(200),
+    pinned: Joi.boolean(),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);
