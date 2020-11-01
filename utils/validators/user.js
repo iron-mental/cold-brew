@@ -54,7 +54,7 @@ const userUpdate = async (req, res, next) => {
     career_contents: Joi.string(),
     sns_github: Joi.string(),
     sns_linkedin: Joi.string(),
-    sns_web: Joi.string().domain(),
+    sns_web: Joi.string(),
   }).min(1);
 
   try {
