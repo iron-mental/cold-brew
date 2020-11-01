@@ -6,7 +6,7 @@ const createApply = async (req, res, next) => {
   });
   const bodySchema = Joi.object({
     user_id: Joi.number().required(),
-    message: Joi.string().required(),
+    message: Joi.string().required().max(100),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -36,7 +36,7 @@ const applyUpdate = async (req, res, next) => {
     apply_id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
-    message: Joi.string(),
+    message: Joi.string().required().max(100),
     rejected_status: Joi.boolean(),
   }).min(1);
   try {
