@@ -7,6 +7,7 @@ const admin = require('firebase-admin');
 
 const v1Router = require('./routes/v1');
 const config = require('./configs/config');
+const response = require('./utils/response');
 
 firebase.initializeApp(config.firebase);
 
@@ -46,8 +47,7 @@ app.use((err, req, res, next) => {
     console.error(err);
   }
 
-  res.status(err.status || 500);
-  return res.json({ message: err.message });
+  response(res, err.message, err.status || 500);
 });
 
 module.exports = app;
