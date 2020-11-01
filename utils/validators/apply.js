@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { validError } = require('../errors/customError');
 
 const createApply = async (req, res, next) => {
   const paramSchema = Joi.object({
@@ -13,7 +14,7 @@ const createApply = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -26,7 +27,7 @@ const applyDetail = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -44,7 +45,7 @@ const applyUpdate = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -57,7 +58,7 @@ const applyDelete = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 

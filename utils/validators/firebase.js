@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { validError } = require('../errors/customError');
 
 const resetPassword = async (req, res, next) => {
   const paramSchema = Joi.object({
@@ -8,7 +9,7 @@ const resetPassword = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 

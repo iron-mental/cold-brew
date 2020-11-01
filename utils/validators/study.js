@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { validError } = require('../errors/customError');
 
 const createStudy = async (req, res, next) => {
   const bodySchema = Joi.object({
@@ -20,7 +21,7 @@ const createStudy = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -32,7 +33,7 @@ const studyDetail = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -59,7 +60,7 @@ const studyUpdate = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -71,7 +72,7 @@ const myStudy = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -84,7 +85,7 @@ const studyList = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 module.exports = { createStudy, studyDetail, studyUpdate, myStudy, studyList };

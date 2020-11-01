@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { validError } = require('../errors/customError');
 
 const signup = async (req, res, next) => {
   const bodySchema = Joi.object({
@@ -10,7 +11,7 @@ const signup = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -23,7 +24,7 @@ const login = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -35,7 +36,7 @@ const userDetail = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -60,7 +61,7 @@ const userUpdate = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -72,7 +73,7 @@ const checkNickname = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -84,7 +85,7 @@ const checkEmail = async (req, res, next) => {
     await querySchema.validateAsync(req.params);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -103,7 +104,7 @@ const withdraw = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -115,7 +116,7 @@ const emailVerification = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
@@ -127,7 +128,7 @@ const emailVerificationProcess = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 
