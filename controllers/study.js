@@ -6,7 +6,9 @@ const response = require('../utils/response');
 const STUDY_PATH = '/images/study';
 
 const createStudy = async (req, res) => {
-  req.body.image = path.join(STUDY_PATH, req.file.uploadedFile.basename);
+  if (req.file) {
+    req.body.image = path.join(STUDY_PATH, req.file.uploadedFile.basename);
+  }
   await studyService.createStudy(req.body, req.file.path);
   response(res, '스터디 생성 완료', 201);
 };
