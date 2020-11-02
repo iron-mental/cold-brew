@@ -4,10 +4,10 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const firebase = require('firebase');
 const admin = require('firebase-admin');
+const fs = require('fs');
 
 const v1Router = require('./routes/v1');
 const config = require('./configs/config');
-const errorHandler = require('./utils/errors/customHandler');
 
 firebase.initializeApp(config.firebase);
 
@@ -33,6 +33,20 @@ app.use(function (req, res, next) {
 });
 
 // pre-error handler
-app.use(errorHandler);
+app.use((err, req, res, next) => {
+  if (req.file) {
+    fs.unlink(req.file.path, (err) => {});
+  }
+
+  if (err.type === 'validation-error') {
+    return res.status(422).json(err);
+  } else if (!err.status) {
+    return res.status(500).json(err);
+  }
+
+  res.status(err.status);
+  delete err.status;
+  return res.json(err);
+});
 
 module.exports = app;
