@@ -1,9 +1,5 @@
-const path = require('path');
-
 const userService = require('../services/user');
 const response = require('../utils/response');
-
-const USER_PATH = '/images/user';
 
 const checkNickname = async (req, res) => {
   await userService.checkNickname(req.params);
@@ -31,9 +27,6 @@ const userDetail = async (req, res) => {
 };
 
 const userUpdate = async (req, res) => {
-  if (req.file) {
-    req.body.image = path.join(USER_PATH, req.file.uploadedFile.basename);
-  }
   await userService.userUpdate(req.params, req.body, req.file);
   response(res, 200, '회원정보 수정 완료');
 };
