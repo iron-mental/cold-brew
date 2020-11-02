@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const { rowSplit } = require('../utils/database');
 const studyDao = require('../dao/study');
+const { rowSplit } = require('../utils/database');
+const { customError } = require('../utils/errors/customError');
 
 // 스터디 생성
 const createStudy = async (createData, filePath) => {
@@ -14,14 +15,13 @@ const createStudy = async (createData, filePath) => {
 const studyDetail = async ({ study_id }) => {
   const studyData = await studyDao.getStudy(study_id);
   if (!studyData) {
-    throw { status: 404, message: '조회된 스터디가 없습니다' };
+    throw customError(404, '조회된 스터디가 없습니다');
   }
   // 권한확인 -> 나중에 jwt 도입 후 인증처리할것 (dao자체는 잘 작동함)
   // if (user_id === studyData.leader) {
   // studyData.apply = await studyDao.getApplyList(study_id);
   // }
-  result = rowSplit(studyData, ['participate', 'notice']);
-  return result;
+  return rowSplit(studyData, ['participate', 'notice']);
 };
 
 const studyUpdate = async ({ study_id }, updateData, filedata) => {
@@ -30,7 +30,7 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
     const previousPath = await studyDao.getImage(study_id);
     const updateRows = await studyDao.studyUpdate(study_id, updateData);
     if (previousPath.length === 0 || updateRows.affectedRows === 0) {
-      throw { status: 404, message: '조회된 스터디가 없습니다' };
+      throw customError(404, '조회된 스터디가 없습니다');
     }
 
     const oldImagePath = path.join(destination, path.basename(previousPath[0].image));
@@ -40,7 +40,7 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
   } else {
     const updateRows = await studyDao.studyUpdate(study_id, updateData);
     if (updateRows.affectedRows === 0) {
-      throw { status: 404, message: '조회된 스터디가 없습니다' };
+      throw customError(404, '조회된 스터디가 없습니다');
     }
   }
 };
@@ -48,7 +48,7 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
 const myStudy = async ({ id }) => {
   const myStudyList = await studyDao.getMyStudy(id);
   if (myStudyList.length === 0) {
-    throw { status: 404, message: '가입한 스터디가 없습니다' };
+    throw customError(404, '가입한 스터디가 없습니다');
   }
   return myStudyList;
 };
@@ -60,10 +60,10 @@ const studyList = async ({ category, sort }) => {
   } else if (sort === 'length') {
     // data = await studyDao.getStudyListByLength(category);
   } else {
-    throw { status: 404, message: 'sort 입력이 잘못되었습니다' };
+    throw customError(404, 'sort 입력이 잘못되었습니다');
   }
   if (data.length === 0) {
-    throw { status: 404, message: '해당 카테고리에 스터디가 없습니다' };
+    throw customError(404, '해당 카테고리에 스터디가 없습니다');
   }
   return data;
 };
