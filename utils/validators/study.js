@@ -66,7 +66,7 @@ const studyUpdate = async (req, res, next) => {
 
 const myStudy = async (req, res, next) => {
   const paramSchema = Joi.object({
-    user_id: Joi.number().required(),
+    id: Joi.number().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -88,4 +88,10 @@ const studyList = async (req, res, next) => {
     validError(next, err);
   }
 };
-module.exports = { createStudy, studyDetail, studyUpdate, myStudy, studyList };
+module.exports = {
+  createStudy,
+  studyDetail,
+  studyUpdate,
+  myStudy,
+  studyList,
+};

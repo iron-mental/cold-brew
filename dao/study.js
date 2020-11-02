@@ -92,7 +92,7 @@ const studyUpdate = async (study_id, updateData) => {
   }
 };
 
-const getMyStudy = async (user_id) => {
+const getMyStudy = async (id) => {
   const conn = await pool.getConnection();
   try {
     const myStudySql = `
@@ -101,7 +101,7 @@ const getMyStudy = async (user_id) => {
       INNER JOIN study AS s
       ON p.study_id = s.id
       WHERE p.user_id = ?`;
-    const [myStudyRows] = await conn.query(myStudySql, user_id);
+    const [myStudyRows] = await conn.query(myStudySql, id);
     return myStudyRows;
   } catch (err) {
     throw { status: 500, message: err.sqlMessage };

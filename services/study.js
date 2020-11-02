@@ -45,8 +45,8 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
   }
 };
 
-const myStudy = async ({ user_id }) => {
-  const myStudyList = await studyDao.getMyStudy(user_id);
+const myStudy = async ({ id }) => {
+  const myStudyList = await studyDao.getMyStudy(id);
   if (myStudyList.length === 0) {
     throw { status: 404, message: '가입한 스터디가 없습니다' };
   }
