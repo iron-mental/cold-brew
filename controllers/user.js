@@ -7,27 +7,27 @@ const USER_PATH = '/images/user';
 
 const checkNickname = async (req, res) => {
   await userService.checkNickname(req.params);
-  response(res, '사용 가능한 닉네임입니다', 200);
+  response(res, 200, '사용 가능한 닉네임입니다');
 };
 
 const checkEmail = async (req, res) => {
   await userService.checkEmail(req.params);
-  response(res, '사용 가능한 이메일입니다', 200);
+  response(res, 200, '사용 가능한 이메일입니다');
 };
 
 const signup = async (req, res) => {
   await userService.signup(req.body);
-  response(res, '회원가입 완료', 201);
+  response(res, 201, '회원가입 완료');
 };
 
 const login = async (req, res) => {
   const id = await userService.login(req.body);
-  return res.redirect(303, `/v1/user/${id}`); // 추후 jwt 적용하면 수정
+  response(res, 201, id);
 };
 
 const userDetail = async (req, res) => {
   const userData = await userService.userDetail(req.params);
-  return res.status(200).json(userData);
+  response(res, 201, userData);
 };
 
 const userUpdate = async (req, res) => {
@@ -35,22 +35,22 @@ const userUpdate = async (req, res) => {
     req.body.image = path.join(USER_PATH, req.file.uploadedFile.basename);
   }
   await userService.userUpdate(req.params, req.body, req.file);
-  response(res, '회원정보 수정 완료', 200);
+  response(res, 200, '회원정보 수정 완료');
 };
 
 const withdraw = async (req, res) => {
   await userService.withdraw(req.params, req.body);
-  response(res, '회원 탈퇴 완료', 200);
+  response(res, 200, '회원 탈퇴 완료');
 };
 
 const emailVerification = async (req, res) => {
   await userService.emailVerification(req.params);
-  response(res, '인증 이메일 발송', 200);
+  response(res, 200, '인증 이메일 발송');
 };
 
 const emailVerificationProcess = async (req, res) => {
   await userService.emailVerificationProcess(req.params);
-  return res.status(200).send(`${req.params.email}님의 이메일인증이 완료되었습니다`);
+  response(res, 200, `${req.params.email}님의 이메일인증이 완료되었습니다`);
 };
 
 module.exports = {
