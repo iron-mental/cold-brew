@@ -16,7 +16,7 @@ const createStudy = async (user_id, createData) => {
     return createRows;
   } catch (err) {
     await conn.rollback();
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -42,7 +42,7 @@ const getStudy = async (study_id) => {
     const [studyRows] = await conn.query(studySql, study_id);
     return studyRows;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -60,7 +60,7 @@ const getApplyList = async (study_id) => {
     const [apply] = await conn.query(applySql, study_id);
     return apply;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -73,7 +73,7 @@ const getImage = async (study_id) => {
     const [imageRows] = await conn.query(imageSQL, { id: study_id });
     return imageRows;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -86,7 +86,7 @@ const studyUpdate = async (study_id, updateData) => {
     const [updateRows] = await conn.query(updateSQL, [updateData, { id: study_id }]);
     return updateRows;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -104,7 +104,7 @@ const getMyStudy = async (id) => {
     const [myStudyRows] = await conn.query(myStudySql, id);
     return myStudyRows;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -130,7 +130,7 @@ const getStudyListByNew = async (category) => {
     const [listRows] = await conn.query(listSql, { category });
     return listRows;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -157,7 +157,7 @@ const getStudyListByNew = async (category) => {
 //     const [listRows] = await conn.query(listSql, { category });
 //     return listRows;
 //   } catch (err) {
-//     throw { status: 500, message: err.sqlMessage };
+// throw customError(500, err.sqlMessage);
 //   } finally {
 //     await conn.release();
 //   }
