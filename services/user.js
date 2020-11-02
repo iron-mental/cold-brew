@@ -46,7 +46,7 @@ const login = async ({ email, password }) => {
     throw { status: 404, message: '조회된 사용자가 없습니다' };
   }
   // JwT 도입시 토큰을 발급할 부분 + 나중엔 login API에서 토큰을 내려줄 생각이라 임시로 user_id를 리턴합니다
-  return id[0].id;
+  return id[0];
 };
 
 // 상세 조회
@@ -91,14 +91,16 @@ const withdraw = async ({ id }, { email, password }) => {
   await userDao.withdraw(id, email, password);
 };
 
+// 인증 이메일 전송
 const emailVerification = async ({ email }) => {
   const verifyStatus = await userDao.verifiedCheck(email);
   if (verifyStatus[0].email_verified === 1) {
-    throw { status: 400, message: `${email} 님은 이미 인증이 완료된 사용자입니다` };
+    // throw { status: 400, message: `${email} 님은 이미 인증이 완료된 사용자입니다` };
   }
   await sendVerifyEmail(email);
 };
 
+// 이메일 인증 처리
 const emailVerificationProcess = async ({ email }) => {
   const updateRows = await userDao.emailVerificationProcess(email);
   if (updateRows.affectedRows === 0) {
