@@ -1,7 +1,7 @@
 const express = require('express');
 
 const asyncWrap = require('../../utils/errors/wrap');
-const firebaseValid = require('../../utils/validators/firebase');
+const firebaseValid = require('../../middlewares/validators/firebase');
 const firebaseController = require('../../controllers/firebase');
 
 const router = express.Router();
