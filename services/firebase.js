@@ -1,14 +1,13 @@
 const firebase = require('firebase');
 
-const { customError } = require('../utils/errors/customError');
+const { firebaseError } = require('../utils/errors/customError');
 
 const resetPassword = async ({ email }) => {
   await firebase
     .auth()
     .sendPasswordResetEmail(email)
-    .then(() => {})
-    .catch((err) => {
-      throw customError(err);
+    .catch(async (err) => {
+      throw await firebaseError(err);
     });
 };
 

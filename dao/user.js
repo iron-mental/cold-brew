@@ -2,6 +2,7 @@ const firebase = require('firebase');
 const admin = require('firebase-admin');
 
 const pool = require('./db');
+const { customError, firebaseError } = require('../utils/errors/customError');
 
 const checkNickname = async (nickname) => {
   const conn = await pool.getConnection();
@@ -36,8 +37,8 @@ const signup = async (email, password, nickname) => {
     .then((userCredential) => {
       return userCredential.user;
     })
-    .catch((error) => {
-      throw customError(400, `Firebase Error: ${error.code}`);
+    .catch((err) => {
+      throw firebaseError(err);
     });
 
   const conn = await pool.getConnection();
@@ -59,8 +60,8 @@ const login = async (email, password) => {
     .then((userCredential) => {
       return userCredential.user;
     })
-    .catch((error) => {
-      throw customError(500, `Firebase Error: ${error.code}`);
+    .catch((err) => {
+      throw firebaseError(err);
     });
 
   const conn = await pool.getConnection();
@@ -140,8 +141,8 @@ const withdraw = async (id, email, password) => {
         const user = firebase.auth().currentUser;
         user.delete();
       })
-      .catch(function (error) {
-        throw customError(400, `Firebase Error: ${error.code}`);
+      .catch((err) => {
+        throw firebaseError(err);
       });
     await conn.commit();
     return withdrawRows;
@@ -187,7 +188,7 @@ const emailVerificationProcess = async (email) => {
         return updateRows;
       })
       .catch((err) => {
-        throw customError(400, `Firebase Error: ${error.code}`);
+        throw firebaseError(err);
       });
     return result;
   } catch (err) {

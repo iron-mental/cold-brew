@@ -51,6 +51,22 @@ const validError = (next, err) => {
   }
 };
 
+const firebaseError = (err) => {
+  const result = {
+    result: false,
+    type: 'firebase-error',
+  };
+
+  if (err.code === 'auth/user-not-found') {
+    result.status = 404;
+    result.message = '조회된 사용자가 없습니다';
+    throw result;
+  }
+  result.status = 500;
+  result.message = err.message;
+  throw result;
+};
+
 const customError = (status, message) => {
   const result = {
     result: false,
@@ -63,5 +79,6 @@ const customError = (status, message) => {
 
 module.exports = {
   validError,
+  firebaseError,
   customError,
 };
