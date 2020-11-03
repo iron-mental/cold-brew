@@ -3,21 +3,26 @@ const fs = require('fs');
 const path = require('path');
 const uuidv4 = require('uuid').v4;
 
+let imagePath = '';
+
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      const dir = path.join(__dirname, '../../public/images/'.concat(req.baseUrl.split('/').splice(-1)[0]));
+      imagePath = path.join('/images', req.baseUrl.split('/').splice(-1)[0]);
+      const dir = path.join(__dirname, '../../public', imagePath);
+
       !fs.existsSync(dir) && fs.mkdirSync(dir);
       cb(null, dir);
     },
     filename: (req, file, cb) => {
       const basename = uuidv4();
       const ext = path.extname(file.originalname);
-
       file.uploadedFile = {
         basename: basename.concat(ext),
         _tmp: basename.concat('_tmp', ext),
       };
+
+      req.body.image = path.join(imagePath, file.uploadedFile.basename);
 
       if (req.method === 'POST') {
         cb(null, file.uploadedFile.basename);

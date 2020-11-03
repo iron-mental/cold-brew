@@ -1,16 +1,15 @@
 const Joi = require('joi');
+const { validError } = require('../errors/customError');
 
 const resetPassword = async (req, res, next) => {
   const paramSchema = Joi.object({
-    email: Joi.string() //
-      .required(),
-  }).min(1);
-
+    email: Joi.string().required(),
+  });
   try {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    next({ status: 422, message: err.details[0].message });
+    validError(next, err);
   }
 };
 

@@ -3,6 +3,7 @@ require('dotenv').config();
 const nodemailer = require('nodemailer');
 
 const { mailer } = require('../configs/config');
+const customError = require('./errors/customError');
 
 const transporter = nodemailer.createTransport(mailer);
 
@@ -26,7 +27,7 @@ const sendVerifyEmail = async (email) => {
     };
     await transporter.sendMail(message);
   } catch (err) {
-    throw { status: 500, message: err };
+    customError(500, err);
   }
 };
 

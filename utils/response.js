@@ -1,7 +1,12 @@
-module.exports = (res, message, code = 200) => {
-  let data = {
-    result: code < 400 ? true : false,
-    message,
+module.exports = (res, status = 200, value) => {
+  const response = {
+    result: true,
   };
-  return res.status(code).json(Object.assign({}, data));
+
+  if (typeof value === 'object') {
+    response.data = value;
+  } else {
+    response.message = value;
+  }
+  return res.status(status).json(response);
 };

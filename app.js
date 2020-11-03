@@ -4,10 +4,10 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const firebase = require('firebase');
 const admin = require('firebase-admin');
+const fs = require('fs');
 
 const v1Router = require('./routes/v1');
 const config = require('./configs/config');
-const response = require('./utils/response');
 
 firebase.initializeApp(config.firebase);
 
@@ -32,22 +32,21 @@ app.use(function (req, res, next) {
   next(createError(404));
 });
 
-const fs = require('fs');
-// error handler
+// pre-error handler
 app.use((err, req, res, next) => {
   if (req.file) {
     fs.unlink(req.file.path, (err) => {});
   }
 
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  if (!err.status) {
-    console.error(err);
+  if (err.type === 'validation-error') {
+    return res.status(422).json(err);
+  } else if (!err.status) {
+    return res.status(500).json(err);
   }
 
-  response(res, err.message, err.status || 500);
+  res.status(err.status);
+  delete err.status;
+  return res.json(err);
 });
 
 module.exports = app;
