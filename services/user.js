@@ -94,6 +94,9 @@ const withdraw = async ({ id }, { email, password }) => {
 // 인증 이메일 전송
 const emailVerification = async ({ email }) => {
   const verifyStatus = await userDao.verifiedCheck(email);
+  if (verifyStatus.length === 0) {
+    throw customError(404, '조회된 사용자가 없습니다');
+  }
   if (verifyStatus[0].email_verified === 1) {
     throw customError(400, `${email} 님은 이미 인증이 완료된 사용자입니다`);
   }

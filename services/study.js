@@ -63,6 +63,7 @@ const studyList = async ({ category, sort }) => {
   } else {
     throw customError(404, 'sort 입력이 잘못되었습니다');
   }
+
   if (studyListRows.length === 0) {
     throw customError(404, '해당 카테고리에 스터디가 없습니다');
   }
