@@ -16,11 +16,15 @@ const createNotice = async (createData) => {
 const getNotice = async (study_id, notice_id) => {
   const conn = await pool.getConnection();
   try {
-    const detailSQL = `SELECT id, study_id, title, contents, pinned,
-      FROM_UNIXTIME(UNIX_TIMESTAMP(created_at),'%Y-%m-%d %H:%i:%s') AS created_at,
-      FROM_UNIXTIME(UNIX_TIMESTAMP(updated_at),'%Y-%m-%d %H:%i:%s') AS updated_at 
-      FROM notice 
-      WHERE study_id = ? AND id = ?`;
+    const detailSQL = `
+      SELECT
+        id, study_id, title, contents, pinned,
+        DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at,
+        DATE_FORMAT(updated_at, "%Y-%c-%d %H:%i:%s") updated_at
+      FROM
+        notice
+      WHERE
+        study_id = ? AND id = ?`;
     const [detailRows] = await conn.query(detailSQL, [study_id, notice_id]);
     return detailRows;
   } catch (err) {

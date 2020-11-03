@@ -1,6 +1,6 @@
 const applyDao = require('../dao/apply');
 
-const { rowSplit } = require('../utils/database');
+const { rowSplit, toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 
 const createApply = async ({ study_id }, createData) => {
@@ -12,10 +12,11 @@ const createApply = async ({ study_id }, createData) => {
 };
 
 const applyDetail = async ({ study_id, apply_id }) => {
-  const applyData = await applyDao.applyDetail(study_id, apply_id);
+  let applyData = await applyDao.applyDetail(study_id, apply_id);
   if (applyData.length === 0) {
     throw customError(404, '조회된 신청내역이 없습니다');
   }
+  applyData = toBoolean(applyData, ['rejected_status']);
   return rowSplit(applyData, ['project']);
 };
 

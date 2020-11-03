@@ -1,5 +1,6 @@
 const noticeDao = require('../dao/notice');
 
+const { toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 
 const createNotice = async ({ study_id }, createData) => {
@@ -15,19 +16,20 @@ const noticeDetail = async ({ study_id, notice_id }) => {
   if (noticeData.length === 0) {
     throw customError(404, '조회된 공지사항이 없습니다');
   }
-  return noticeData[0];
+  noticeRows = toBoolean(noticeRows, ['pinned']);
+  return noticeRows[0];
 };
 
 const noticeUpdate = async ({ study_id, notice_id }, updateData) => {
-  const rows = await noticeDao.noticeUpdate(study_id, notice_id, updateData);
-  if (rows.affectedRows === 0) {
+  const updateRows = await noticeDao.noticeUpdate(study_id, notice_id, updateData);
+  if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 공지사항이 없습니다');
   }
 };
 
 const noticeDelete = async ({ study_id, notice_id }) => {
-  const rows = await noticeDao.noticeDelete(study_id, notice_id);
-  if (rows.affectedRows === 0) {
+  const deleteRows = await noticeDao.noticeDelete(study_id, notice_id);
+  if (deleteRows.affectedRows === 0) {
     throw customError(404, '조회된 공지사항이 없습니다');
   }
 };

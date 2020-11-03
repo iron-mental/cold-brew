@@ -1,4 +1,5 @@
 const firebase = require('firebase');
+
 const { customError } = require('../utils/errors/customError');
 
 const resetPassword = async ({ email }) => {

@@ -43,7 +43,6 @@ app.use((err, req, res, next) => {
   } else if (!err.status) {
     return res.status(500).json(err);
   }
-
   res.status(err.status);
   delete err.status;
   return res.json(err);

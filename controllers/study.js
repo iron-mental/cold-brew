@@ -2,7 +2,7 @@ const studyService = require('../services/study');
 const response = require('../utils/response');
 
 const createStudy = async (req, res) => {
-  await studyService.createStudy(req.body, req.file.path);
+  await studyService.createStudy(req.body);
   response(res, 201, '스터디 생성 완료');
 };
 

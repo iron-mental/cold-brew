@@ -2,26 +2,27 @@ const fs = require('fs');
 const path = require('path');
 
 const studyDao = require('../dao/study');
-const { rowSplit } = require('../utils/database');
+const { rowSplit, toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 
 // 스터디 생성
-const createStudy = async (createData, filePath) => {
+const createStudy = async (createData) => {
   const { user_id } = createData;
   delete createData.user_id;
   await studyDao.createStudy(user_id, createData);
 };
 
 const studyDetail = async ({ study_id }) => {
-  const studyData = await studyDao.getStudy(study_id);
-  if (!studyData) {
+  let studyRows = await studyDao.getStudy(study_id);
+  if (studyRows.length === 0) {
     throw customError(404, '조회된 스터디가 없습니다');
   }
   // 권한확인 -> 나중에 jwt 도입 후 인증처리할것 (dao자체는 잘 작동함)
-  // if (user_id === studyData.leader) {
-  // studyData.apply = await studyDao.getApplyList(study_id);
+  // if (user_id === studyRows.leader) {
+  // studyRows.apply = await studyDao.getApplyList(study_id);
   // }
-  return rowSplit(studyData, ['participate', 'notice']);
+  studyRows = toBoolean(studyRows, ['Npinned', 'Pleader']);
+  return rowSplit(studyRows, ['participate', 'notice']);
 };
 
 const studyUpdate = async ({ study_id }, updateData, filedata) => {
@@ -54,18 +55,18 @@ const myStudy = async ({ id }) => {
 };
 
 const studyList = async ({ category, sort }) => {
-  let data = '';
+  let studyListRows = '';
   if (sort === 'new') {
-    data = await studyDao.getStudyListByNew(category);
+    studyListRows = await studyDao.getStudyListByNew(category);
   } else if (sort === 'length') {
-    // data = await studyDao.getStudyListByLength(category);
+    // studyListRows = await studyDao.getStudyListByLength(category);
   } else {
     throw customError(404, 'sort 입력이 잘못되었습니다');
   }
-  if (data.length === 0) {
+  if (studyListRows.length === 0) {
     throw customError(404, '해당 카테고리에 스터디가 없습니다');
   }
-  return data;
+  return studyListRows;
 };
 
 module.exports = { createStudy, studyDetail, studyUpdate, myStudy, studyList };

@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const userDao = require('../dao/user');
-const { rowSplit } = require('../utils/database');
+const { rowSplit, toBoolean } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
 const { customError } = require('../utils/errors/customError');
 
@@ -32,7 +32,6 @@ const signup = async ({ email, password, nickname }) => {
   if (emailCheckRows.length > 0) {
     throw customError(400, '중복된 이메일이 존재합니다');
   }
-
   const createRows = await userDao.signup(email, password, nickname);
   if (createRows.affectedRows === 0) {
     throw customError(400, '회원가입에 실패했습니다'); // 실패 할게 있나? -> 제거 고민중
@@ -41,21 +40,22 @@ const signup = async ({ email, password, nickname }) => {
 
 // 로그인
 const login = async ({ email, password }) => {
-  const id = await userDao.login(email, password);
-  if (id.length === 0) {
+  const idRows = await userDao.login(email, password);
+  if (idRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
   // JwT 도입시 토큰을 발급할 부분 + 나중엔 login API에서 토큰을 내려줄 생각이라 임시로 user_id를 리턴합니다
-  return id[0];
+  return idRows[0];
 };
 
 // 상세 조회
 const userDetail = async ({ id }) => {
-  const userData = await userDao.userDetail(id);
-  if (userData.length === 0) {
+  let userDataRows = await userDao.userDetail(id);
+  if (userDataRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-  return rowSplit(userData, ['project']);
+  userDataRows = toBoolean(userDataRows, ['email_verified']);
+  return rowSplit(userDataRows, ['project']);
 };
 
 // 수정 - (이메일, 비밀번호 제외)
@@ -67,9 +67,7 @@ const userUpdate = async ({ id }, updateData, filedata) => {
     }
   }
   if (filedata) {
-    console.log('이미지 있음');
     const { destination, uploadedFile, path: _tmpPath } = filedata;
-
     const previousPath = await userDao.getImage(id);
     const updateRows = await userDao.userUpdate(id, updateData);
     if (updateRows.affectedRows === 0) {
