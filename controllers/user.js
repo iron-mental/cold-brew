@@ -1,55 +1,49 @@
-const path = require('path');
-
 const userService = require('../services/user');
-
-const USER_PATH = '/images/user';
+const response = require('../utils/response');
 
 const checkNickname = async (req, res) => {
   await userService.checkNickname(req.params);
-  return res.status(200).json({ message: '사용 가능한 닉네임입니다' });
+  response(res, 200, '사용 가능한 닉네임입니다');
 };
 
 const checkEmail = async (req, res) => {
   await userService.checkEmail(req.params);
-  return res.status(200).json({ message: '사용 가능합니다' });
+  response(res, 200, '사용 가능한 이메일입니다');
 };
 
 const signup = async (req, res) => {
   await userService.signup(req.body);
-  return res.status(201).json({ message: '회원가입 되었습니다' });
+  response(res, 201, '회원가입 완료');
 };
 
 const login = async (req, res) => {
   const id = await userService.login(req.body);
-  return res.status(200).json({ message: '로그인 성공', id }); // 추후 jwt 적용하면 수정
+  response(res, 201, id);
 };
 
 const userDetail = async (req, res) => {
   const userData = await userService.userDetail(req.params);
-  return res.status(200).json(userData);
+  response(res, 201, userData);
 };
 
 const userUpdate = async (req, res) => {
-  if (req.file) {
-    req.body.image = path.join(USER_PATH, req.file.uploadedFile.basename);
-  }
   await userService.userUpdate(req.params, req.body, req.file);
-  return res.status(200).json({ message: '수정 되었습니다' });
+  response(res, 200, '회원정보 수정 완료');
 };
 
 const withdraw = async (req, res) => {
   await userService.withdraw(req.params, req.body);
-  return res.status(200).json({ message: '삭제되었습니다' });
+  response(res, 200, '회원 탈퇴 완료');
 };
 
 const emailVerification = async (req, res) => {
   await userService.emailVerification(req.params);
-  return res.status(200).json({ message: '이메일 전송에 성공했습니다' });
+  response(res, 200, '인증 이메일 발송');
 };
 
 const emailVerificationProcess = async (req, res) => {
   await userService.emailVerificationProcess(req.params);
-  return res.status(200).send(`${req.params.email}님의 이메일인증이 완료되었습니다`);
+  response(res, 200, `${req.params.email}님의 이메일인증이 완료되었습니다`);
 };
 
 module.exports = {

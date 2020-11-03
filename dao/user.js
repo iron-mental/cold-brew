@@ -10,7 +10,7 @@ const checkNickname = async (nickname) => {
     const [checkRows] = await conn.query(checkSql, { nickname });
     return checkRows;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -23,7 +23,7 @@ const checkEmail = async (email) => {
     const [checkRows] = await conn.query(checkSql, { email });
     return checkRows;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -37,7 +37,7 @@ const signup = async (email, password, nickname) => {
       return userCredential.user;
     })
     .catch((error) => {
-      throw { status: 400, message: 'Firebase Error: ' + error.code };
+      throw customError(400, `Firebase Error: ${error.code}`);
     });
 
   const conn = await pool.getConnection();
@@ -46,7 +46,7 @@ const signup = async (email, password, nickname) => {
     const [rows] = await conn.query(sql, { uid, email, email_verified: emailVerified, nickname });
     return rows;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -60,7 +60,7 @@ const login = async (email, password) => {
       return userCredential.user;
     })
     .catch((error) => {
-      throw { status: 400, message: 'Firebase Error: ' + error.code };
+      throw customError(500, `Firebase Error: ${error.code}`);
     });
 
   const conn = await pool.getConnection();
@@ -69,7 +69,7 @@ const login = async (email, password) => {
     const [rows] = await conn.query(userSql, { uid });
     return rows;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -92,8 +92,7 @@ const userDetail = async (id) => {
     const [userData] = await conn.query(userSql, id);
     return userData;
   } catch (err) {
-    console.log('err: ', err);
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -106,7 +105,7 @@ const getImage = async (id) => {
     const [imageRows] = await conn.query(imageSQL, { id });
     return imageRows;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -119,7 +118,7 @@ const userUpdate = async (id, updateData) => {
     const [updateRows] = await conn.query(updateSql, [updateData, { id }]);
     return updateRows;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -132,10 +131,7 @@ const withdraw = async (id, email, password) => {
     const withdrawSql = `DELETE FROM user WHERE ? AND ?`;
     const [withdrawRows] = await conn.query(withdrawSql, [{ id }, { email }]);
     if (!withdrawRows.affectedRows) {
-      throw {
-        status: 404,
-        message: '조회된 사용자가 없습니다',
-      };
+      throw customError(400, '조회된 사용자가 없습니다');
     }
     await firebase
       .auth()
@@ -145,7 +141,7 @@ const withdraw = async (id, email, password) => {
         user.delete();
       })
       .catch(function (error) {
-        throw { status: 400, message: 'Firebase Error: ' + error.code };
+        throw customError(400, `Firebase Error: ${error.code}`);
       });
     await conn.commit();
     return withdrawRows;
@@ -154,9 +150,9 @@ const withdraw = async (id, email, password) => {
     if (err.status) {
       throw err;
     } else if (err.errno === 1451) {
-      throw { status: 400, message: '해당 사용자에게 종속되어있는 데이터가 존재합니다' };
+      throw customError(400, '해당 사용자에게 종속되어있는 데이터가 존재합니다');
     }
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -169,7 +165,7 @@ const verifiedCheck = async (email) => {
     const [checkRows] = await conn.query(checkSql, { email });
     return checkRows;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -191,11 +187,10 @@ const emailVerificationProcess = async (email) => {
         return updateRows;
       })
       .catch((err) => {
-        throw { status: 500, message: err };
+        throw customError(400, `Firebase Error: ${error.code}`);
       });
     return result;
   } catch (err) {
-    console.log('err: ', err);
     if (err.status) {
       throw err;
     }

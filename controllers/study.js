@@ -1,35 +1,28 @@
-const path = require('path');
-
 const studyService = require('../services/study');
-
-const STUDY_PATH = '/images/study';
+const response = require('../utils/response');
 
 const createStudy = async (req, res) => {
-  req.body.image = path.join(STUDY_PATH, req.file.uploadedFile.basename);
-  await studyService.createStudy(req.body, req.file.path);
-  return res.status(201).json({ message: '스터디 생성 성공' });
+  await studyService.createStudy(req.body);
+  response(res, 201, '스터디 생성 완료');
 };
 
 const studyDetail = async (req, res) => {
-  const data = await studyService.studyDetail(req.params);
-  return res.status(200).json(data);
+  const studyData = await studyService.studyDetail(req.params);
+  response(res, 200, studyData);
 };
 
 const studyUpdate = async (req, res) => {
-  if (req.file) {
-    req.body.image = path.join(STUDY_PATH, req.file.uploadedFile.basename);
-  }
   await studyService.studyUpdate(req.params, req.body, req.file);
-  return res.status(200).json({ message: '스터디 수정 성공' });
+  response(res, 200, '스터디 수정 완료');
 };
 
 const myStudy = async (req, res) => {
-  const data = await studyService.myStudy(req.params);
-  return res.status(200).json(data);
+  const studyList = await studyService.myStudy(req.params);
+  response(res, 200, studyList);
 };
 
 const studyList = async (req, res) => {
-  const data = await studyService.studyList(req.params);
-  return res.status(200).json(data);
+  const studyList = await studyService.studyList(req.params);
+  response(res, 200, studyList);
 };
 module.exports = { createStudy, studyDetail, studyUpdate, myStudy, studyList };

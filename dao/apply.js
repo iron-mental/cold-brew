@@ -1,4 +1,5 @@
 const pool = require('./db');
+const { customError } = require('../utils/errors/customError');
 
 const createApply = async (createData) => {
   const conn = await pool.getConnection();
@@ -7,7 +8,7 @@ const createApply = async (createData) => {
     const [createRows] = await conn.query(createSQL, createData);
     return createRows;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -34,7 +35,7 @@ const applyDetail = async (study_id, apply_id) => {
     const [detailRows] = await conn.query(detailSQL, [study_id, apply_id]);
     return detailRows;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -47,7 +48,7 @@ const applyUpdate = async (study_id, apply_id, updateData) => {
     const [updateRows] = await conn.query(updateSQL, [updateData, study_id, apply_id]);
     return updateRows;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -60,7 +61,7 @@ const applyDelete = async (study_id, apply_id) => {
     const [deleteRows] = await conn.query(deleteSQL, [study_id, apply_id]);
     return deleteRows;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }

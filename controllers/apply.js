@@ -1,23 +1,24 @@
 const applyService = require('../services/apply');
+const response = require('../utils/response');
 
 const createApply = async (req, res) => {
   await applyService.createApply(req.params, req.body);
-  return res.status(201).json({ message: '스터디 신청 완료' });
+  response(res, 201, '가입 신청 완료');
 };
 
 const applyDetail = async (req, res) => {
   const applyData = await applyService.applyDetail(req.params);
-  return res.status(200).json(applyData);
+  response(res, 200, applyData);
 };
 
 const applyUpdate = async (req, res) => {
   await applyService.applyUpdate(req.params, req.body);
-  return res.status(200).json({ message: '가입신청 수정 성공' });
+  response(res, 200, '가입 수정 완료');
 };
 
 const applyDelete = async (req, res) => {
   await applyService.applyDelete(req.params);
-  return res.status(200).json({ message: '삭제 성공' });
+  response(res, 200, '가입 삭제 완료');
 };
 
 module.exports = {

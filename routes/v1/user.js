@@ -22,6 +22,6 @@ router.delete('/:id', userValid.withdraw, asyncWrap(userController.withdraw)); /
 router.get('/emailVerify/:email', userValid.emailVerification, asyncWrap(userController.emailVerification)); // 이메일 인증 요청
 router.get('/emailVerify-process/:email', userValid.emailVerificationProcess, asyncWrap(userController.emailVerificationProcess)); // 이메일 인증 요청
 
-router.get('/:user_id/study', studyValid.myStudy, asyncWrap(studyController.myStudy)); // 내 스터디 조회
+router.get('/:id/study', studyValid.myStudy, asyncWrap(studyController.myStudy)); // 내 스터디 조회
 
 module.exports = router;
