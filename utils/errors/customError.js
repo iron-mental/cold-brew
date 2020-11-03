@@ -1,3 +1,29 @@
+const authError = (next, err) => {
+  const result = {
+    result: false,
+    type: 'auth-error',
+    label: err.message,
+  };
+
+  switch (err.message) {
+    case 'jwt malformed':
+      result.message = `토큰 형식이 잘못되었습니다`;
+      return next(result);
+
+    case 'invalid signature':
+      result.message = `서명이 올바르지 않습니다`;
+      return next(result);
+
+    case 'jwt signature is required':
+      result.message = `서명이 필요합니다`;
+      return next(result);
+
+    case 'jwt expired':
+      result.message = `만료된 토큰입니다`;
+      return next(result);
+  }
+};
+
 const validError = (next, err) => {
   const result = {
     result: false,
@@ -12,7 +38,6 @@ const validError = (next, err) => {
 
     case 'any.required':
       result.label = err.details[0].path[0];
-      // result.message = `${err.details[0].context.label}를 입력하세요`;
       result.message = `값를 입력하세요`;
       return next(result);
 
@@ -23,7 +48,6 @@ const validError = (next, err) => {
 
     case 'string.email':
       result.label = err.details[0].context.label;
-      // result.message = `${err.details[0].context.value}는 유효하지 않은 이메일입니다`;
       result.message = `유효하지 않은 이메일입니다`;
       return next(result);
 
@@ -39,13 +63,11 @@ const validError = (next, err) => {
 
     case 'number.base':
       result.label = err.details[0].context.label;
-      // result.message = `${err.details[0].context.label}는 숫자만 입력 가능합니다`;
       result.message = `숫자만 입력 가능합니다`;
       return next(result);
 
     case 'boolean.base':
       result.label = err.details[0].context.label;
-      // result.message = `${err.details[0].context.label}는 Boolean만 입력 가능합니다.`;
       result.message = `true/false만 입력 가능합니다.`;
       return next(result);
   }
@@ -78,6 +100,7 @@ const customError = (status, message) => {
 };
 
 module.exports = {
+  authError,
   validError,
   firebaseError,
   customError,
