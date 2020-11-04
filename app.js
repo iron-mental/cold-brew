@@ -8,6 +8,7 @@ const fs = require('fs');
 
 const v1Router = require('./routes/v1');
 const config = require('./configs/config');
+const { verify } = require('./middlewares/auth');
 
 firebase.initializeApp(config.firebase);
 
@@ -22,6 +23,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(verify);
 
 app.use('/v1', v1Router);
 
