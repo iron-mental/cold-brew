@@ -4,6 +4,7 @@ const path = require('path');
 const userDao = require('../dao/user');
 const { rowSplit, toBoolean } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
+const { accessToken, refreshToken } = require('../utils/jwt.js');
 const { customError } = require('../utils/errors/customError');
 
 // 닉네임 중복체크
@@ -40,12 +41,11 @@ const signup = async ({ email, password, nickname }) => {
 
 // 로그인
 const login = async ({ email, password }) => {
-  const idRows = await userDao.login(email, password);
-  if (idRows.length === 0) {
+  const loginRows = await userDao.login(email, password);
+  if (loginRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-  // JwT 도입시 토큰을 발급할 부분 + 나중엔 login API에서 토큰을 내려줄 생각이라 임시로 user_id를 리턴합니다
-  return idRows[0];
+  return accessToken(loginRows[0]);
 };
 
 // 상세 조회
