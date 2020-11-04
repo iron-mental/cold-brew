@@ -21,6 +21,14 @@ const authError = (next, err) => {
     case 'jwt expired':
       result.message = `만료된 토큰입니다`;
       return next(result);
+
+    case 'jwt not exist':
+      result.message = `토큰이 입력되지 않았습니다`;
+      return next(result);
+
+    default:
+      result.message = `기타 에러`;
+      return next(result);
   }
 };
 
