@@ -132,6 +132,13 @@ const emailVerificationProcess = async (req, res, next) => {
   }
 };
 
+const reissuance = async (req, res, next) => {
+  if (req.headers.authorization) {
+    return next();
+  }
+  validError(next, err);
+};
+
 module.exports = {
   signup,
   login,
@@ -142,4 +149,5 @@ module.exports = {
   withdraw,
   emailVerification,
   emailVerificationProcess,
+  reissuance,
 };
