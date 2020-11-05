@@ -14,6 +14,7 @@ router.get('/check-email/:email', userValid.checkEmail, asyncWrap(userController
 
 router.post('/', userValid.signup, asyncWrap(userController.signup)); // 회원 가입
 router.post('/login', userValid.login, asyncWrap(userController.login)); // 로그인
+router.get('/reissuance', userValid.reissuance, asyncWrap(userController.reissuance)); // accessToken 재발급
 
 router.get('/:id', userValid.userDetail, asyncWrap(userController.userDetail)); // 유저 상세조회
 router.patch('/:id', imageUpload, userValid.userUpdate, asyncWrap(userController.userUpdate)); // 유저 정보수정
