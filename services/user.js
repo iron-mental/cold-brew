@@ -45,7 +45,12 @@ const login = async ({ email, password }) => {
   if (loginRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-  return accessToken(loginRows[0]);
+  const access = accessToken(loginRows[0]);
+  const refresh = refreshToken(loginRows[0]);
+  return {
+    accessToken: access,
+    refreshToken: refresh,
+  };
 };
 
 // 상세 조회
@@ -121,4 +126,5 @@ module.exports = {
   withdraw,
   emailVerification,
   emailVerificationProcess,
+  // reissuance,
 };
