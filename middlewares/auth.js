@@ -5,10 +5,8 @@ const { authError } = require('../utils/errors/customError');
 const exception = ['check-nickname', 'check-email', 'login', 'reset-password', 'reissuance'];
 
 const verify = async (req, res, next) => {
-  const path = req.url.split('/')[3];
-
   // 토큰이 없어도 되는 APIs 확인
-  if (exception.indexOf(path) > -1 || req.url === '/v1/user') {
+  if (exception.indexOf(req.url.split('/')[3]) > -1 || req.url === '/v1/user') {
     return next();
   }
   // 토큰 유무 확인
