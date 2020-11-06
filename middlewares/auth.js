@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const { authError } = require('../utils/errors/customError');
 
-const exception = ['check-nickname', 'check-email', 'login', 'reset-password', 'reissuance'];
+const exception = ['check-nickname', 'check-email', 'login', 'reset-password'];
 
 const verify = async (req, res, next) => {
   // 토큰이 없어도 되는 APIs 확인
