@@ -10,20 +10,20 @@ const accessToken = ({ id, email }) => {
   };
   const options = {
     expiresIn: 60 * 15, // 15분
-    subject: 'userInfo-Access',
+    subject: 'userInfo-access',
     issuer: process.env.JWT_issuer,
   };
   return jwt.sign(data, secretKey, options);
 };
 
-const refreshToken = (user_id, email) => {
+const refreshToken = ({ id, email }) => {
   const data = {
-    aud: user_id,
+    aud: id,
     email,
   };
   const options = {
     expiresIn: '15d', // 15일
-    subject: 'userInfo-Refresh',
+    subject: 'userInfo-refresh',
     issuer: process.env.JWT_issuer,
   };
   return jwt.sign(data, secretKey, options);
