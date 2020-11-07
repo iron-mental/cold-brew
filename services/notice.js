@@ -16,7 +16,7 @@ const noticeDetail = async ({ study_id, notice_id }) => {
   if (noticeData.length === 0) {
     throw customError(404, '조회된 공지사항이 없습니다');
   }
-  noticeRows = toBoolean(noticeRows, ['pinned']);
+  noticeRows = toBoolean(noticeData, ['pinned']);
   return noticeRows[0];
 };
 
