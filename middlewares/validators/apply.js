@@ -38,7 +38,6 @@ const applyUpdate = async (req, res, next) => {
   });
   const bodySchema = Joi.object({
     message: Joi.string().required().max(100),
-    rejected_status: Joi.boolean(),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);

@@ -1,6 +1,30 @@
 const Joi = require('joi');
 const { validError } = require('../../utils/errors/customError');
 
+const checkNickname = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    nickname: Joi.string().required().min(2).max(8),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
+const checkEmail = async (req, res, next) => {
+  const querySchema = Joi.object({
+    email: Joi.string().email().required(),
+  });
+  try {
+    await querySchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
 const signup = async (req, res, next) => {
   const bodySchema = Joi.object({
     email: Joi.string().email().required(),
@@ -49,7 +73,6 @@ const userUpdate = async (req, res, next) => {
     nickname: Joi.string().min(2).max(8),
     introduce: Joi.string().max(200),
     location: Joi.string(),
-    location_last: Joi.string(),
     career_title: Joi.string().min(2).max(20),
     career_contents: Joi.string().max(200),
     sns_github: Joi.string().max(40),
@@ -59,30 +82,6 @@ const userUpdate = async (req, res, next) => {
   try {
     await paramSchema.validateAsync(req.params);
     await bodySchema.validateAsync(req.body);
-    next();
-  } catch (err) {
-    validError(next, err);
-  }
-};
-
-const checkNickname = async (req, res, next) => {
-  const paramSchema = Joi.object({
-    nickname: Joi.string().required().min(2).max(8),
-  });
-  try {
-    await paramSchema.validateAsync(req.params);
-    next();
-  } catch (err) {
-    validError(next, err);
-  }
-};
-
-const checkEmail = async (req, res, next) => {
-  const querySchema = Joi.object({
-    email: Joi.string().email().required(),
-  });
-  try {
-    await querySchema.validateAsync(req.params);
     next();
   } catch (err) {
     validError(next, err);
