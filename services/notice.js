@@ -12,11 +12,11 @@ const createNotice = async ({ study_id }, createData) => {
 };
 
 const noticeDetail = async ({ study_id, notice_id }) => {
-  const noticeData = await noticeDao.getNotice(study_id, notice_id);
-  if (noticeData.length === 0) {
+  let noticeRows = await noticeDao.getNotice(study_id, notice_id);
+  if (noticeRows.length === 0) {
     throw customError(404, '조회된 공지사항이 없습니다');
   }
-  noticeRows = toBoolean(noticeData, ['pinned']);
+  noticeRows = toBoolean(noticeRows, ['pinned']);
   return noticeRows[0];
 };
 
@@ -34,9 +34,19 @@ const noticeDelete = async ({ study_id, notice_id }) => {
   }
 };
 
+const noticeList = async ({ study_id }) => {
+  let noticeRows = await noticeDao.getNoticeList(study_id);
+  if (noticeRows.length === 0) {
+    throw customError(404, '조회된 공지사항이 없습니다');
+  }
+  noticeRows = toBoolean(noticeRows, ['pinned']);
+  return noticeRows;
+};
+
 module.exports = {
   createNotice,
   noticeDetail,
   noticeUpdate,
   noticeDelete,
+  noticeList,
 };

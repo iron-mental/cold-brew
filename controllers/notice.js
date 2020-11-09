@@ -21,9 +21,15 @@ const noticeDelete = async (req, res) => {
   response(res, 200, '공지사항 삭제 완료');
 };
 
+const noticeList = async (req, res) => {
+  const noticeList = await noticeService.noticeList(req.params);
+  response(res, 200, noticeList);
+};
+
 module.exports = {
   createNotice,
   noticeDetail,
   noticeUpdate,
   noticeDelete,
+  noticeList,
 };

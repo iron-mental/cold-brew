@@ -61,9 +61,28 @@ const noticeDelete = async (study_id, notice_id) => {
   }
 };
 
+const getNoticeList = async (study_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const deleteSQL = `
+      SELECT id, title, contents, pinned,
+        DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at,
+        DATE_FORMAT(updated_at, "%Y-%c-%d %H:%i:%s") updated_at
+      FROM notice
+      WHERE ?`;
+    const [deleteRows] = await conn.query(deleteSQL, { study_id });
+    return deleteRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   createNotice,
   getNotice,
   noticeUpdate,
   noticeDelete,
+  getNoticeList,
 };
