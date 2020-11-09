@@ -94,24 +94,6 @@ const userDetail = async (id) => {
   }
 };
 
-const getProjects = async (id) => {
-  const conn = await pool.getConnection();
-  try {
-    const projectSql = `
-      SELECT
-        id, title, contents, sns_github, sns_appstore, sns_playstore,
-        DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") create_at
-      FROM project
-      WHERE user_id = ?`;
-    const [projectData] = await conn.query(projectSql, id);
-    return projectData;
-  } catch (err) {
-    throw customError(500, err.sqlMessage);
-  } finally {
-    await conn.release();
-  }
-};
-
 const getImage = async (id) => {
   const conn = await pool.getConnection();
   try {
@@ -218,7 +200,6 @@ module.exports = {
   signup,
   login,
   userDetail,
-  getProjects,
   getImage,
   userUpdate,
   checkNickname,

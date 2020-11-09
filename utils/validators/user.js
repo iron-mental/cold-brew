@@ -1,4 +1,5 @@
 const Joi = require('joi');
+
 const { validError } = require('../errors/customError');
 
 const checkNickname = async (req, res, next) => {
@@ -53,18 +54,6 @@ const login = async (req, res, next) => {
 };
 
 const userDetail = async (req, res, next) => {
-  const paramSchema = Joi.object({
-    id: Joi.number().required(),
-  });
-  try {
-    await paramSchema.validateAsync(req.params);
-    next();
-  } catch (err) {
-    validError(next, err);
-  }
-};
-
-const userProject = async (req, res, next) => {
   const paramSchema = Joi.object({
     id: Joi.number().required(),
   });
@@ -150,7 +139,6 @@ module.exports = {
   signup,
   login,
   userDetail,
-  userProject,
   userUpdate,
   checkNickname,
   checkEmail,

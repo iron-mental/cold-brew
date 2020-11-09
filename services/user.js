@@ -57,15 +57,6 @@ const userDetail = async ({ id }) => {
   return toBoolean(userDataRows, ['email_verified']);
 };
 
-// 프로젝트 목록 조회
-const userProject = async ({ id }) => {
-  let projectRows = await userDao.getProjects(id);
-  if (projectRows.length === 0) {
-    throw customError(404, '조회된 결과가 없습니다');
-  }
-  return projectRows;
-};
-
 // 수정 - (이메일, 비밀번호 제외)
 const userUpdate = async ({ id }, updateData, filedata) => {
   if (updateData.nickname) {
@@ -123,7 +114,6 @@ module.exports = {
   signup,
   login,
   userDetail,
-  userProject,
   userUpdate,
   checkNickname,
   checkEmail,
