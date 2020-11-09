@@ -81,7 +81,7 @@ const userDetail = async (id) => {
   try {
     const userSql = `
       SELECT 
-        id, nickname, email, image, introduce, location, career_title, career_contents, sns_github, sns_linkedin, sns_web, email_verified,
+        id, nickname, email, image, introduce, CONCAT(region_1depth_name, ' ', region_2depth_name) address, career_title, career_contents, sns_github, sns_linkedin, sns_web, email_verified,
         DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at
       FROM user 
       WHERE ?`;
