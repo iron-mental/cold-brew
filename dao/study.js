@@ -1,4 +1,5 @@
 const pool = require('./db');
+const { customError } = require('../utils/errors/customError');
 
 const createStudy = async (user_id, createData) => {
   const conn = await pool.getConnection();
@@ -16,6 +17,9 @@ const createStudy = async (user_id, createData) => {
     return createRows;
   } catch (err) {
     await conn.rollback();
+    if (err.errno === 1452) {
+      throw customError(500, '조회된 유저가 없습니다');
+    }
     throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
