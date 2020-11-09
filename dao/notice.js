@@ -1,4 +1,5 @@
 const pool = require('./db');
+const { customError } = require('../utils/errors/customError');
 
 const createNotice = async (createData) => {
   const conn = await pool.getConnection();
