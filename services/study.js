@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const studyDao = require('../dao/study');
-const { rowSplit, toBoolean, locationMerge } = require('../utils/query');
+const { rowSplit, toBoolean, locationMerge, cutId } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 
 // 스터디 생성
@@ -68,7 +68,20 @@ const studyList = async ({ category, sort }) => {
   if (studyListRows.length === 0) {
     throw customError(404, '해당 카테고리에 스터디가 없습니다');
   }
-  return studyListRows;
+
+  return cutId(studyListRows);
 };
 
-module.exports = { createStudy, studyDetail, studyUpdate, myStudy, studyList };
+const studyList_paging = async ({ idList }) => {
+  const StudyList = await studyDao.studyList_paging(idList);
+  return StudyList;
+};
+
+module.exports = {
+  createStudy,
+  studyDetail,
+  studyUpdate,
+  myStudy,
+  studyList,
+  studyList_paging,
+};

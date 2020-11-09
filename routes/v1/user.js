@@ -25,7 +25,7 @@ router.post('/', userValid.signup, asyncWrap(userController.signup)); // 회원 
 router.post('/login', userValid.login, asyncWrap(userController.login)); // 로그인
 
 router.get('/:id', userValid.userDetail, asyncWrap(userController.userDetail)); // 유저 상세조회
-router.patch('/:id', imageUpload, userValid.userUpdate, asyncWrap(userController.userUpdate)); // 유저 정보수정
+router.put('/:id', imageUpload, userValid.userUpdate, asyncWrap(userController.userUpdate)); // 유저 정보수정
 router.delete('/:id', userValid.withdraw, asyncWrap(userController.withdraw)); // 회원 탈퇴
 
 router.get('/:id/study', studyValid.myStudy, asyncWrap(studyController.myStudy)); // 내 스터디 조회
