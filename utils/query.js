@@ -1,26 +1,26 @@
 const rowSplit = (rows, tags) => {
   // 결과, 키 목록, 임시 저장 모델, 저장된 id
-  let [result, keys, tmpModel, insertedId] = [{}, {}, {}, {}];
+  let [result, keys, tempModel, insertedId] = [{}, {}, {}, {}];
 
   // 사전 작업
   tags.forEach((tag) => {
     result[tag] = [];
-    tmpModel[tag] = {};
+    tempModel[tag] = {};
     insertedId[tag] = [];
     keys[tag[0].toUpperCase()] = tag;
   });
 
   rows.forEach((row, idx) => {
-    let tmp = tmpModel;
+    let temp = tempModel;
     for (const [key, value] of Object.entries(row)) {
       if (idx === 0 && !(key[0] in keys)) {
         result[key] = row[key];
       } else if (key[0] in keys) {
-        tmp[keys[key[0]]][key.slice(1)] = value;
+        temp[keys[key[0]]][key.slice(1)] = value;
       }
     }
 
-    for (const [key, value] of Object.entries(tmp)) {
+    for (const [key, value] of Object.entries(temp)) {
       if (insertedId[key].indexOf(value.id) === -1 && Object.keys(value).length && value.id) {
         insertedId[key].push(value.id);
         result[key].push(Object.assign({}, value));
@@ -31,12 +31,23 @@ const rowSplit = (rows, tags) => {
 };
 
 const toBoolean = (rows, tags) => {
-  for (row of rows) {
-    for (tag of tags) {
+  for (const row of rows) {
+    for (const tag of tags) {
       row[tag] = Boolean(row[tag]);
     }
   }
   return rows;
 };
 
-module.exports = { rowSplit, toBoolean };
+const locationMerge = (row) => {
+  row.location = {};
+  for (const [key, value] of Object.entries(row)) {
+    if (key[0] === 'L') {
+      row.location[key.slice(1)] = value;
+      delete row[key];
+    }
+  }
+  return row;
+};
+
+module.exports = { rowSplit, toBoolean, locationMerge };
