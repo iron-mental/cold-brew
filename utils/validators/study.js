@@ -75,12 +75,12 @@ const myStudy = async (req, res, next) => {
 };
 
 const studyList = async (req, res, next) => {
-  const paramSchema = Joi.object({
+  const querySchema = Joi.object({
     category: Joi.string().required(),
     sort: Joi.string().required(),
   });
   try {
-    await paramSchema.validateAsync(req.params);
+    await querySchema.validateAsync(req.query);
     next();
   } catch (err) {
     validError(next, err);

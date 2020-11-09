@@ -22,7 +22,7 @@ const myStudy = async (req, res) => {
 };
 
 const studyList = async (req, res) => {
-  const studyList = await studyService.studyList(req.params);
+  const studyList = await studyService.studyList(req.query);
   response(res, 200, studyList);
 };
 module.exports = { createStudy, studyDetail, studyUpdate, myStudy, studyList };
