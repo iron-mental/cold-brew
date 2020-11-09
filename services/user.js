@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const userDao = require('../dao/user');
-const { rowSplit, toBoolean } = require('../utils/query');
+const { toBoolean } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
 const { customError } = require('../utils/errors/customError');
 
@@ -54,8 +54,16 @@ const userDetail = async ({ id }) => {
   if (userDataRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-  userDataRows = toBoolean(userDataRows, ['email_verified']);
-  return rowSplit(userDataRows, ['project']);
+  return toBoolean(userDataRows, ['email_verified']);
+};
+
+// 프로젝트 목록 조회
+const userProject = async ({ id }) => {
+  let projectRows = await userDao.getProjects(id);
+  if (projectRows.length === 0) {
+    throw customError(404, '조회된 결과가 없습니다');
+  }
+  return projectRows;
 };
 
 // 수정 - (이메일, 비밀번호 제외)
@@ -115,6 +123,7 @@ module.exports = {
   signup,
   login,
   userDetail,
+  userProject,
   userUpdate,
   checkNickname,
   checkEmail,

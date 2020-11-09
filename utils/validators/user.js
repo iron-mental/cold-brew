@@ -64,6 +64,18 @@ const userDetail = async (req, res, next) => {
   }
 };
 
+const userProject = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    id: Joi.number().required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
 const userUpdate = async (req, res, next) => {
   const paramSchema = Joi.object({
     id: Joi.number().required(),
@@ -135,6 +147,7 @@ module.exports = {
   signup,
   login,
   userDetail,
+  userProject,
   userUpdate,
   checkNickname,
   checkEmail,

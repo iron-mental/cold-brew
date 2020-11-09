@@ -23,5 +23,6 @@ router.get('/emailVerify/:email', userValid.emailVerification, asyncWrap(userCon
 router.get('/emailVerify-process/:email', userValid.emailVerificationProcess, asyncWrap(userController.emailVerificationProcess)); // 이메일 인증 요청
 
 router.get('/:id/study', studyValid.myStudy, asyncWrap(studyController.myStudy)); // 내 스터디 조회
+router.get('/:id/project', userValid.userProject, asyncWrap(userController.userProject)); // 내 스터디 조회
 
 module.exports = router;

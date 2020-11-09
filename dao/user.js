@@ -81,17 +81,30 @@ const userDetail = async (id) => {
   try {
     const userSql = `
       SELECT 
-        u.id, u.nickname, u.email, u.image, u.introduce, u.location, u.career_title, u.career_contents, u.sns_github, u.sns_linkedin, u.sns_web, u.email_verified,
-        DATE_FORMAT(u.created_at, "%Y-%c-%d %H:%i:%s") created_at,
-        p.id Pid, p.title Ptitle, p.contents Pcontents, p.sns_github Psns_github, p.sns_appstore Psns_appstore, p.sns_playstore Psns_playstore,
-        DATE_FORMAT(p.created_at, "%Y-%c-%d %H:%i:%s") Pcreated_at
-      FROM
-        user u
-        LEFT JOIN project p
-        ON u.id = p.user_id
-      WHERE u.id = ?`;
-    const [userData] = await conn.query(userSql, id);
+        id, nickname, email, image, introduce, location, career_title, career_contents, sns_github, sns_linkedin, sns_web, email_verified,
+        DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at
+      FROM user 
+      WHERE ?`;
+    const [userData] = await conn.query(userSql, { id });
     return userData;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
+const getProjects = async (id) => {
+  const conn = await pool.getConnection();
+  try {
+    const projectSql = `
+      SELECT
+        id, title, contents, sns_github, sns_appstore, sns_playstore,
+        DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") create_at
+      FROM project
+      WHERE user_id = ?`;
+    const [projectData] = await conn.query(projectSql, id);
+    return projectData;
   } catch (err) {
     throw customError(500, err.sqlMessage);
   } finally {
@@ -205,6 +218,7 @@ module.exports = {
   signup,
   login,
   userDetail,
+  getProjects,
   getImage,
   userUpdate,
   checkNickname,

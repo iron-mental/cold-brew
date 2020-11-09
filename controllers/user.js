@@ -26,6 +26,10 @@ const userDetail = async (req, res) => {
   response(res, 201, userData);
 };
 
+const userProject = async (req, res) => {
+  const projects = await userService.userProject(req.params);
+  response(res, 201, projects);
+};
 const userUpdate = async (req, res) => {
   await userService.userUpdate(req.params, req.body, req.file);
   response(res, 200, '회원정보 수정 완료');
@@ -50,6 +54,7 @@ module.exports = {
   signup,
   login,
   userDetail,
+  userProject,
   userUpdate,
   checkNickname,
   checkEmail,
