@@ -32,14 +32,9 @@ const getStudy = async (study_id) => {
     const studySql = `
       SELECT
         s.id, s.category, s.title ,s.introduce, s.image, s.progress, s.study_time, s.location, s.location_detail, s.sns_notion, s.sns_evernote, s.sns_web,
-        n.id Nid, n.title Ntitle, n.contents Ncontents, n.pinned Npinned,
-        DATE_FORMAT(n.created_at, "%Y-%c-%d %H:%i:%s") Ncreated_at,
-        DATE_FORMAT(n.updated_at, "%Y-%c-%d %H:%i:%s") Nupdated_at,
         p.id Pid, p.user_id Puser_id, u.nickname Pnickname, u.image Pimage, p.leader Pleader
       FROM
         study s
-        LEFT JOIN notice n
-        ON s.id = n.study_id
         LEFT JOIN participate p
         ON s.id = p.study_id
         LEFT JOIN user u

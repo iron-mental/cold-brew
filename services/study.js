@@ -21,8 +21,8 @@ const studyDetail = async ({ study_id }) => {
   // if (user_id === studyRows.leader) {
   // studyRows.apply = await studyDao.getApplyList(study_id);
   // }
-  studyRows = toBoolean(studyRows, ['Npinned', 'Pleader']);
-  return rowSplit(studyRows, ['participate', 'notice']);
+  studyRows = toBoolean(studyRows, ['Pleader']);
+  return rowSplit(studyRows, ['participate']);
 };
 
 const studyUpdate = async ({ study_id }, updateData, filedata) => {
