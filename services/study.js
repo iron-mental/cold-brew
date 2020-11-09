@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const studyDao = require('../dao/study');
-const { rowSplit, toBoolean } = require('../utils/query');
+const { rowSplit, toBoolean, locationMerge } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 
 // 스터디 생성
@@ -22,7 +22,8 @@ const studyDetail = async ({ study_id }) => {
   // studyRows.apply = await studyDao.getApplyList(study_id);
   // }
   studyRows = toBoolean(studyRows, ['Pleader']);
-  return rowSplit(studyRows, ['participate']);
+  studyRows = rowSplit(studyRows, ['participate']);
+  return locationMerge(studyRows);
 };
 
 const studyUpdate = async ({ study_id }, updateData, filedata) => {

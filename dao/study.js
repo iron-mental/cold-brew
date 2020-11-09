@@ -31,7 +31,8 @@ const getStudy = async (study_id) => {
   try {
     const studySql = `
       SELECT
-        s.id, s.category, s.title ,s.introduce, s.image, s.progress, s.study_time, s.location, s.location_detail, s.sns_notion, s.sns_evernote, s.sns_web,
+        s.id, s.category, s.title ,s.introduce, s.image, s.progress, s.study_time, s.sns_notion, s.sns_evernote, s.sns_web,
+        s.latitude Llatitude, s.longitude Llongitude, s.address_name Laddress_name, s.place_name Lplace_name, s.location_detail Llocation_detail,
         p.id Pid, p.user_id Puser_id, u.nickname Pnickname, u.image Pimage, p.leader Pleader
       FROM
         study s
@@ -100,7 +101,7 @@ const getMyStudy = async (id) => {
   try {
     const myStudySql = `
       SELECT
-        s.id, s.title, s.location, s.image
+        s.id, s.title, s.region_2depth_name, s.image
       FROM
         participate p
         INNER JOIN study s
@@ -124,7 +125,7 @@ const getStudyListByNew = async (category) => {
         *, count(*) members
       FROM (
         SELECT
-          s.id, s.title, s.introduce, s.image, s.location, u.image leader_image,
+          s.id, s.title, s.introduce, s.image, s.region_2depth_name, u.image leader_image,
           DATE_FORMAT(s.created_at, '%Y-%c-%d %H:%i:%s') created_at
         FROM
           study s
