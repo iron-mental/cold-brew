@@ -13,4 +13,6 @@ const resetPassword = async (req, res, next) => {
   }
 };
 
-module.exports = { resetPassword };
+module.exports = {
+  resetPassword,
+};

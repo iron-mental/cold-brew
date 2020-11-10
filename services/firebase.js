@@ -11,4 +11,6 @@ const resetPassword = async ({ email }) => {
     });
 };
 
-module.exports = { resetPassword };
+module.exports = {
+  resetPassword,
+};

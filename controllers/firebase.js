@@ -6,4 +6,6 @@ const resetPassword = async (req, res) => {
   response(res, 200, '비밀번호 변경 메일 발송');
 };
 
-module.exports = { resetPassword };
+module.exports = {
+  resetPassword,
+};

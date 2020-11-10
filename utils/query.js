@@ -57,4 +57,9 @@ const cutId = (rows) => {
   return rows;
 };
 
-module.exports = { rowSplit, toBoolean, locationMerge, cutId };
+module.exports = {
+  rowSplit,
+  toBoolean,
+  locationMerge,
+  cutId,
+};
