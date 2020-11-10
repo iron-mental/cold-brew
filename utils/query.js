@@ -50,4 +50,11 @@ const locationMerge = (row) => {
   return row;
 };
 
-module.exports = { rowSplit, toBoolean, locationMerge };
+const cutId = (rows) => {
+  for (let idx = 10; idx < rows.length; idx++) {
+    rows[idx] = rows[idx].id;
+  }
+  return rows;
+};
+
+module.exports = { rowSplit, toBoolean, locationMerge, cutId };
