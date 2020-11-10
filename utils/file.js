@@ -33,7 +33,7 @@ const upload = multer({
   }),
   fileFilter: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
-    if (ext !== '.jpg' && ext !== '.jpeg') {
+    if (ext !== '.jpg' && ext !== '.jpeg' && ext !== '.png') {
       cb({ status: 422, message: `File extension Error: [${ext}] is not allow` }, false);
     } else {
       cb(null, true);
