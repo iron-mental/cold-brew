@@ -174,6 +174,37 @@ const getStudyListByNew = async (category) => {
 //   }
 // };
 
+const studyPaging = async (studyKeys) => {
+  const params = studyKeys.concat(studyKeys);
+  const conn = await pool.getConnection();
+  try {
+    const listSql = `
+    SELECT
+        *, count(*) members
+      FROM (
+        SELECT
+          s.id, s.title, s.introduce, s.image, s.region_2depth_name, u.image leader_image,
+          DATE_FORMAT(s.created_at, '%Y-%c-%d %H:%i:%s') created_at
+        FROM
+          study s
+          LEFT JOIN participate p
+          ON s.id = p.study_id
+          LEFT JOIN user u
+          ON u.id = p.user_id
+        WHERE s.id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) T
+      GROUP BY id
+      ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const [listRows] = await conn.query(listSql, params);
+    return listRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   createStudy,
   getStudy,
@@ -183,4 +214,5 @@ module.exports = {
   getMyStudy,
   getStudyListByNew,
   // getStudyListByLength,
+  studyPaging,
 };

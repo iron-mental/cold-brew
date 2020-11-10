@@ -72,9 +72,9 @@ const studyList = async ({ category, sort }) => {
   return cutId(studyListRows);
 };
 
-const studyList_paging = async ({ idList }) => {
-  const StudyList = await studyDao.studyList_paging(idList);
-  return StudyList;
+const studyPaging = async (studyKeys) => {
+  const studyList = await studyDao.studyPaging(studyKeys);
+  return studyList;
 };
 
 module.exports = {
@@ -83,5 +83,5 @@ module.exports = {
   studyUpdate,
   myStudy,
   studyList,
-  studyList_paging,
+  studyPaging,
 };

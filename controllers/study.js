@@ -25,4 +25,22 @@ const studyList = async (req, res) => {
   const studyList = await studyService.studyList(req.query);
   response(res, 200, studyList);
 };
-module.exports = { createStudy, studyDetail, studyUpdate, myStudy, studyList };
+
+const studyPaging = async (req, res) => {
+  const studyKeys = Array.from({ length: 10 });
+  for (const [key, value] of Object.entries(req.query.values.split(','))) {
+    studyKeys[key] = value;
+  }
+
+  const studyList = await studyService.studyPaging(studyKeys);
+  response(res, 200, studyList);
+};
+
+module.exports = {
+  createStudy,
+  studyDetail,
+  studyUpdate,
+  myStudy,
+  studyList,
+  studyPaging,
+};

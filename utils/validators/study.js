@@ -96,10 +96,24 @@ const studyList = async (req, res, next) => {
     validError(next, err);
   }
 };
+
+const studyPaging = async (req, res, next) => {
+  const querySchema = Joi.object({
+    values: Joi.string().min(1).required(),
+  });
+  try {
+    await querySchema.validateAsync(req.query);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
 module.exports = {
   createStudy,
   studyDetail,
   studyUpdate,
   myStudy,
   studyList,
+  studyPaging,
 };
