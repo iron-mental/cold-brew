@@ -28,7 +28,7 @@ const upload = multer({
 
       if (req.method === 'POST') {
         cb(null, file.uploadedFile.basename);
-      } else if (req.method === 'PATCH') {
+      } else if (req.method === 'PUT') {
         cb(null, file.uploadedFile._tmp);
       }
     },
