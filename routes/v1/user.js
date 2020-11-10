@@ -31,8 +31,8 @@ router.delete('/:id', userValid.withdraw, asyncWrap(userController.withdraw)); /
 router.get('/:id/study', studyValid.myStudy, asyncWrap(studyController.myStudy)); // 내 스터디 조회
 
 router.post('/:id/project', projectValid.createProject, asyncWrap(projectController.createProject)); // 프로젝트 작성
-router.get('/:id/project', projectValid.getProjectList, asyncWrap(projectController.getProjectList)); // 내 프로젝트 조회
-router.put('/:id/project/:project_id', projectValid.updateProject, asyncWrap(projectController.updateProject)); // 프로젝트 삭제
+router.get('/:id/project', projectValid.getProjectList, asyncWrap(projectController.getProjectList)); // 내 프로젝트 목록 조회
+router.put('/:id/project/:project_id', projectValid.updateProject, asyncWrap(projectController.updateProject)); // 프로젝트 수정
 router.delete('/:id/project/:project_id', projectValid.deleteProject, asyncWrap(projectController.deleteProject)); // 프로젝트 삭제
 
 module.exports = router;

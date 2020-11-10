@@ -5,7 +5,7 @@ const { customError } = require('../utils/errors/customError');
 const createProject = async (createData) => {
   // jwt 도입시 적용
   // const projectRows = await projectDao.getProjectList(req.user.user_id);
-  // if (projectRows.length >= 3) {
+  // if (projectRows.length > 2) {
   //   throw customError(400, '프로젝트는 3개까지 등록할 수 있습니다.');
   // }
   const createRows = await projectDao.createProject(createData);
