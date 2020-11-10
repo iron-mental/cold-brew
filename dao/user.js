@@ -66,7 +66,7 @@ const login = async (email, password) => {
 
   const conn = await pool.getConnection();
   try {
-    const userSql = 'SELECT id FROM user WHERE ?';
+    const userSql = 'SELECT id, email FROM user WHERE ?';
     const [rows] = await conn.query(userSql, { uid });
     return rows;
   } catch (err) {

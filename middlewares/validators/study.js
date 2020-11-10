@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { validError } = require('../errors/customError');
+const { validError } = require('../../utils/errors/customError');
 
 const createStudy = async (req, res, next) => {
   const bodySchema = Joi.object({

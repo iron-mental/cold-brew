@@ -8,6 +8,7 @@ const fs = require('fs');
 
 const v1Router = require('./routes/v1');
 const config = require('./configs/config');
+const { verify } = require('./middlewares/auth');
 
 firebase.initializeApp(config.firebase);
 
@@ -22,6 +23,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(verify);
 
 app.use('/v1', v1Router);
 
@@ -40,10 +42,12 @@ app.use((err, req, res, next) => {
 
   if (err.type === 'validation-error') {
     return res.status(422).json(err);
-  } else if (!err.status) {
-    return res.status(500).json(err);
+  } else if (err.type === 'auth-error') {
+    return res.status(401).json(err);
   }
-  res.status(err.status);
+
+  const status = err.status || 500;
+  res.status(status);
   delete err.status;
   return res.json(err);
 });
