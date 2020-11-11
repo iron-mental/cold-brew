@@ -24,6 +24,9 @@ const updateProject = async ({ id, project_id }, updateData) => {
 // 프로젝트 목록 조회
 const getProjectList = async ({ id }) => {
   const projectRows = await projectDao.getProjectList(id);
+  if (deleteRows.length === 0) {
+    throw customError(404, '조회된 프로젝트가 없습니다');
+  }
   return projectRows;
 };
 
