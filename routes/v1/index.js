@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-var userRouter = require('./user');
-var studyRouter = require('./study');
-var firebaseRouter = require('./firebase');
+const userRouter = require('./user');
+const studyRouter = require('./study');
+const firebaseRouter = require('./firebase');
 
 /* routing */
 router.use('/user', userRouter);
