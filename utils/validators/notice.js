@@ -76,10 +76,23 @@ const noticeList = async (req, res, next) => {
   }
 };
 
+const noticePaging = async (req, res, next) => {
+  const querySchema = Joi.object({
+    values: Joi.string().min(1).required(),
+  });
+  try {
+    await querySchema.validateAsync(req.query);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
 module.exports = {
   createNotice,
   noticeDetail,
   noticeUpdate,
   noticeDelete,
   noticeList,
+  noticePaging,
 };

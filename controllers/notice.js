@@ -26,10 +26,21 @@ const noticeList = async (req, res) => {
   response(res, 200, noticeList);
 };
 
+const noticePaging = async (req, res) => {
+  const noticeKeys = Array.from({ length: 10 });
+  for (const [key, value] of Object.entries(req.query.values.split(','))) {
+    noticeKeys[key] = value;
+  }
+
+  const studyList = await noticeService.noticePaging(noticeKeys);
+  response(res, 200, studyList);
+};
+
 module.exports = {
   createNotice,
   noticeDetail,
   noticeUpdate,
   noticeDelete,
   noticeList,
+  noticePaging,
 };

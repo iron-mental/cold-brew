@@ -79,10 +79,32 @@ const getNoticeList = async (study_id) => {
   }
 };
 
+const noticePaging = async (noticeKeys) => {
+  const params = noticeKeys.concat(noticeKeys);
+  const conn = await pool.getConnection();
+  try {
+    const listSql = `
+    SELECT id, title, contents, pinned,
+      DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at,
+      DATE_FORMAT(updated_at, "%Y-%c-%d %H:%i:%s") updated_at
+    FROM notice
+    WHERE id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const [listRows] = await conn.query(listSql, params);
+    return listRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   createNotice,
   getNotice,
   noticeUpdate,
   noticeDelete,
   getNoticeList,
+  noticePaging,
 };

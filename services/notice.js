@@ -43,10 +43,16 @@ const noticeList = async ({ study_id }) => {
   return noticeRows;
 };
 
+const noticePaging = async (noticeKeys) => {
+  const noticeList = await noticeDao.noticePaging(noticeKeys);
+  return noticeList;
+};
+
 module.exports = {
   createNotice,
   noticeDetail,
   noticeUpdate,
   noticeDelete,
   noticeList,
+  noticePaging,
 };
