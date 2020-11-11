@@ -125,7 +125,7 @@ const getStudyListByNew = async (category) => {
         *, count(*) members
       FROM (
         SELECT
-          s.id, s.title, s.introduce, s.image, s.region_2depth_name, u.image leader_image,
+          s.id id, s.title, s.introduce, s.image, s.region_2depth_name, u.image leader_image,
           DATE_FORMAT(s.created_at, '%Y-%c-%d %H:%i:%s') created_at
         FROM
           study s
@@ -147,32 +147,45 @@ const getStudyListByNew = async (category) => {
   }
 };
 
-// 이번 주 회의때 location 논의 후 쿼리 구현 예정
-// const getStudyListByLength = async (category) => {
-//   const conn = await pool.getConnection();
-//   try {
-//     const listSql = `
-//       SELECT *, count(*) members
-//       FROM (SELECT s.id id, s.title, s.introduce, s.image, s.location, u.image leader_image,
-//       DATE_FORMAT(s.created_at, '%Y-%c-%d %H:%i:%s') created_at
-//       FROM study s
-//       LEFT JOIN participate p
-//       ON s.id = p.study_id
-//       LEFT JOIN user u
-//       ON u.id = p.user_id
-//       WHERE ?
-//       ORDER BY p.leader DESC) T
-//       GROUP BY id
-//       ORDER BY created_at DESC
-//       `;
-//     const [listRows] = await conn.query(listSql, { category });
-//     return listRows;
-//   } catch (err) {
-// throw customError(500, err.sqlMessage);
-//   } finally {
-//     await conn.release();
-//   }
-// };
+const getStudyListByLength = async (category) => {
+  const user_id = 1;
+  const conn = await pool.getConnection();
+  try {
+    const listSql = `
+      SELECT
+        @lat:= latitude latitude,
+        @long:= longitude longitude,
+        @2depth:= region_2depth_name region_2depth_name
+      FROM user
+      WHERE id = ?;
+
+      SELECT
+        *, count(*) members
+      FROM (
+        SELECT
+          s.id id, s.title, s.introduce, s.image, s.region_2depth_name, u.image leader_image,
+          DATE_FORMAT(s.created_at, '%Y-%c-%d %H:%i:%s') created_at,
+          (6371*acos(cos(radians(@lat))*cos(radians(s.latitude))*cos(radians(s.longitude)
+          -radians(@long))+sin(radians(@lat))*sin(radians(s.latitude)))) AS distance
+        FROM
+          study s
+          LEFT JOIN participate p
+          ON s.id = p.study_id
+          LEFT JOIN user u
+          ON u.id = p.user_id
+        WHERE ?
+        ORDER BY p.leader DESC ) T
+      GROUP BY id 
+      ORDER BY distance ASC;
+    `;
+    const [listRows] = await conn.query(listSql, [user_id, { category }]);
+    return listRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
 
 const studyPaging = async (studyKeys) => {
   const params = studyKeys.concat(studyKeys);
@@ -213,6 +226,6 @@ module.exports = {
   studyUpdate,
   getMyStudy,
   getStudyListByNew,
-  // getStudyListByLength,
+  getStudyListByLength,
   studyPaging,
 };

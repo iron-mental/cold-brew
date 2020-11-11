@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const studyDao = require('../dao/study');
-const { rowSplit, toBoolean, locationMerge, cutId } = require('../utils/query');
+const { rowSplit, toBoolean, locationMerge, cutId, customSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 
 // 스터디 생성
@@ -60,7 +60,8 @@ const studyList = async ({ category, sort }) => {
   if (sort === 'new') {
     studyListRows = await studyDao.getStudyListByNew(category);
   } else if (sort === 'length') {
-    // studyListRows = await studyDao.getStudyListByLength(category);
+    studyListRows = await studyDao.getStudyListByLength(category);
+    studyListRows = customSorting(studyListRows);
   } else {
     throw customError(404, 'sort 입력이 잘못되었습니다');
   }
@@ -68,7 +69,6 @@ const studyList = async ({ category, sort }) => {
   if (studyListRows.length === 0) {
     throw customError(404, '해당 카테고리에 스터디가 없습니다');
   }
-
   return cutId(studyListRows);
 };
 

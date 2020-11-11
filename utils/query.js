@@ -57,9 +57,25 @@ const cutId = (rows) => {
   return rows;
 };
 
+const customSorting = (rows) => {
+  const gu = rows[0][0].region_2depth_name;
+  let [targetRows, otherRows] = [[], []];
+
+  rows[1].forEach((row, idx) => {
+    if (row.region_2depth_name === gu) {
+      targetRows.push(rows[1][idx]);
+    } else {
+      otherRows.push(rows[1][idx]);
+    }
+  });
+
+  return targetRows.concat(otherRows);
+};
+
 module.exports = {
   rowSplit,
   toBoolean,
   locationMerge,
   cutId,
+  customSorting,
 };
