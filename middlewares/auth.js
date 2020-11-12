@@ -11,9 +11,10 @@ const verify = async (req, res, next) => {
   }
   // 토큰 유무 확인
   else if (req.headers.authorization) {
+    req.jwt = req.headers.authorization.split(' ')[1];
     try {
-      const decoded = await jwt.verify(req.headers.authorization.split(' ')[1], process.env.JWT_secret);
-      res.user = decoded;
+      const decoded = await jwt.verify(req.jwt, process.env.JWT_secret);
+      req.user = decoded;
       return next();
     } catch (err) {
       return authError(next, err);
