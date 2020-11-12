@@ -19,7 +19,6 @@ const accessToken = ({ id, email }) => {
 const refreshToken = ({ id, email }) => {
   const data = {
     aud: id,
-    email,
   };
   const options = {
     expiresIn: '15d', // 15일
