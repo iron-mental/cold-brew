@@ -81,7 +81,7 @@ const getMyStudy = async (id) => {
   try {
     const myStudySql = `
       SELECT
-        s.id, s.title, s.region_2depth_name, s.image
+        s.id, s.title, s.sigungu, s.image
       FROM
         participate p
         INNER JOIN study s
@@ -105,7 +105,7 @@ const getStudyListByNew = async (category) => {
         *, count(*) members
       FROM (
         SELECT
-          s.id id, s.title, s.introduce, s.image, s.region_2depth_name, u.image leader_image,
+          s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
           DATE_FORMAT(s.created_at, '%Y-%c-%d %H:%i:%s') created_at
         FROM
           study s
@@ -135,7 +135,7 @@ const getStudyListByLength = async (category) => {
       SELECT
         @lat:= latitude latitude,
         @long:= longitude longitude,
-        @2depth:= region_2depth_name region_2depth_name
+        @2depth:= sigungu sigungu
       FROM user
       WHERE id = ?;
 
@@ -143,7 +143,7 @@ const getStudyListByLength = async (category) => {
         *, count(*) members
       FROM (
         SELECT
-          s.id id, s.title, s.introduce, s.image, s.region_2depth_name, u.image leader_image,
+          s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
           DATE_FORMAT(s.created_at, '%Y-%c-%d %H:%i:%s') created_at,
           (6371*acos(cos(radians(@lat))*cos(radians(s.latitude))*cos(radians(s.longitude)
           -radians(@long))+sin(radians(@lat))*sin(radians(s.latitude)))) AS distance
@@ -176,7 +176,7 @@ const studyPaging = async (studyKeys) => {
         *, count(*) members
       FROM (
         SELECT
-          s.id, s.title, s.introduce, s.image, s.region_2depth_name, u.image leader_image,
+          s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
           DATE_FORMAT(s.created_at, '%Y-%c-%d %H:%i:%s') created_at
         FROM
           study s
