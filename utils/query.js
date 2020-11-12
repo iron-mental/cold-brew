@@ -58,12 +58,10 @@ const cutId = (rows) => {
 };
 
 const customSorting = (rows) => {
-  console.log('rows: ', rows);
-  const gu = rows[0][0].region_2depth_name;
   let [targetRows, otherRows] = [[], []];
 
   rows[1].forEach((row, idx) => {
-    if (row.sigungu === gu) {
+    if (row.sigungu === rows[0][0].sigungu) {
       targetRows.push(rows[1][idx]);
     } else {
       otherRows.push(rows[1][idx]);

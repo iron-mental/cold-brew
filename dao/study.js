@@ -128,7 +128,9 @@ const getStudyListByNew = async (category) => {
 };
 
 const getStudyListByLength = async (category) => {
+  // 나중에 토큰과 함께 수정될 부분
   const user_id = 1;
+
   const conn = await pool.getConnection();
   try {
     const listSql = `
