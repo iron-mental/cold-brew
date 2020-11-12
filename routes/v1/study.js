@@ -36,4 +36,7 @@ router.get('/:study_id/apply/:apply_id', applyValid.applyDetail, asyncWrap(apply
 router.put('/:study_id/apply/:apply_id', applyValid.applyUpdate, asyncWrap(applyController.applyUpdate)); // 신청 수정 (reject 권한확인 추가할것)
 router.delete('/:study_id/apply/:apply_id', applyValid.applyDelete, asyncWrap(applyController.applyDelete)); // 신청 삭제  (정책에 따라 없어질수도 있음)
 
+// ApplyList
+router.get('/:study_id/apply', applyValid.applyList, asyncWrap(applyController.applyList)); // 스터디 신청 목록 조회
+
 module.exports = router;

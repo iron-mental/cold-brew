@@ -50,26 +50,6 @@ const getStudy = async (study_id) => {
   }
 };
 
-const getApplyList = async (study_id) => {
-  const conn = await pool.getConnection();
-  try {
-    const applySql = `
-      SELECT 
-        a.id, u.id user_id, u.image, a.message
-      FROM
-        apply a
-        INNER JOIN user u
-        ON u.id = a.user_id
-      WHERE a.study_id = ?`;
-    const [apply] = await conn.query(applySql, study_id);
-    return apply;
-  } catch (err) {
-    throw customError(500, err.sqlMessage);
-  } finally {
-    await conn.release();
-  }
-};
-
 const getImage = async (study_id) => {
   const conn = await pool.getConnection();
   try {
@@ -221,7 +201,6 @@ const studyPaging = async (studyKeys) => {
 module.exports = {
   createStudy,
   getStudy,
-  getApplyList,
   getImage,
   studyUpdate,
   getMyStudy,

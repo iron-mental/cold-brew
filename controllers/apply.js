@@ -21,9 +21,15 @@ const applyDelete = async (req, res) => {
   response(res, 200, '가입신청 삭제 완료');
 };
 
+const applyList = async (req, res) => {
+  const applyList = await applyService.applyList(req.params);
+  response(res, 200, applyList);
+};
+
 module.exports = {
   createApply,
   applyDetail,
   applyUpdate,
   applyDelete,
+  applyList,
 };

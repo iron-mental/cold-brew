@@ -17,10 +17,6 @@ const studyDetail = async ({ study_id }) => {
   if (studyRows.length === 0) {
     throw customError(404, '조회된 스터디가 없습니다');
   }
-  // 권한확인 -> 나중에 jwt 도입 후 인증처리할것 (dao자체는 잘 작동함)
-  // if (user_id === studyRows.leader) {
-  // studyRows.apply = await studyDao.getApplyList(study_id);
-  // }
   studyRows = toBoolean(studyRows, ['Pleader']);
   studyRows = rowSplit(studyRows, ['participate']);
   return locationMerge(studyRows);

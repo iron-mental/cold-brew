@@ -34,9 +34,23 @@ const applyDelete = async ({ study_id, apply_id }) => {
   }
 };
 
+const applyList = async ({ study_id }) => {
+  // // 방장인지 확인
+  // if (req.user.admin.indexOf(study_id)) {
+  //       권한 있음
+  // }
+  //       권한없음
+  let applyList = await applyDao.getApplyList(study_id);
+  if (applyList.length === 0) {
+    throw customError(404, '조회된 신청내역이 없습니다');
+  }
+  return applyList;
+};
+
 module.exports = {
   createApply,
   applyDetail,
   applyUpdate,
   applyDelete,
+  applyList,
 };
