@@ -57,14 +57,14 @@ const cutId = (rows) => {
   return rows;
 };
 
-const customSorting = (rows) => {
+const customSorting = (sigungu, rows) => {
   let [targetRows, otherRows] = [[], []];
 
-  rows[1].forEach((row, idx) => {
-    if (row.sigungu === rows[0][0].sigungu) {
-      targetRows.push(rows[1][idx]);
+  rows.forEach((row, idx) => {
+    if (row.sigungu === sigungu) {
+      targetRows.push(rows[idx]);
     } else {
-      otherRows.push(rows[1][idx]);
+      otherRows.push(rows[idx]);
     }
   });
 
