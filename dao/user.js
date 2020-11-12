@@ -196,6 +196,19 @@ const emailVerificationProcess = async (email) => {
   }
 };
 
+const getLocation = async (user_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const checkSql = 'SELECT latitude, longitude, sigungu FROM user WHERE id = ?';
+    const [checkRows] = await conn.query(checkSql, user_id);
+    return checkRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -207,4 +220,5 @@ module.exports = {
   withdraw,
   verifiedCheck,
   emailVerificationProcess,
+  getLocation,
 };

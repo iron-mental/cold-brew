@@ -127,28 +127,18 @@ const getStudyListByNew = async (category) => {
   }
 };
 
-const getStudyListByLength = async (category) => {
-  // 나중에 토큰과 함께 수정될 부분
-  const user_id = 1;
-
+const getStudyListByLength = async ({ latitude, longitude }, category) => {
   const conn = await pool.getConnection();
   try {
     const listSql = `
-      SELECT
-        @lat:= latitude latitude,
-        @long:= longitude longitude,
-        @2depth:= sigungu sigungu
-      FROM user
-      WHERE id = ?;
-
       SELECT
         *, count(*) members
       FROM (
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
           DATE_FORMAT(s.created_at, '%Y-%c-%d %H:%i:%s') created_at,
-          (6371*acos(cos(radians(@lat))*cos(radians(s.latitude))*cos(radians(s.longitude)
-          -radians(@long))+sin(radians(@lat))*sin(radians(s.latitude)))) AS distance
+          (6371*acos(cos(radians(?))*cos(radians(s.latitude))*cos(radians(s.longitude)
+          -radians(?))+sin(radians(?))*sin(radians(s.latitude)))) AS distance
         FROM
           study s
           LEFT JOIN participate p
@@ -157,10 +147,10 @@ const getStudyListByLength = async (category) => {
           ON u.id = p.user_id
         WHERE ?
         ORDER BY p.leader DESC ) T
-      GROUP BY id 
+      GROUP BY id
       ORDER BY distance ASC;
     `;
-    const [listRows] = await conn.query(listSql, [user_id, { category }]);
+    const [listRows] = await conn.query(listSql, [latitude, longitude, latitude, { category }]);
     return listRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
