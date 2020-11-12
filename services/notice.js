@@ -1,6 +1,6 @@
 const noticeDao = require('../dao/notice');
 
-const { toBoolean } = require('../utils/query');
+const { toBoolean, cutId } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 
 const createNotice = async ({ study_id }, createData) => {
@@ -40,7 +40,7 @@ const noticeList = async ({ study_id }) => {
     throw customError(404, '조회된 공지사항이 없습니다');
   }
   noticeRows = toBoolean(noticeRows, ['pinned']);
-  return noticeRows;
+  return cutId(noticeRows);
 };
 
 const noticePaging = async (noticeKeys) => {
