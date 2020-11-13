@@ -99,15 +99,15 @@ const withdraw = async ({ id }, { email, password }) => {
 };
 
 // 인증 이메일 전송
-const emailVerification = async ({ email }) => {
-  const verifyStatus = await userDao.verifiedCheck(email);
-  if (verifyStatus.length === 0) {
+const emailVerification = async ({ id }) => {
+  const verifyRows = await userDao.verifiedCheck(id);
+  if (verifyRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-  if (verifyStatus[0].email_verified === 1) {
+  if (verifyRows[0].email_verified === 1) {
     throw customError(400, `${email} 님은 이미 인증이 완료된 사용자입니다`);
   }
-  await sendVerifyEmail(email);
+  await sendVerifyEmail(verifyRows[0].email);
 };
 
 // 이메일 인증 처리
@@ -126,21 +126,21 @@ const reissuance = async (expiredToken, { refresh_token }) => {
   } catch (err) {
     throw customError(401, 'Refresh Token이 만료되었습니다. 다시 로그인 하세요.');
   }
-  const tokenRows = await userDao.checkToken(refresh_token);
-  if (tokenRows.length === 0) {
+  const [userData] = await userDao.checkToken(refresh_token);
+  if (userData.length === 0) {
     throw customError(401, 'Refresh Token이 유효하지 않습니다. 다시 로그인 하세요.');
-  } else if (tokenRows[0].access_token !== expiredToken) {
+  } else if (userData.access_token !== expiredToken) {
     throw customError(401, 'Access Token이 일치하지 않습니다. 다시 로그인 하세요');
   }
 
-  const newToken = { access_token: getAccessToken(decoded) };
-
+  const newToken = { access_token: getAccessToken(userData) };
   const timeGap = decoded.exp - Math.floor(new Date().getTime() / 1000);
+
   if (timeGap < process.env.JWT_refreshCyle) {
-    newToken.refresh_token = getRefreshToken(decoded);
+    newToken.refresh_token = getRefreshToken(userData);
   }
 
-  await userDao.userUpdate(decoded.aud, newToken);
+  await userDao.userUpdate(userData.id, newToken);
   return newToken;
 };
 

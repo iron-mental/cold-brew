@@ -154,11 +154,11 @@ const withdraw = async (id, email, password) => {
   }
 };
 
-const verifiedCheck = async (email) => {
+const verifiedCheck = async (id) => {
   const conn = await pool.getConnection();
   try {
-    const checkSql = 'SELECT email_verified FROM user WHERE ?';
-    const [checkRows] = await conn.query(checkSql, { email });
+    const checkSql = 'SELECT email ,email_verified FROM user WHERE ?';
+    const [checkRows] = await conn.query(checkSql, { id });
     return checkRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -199,7 +199,7 @@ const emailVerificationProcess = async (email) => {
 const checkToken = async (refreshToken) => {
   const conn = await pool.getConnection();
   try {
-    const checkSql = 'SELECT access_token FROM user WHERE refresh_token = ?';
+    const checkSql = 'SELECT id, email, access_token FROM user WHERE refresh_token = ?';
     const [checkRows] = await conn.query(checkSql, refreshToken);
     return checkRows;
   } catch (err) {
