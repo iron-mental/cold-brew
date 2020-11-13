@@ -47,9 +47,9 @@ const emailVerificationProcess = async (req, res) => {
 };
 
 const reissuance = async (req, res) => {
-  const access_token = req.headers.authorization.split(' ')[1];
-  const new_token = await userService.reissuance(access_token, req.body);
-  response(res, 200, new_token);
+  const oldAccessToken = req.headers.authorization.split(' ')[1];
+  const newToken = await userService.reissuance(oldAccessToken, req.body);
+  response(res, 200, newToken);
 };
 
 module.exports = {
