@@ -8,7 +8,6 @@ const rds = {
     database: process.env.DB_database,
     connectionLimit: process.env.DB_connectionLimit,
     waitForConnections: process.env.DB_waitForConnections,
-    multipleStatements: process.env.DB_multipleStatements,
   },
 };
 
