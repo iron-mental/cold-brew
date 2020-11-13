@@ -2,12 +2,13 @@ const jwt = require('jsonwebtoken');
 
 const { authError } = require('../utils/errors/customError');
 
-const exception = ['check-nickname', 'check-email', 'login', 'reset-password', 'reissuance'];
+const exceptionList = ['check-nickname', 'check-email', 'login', 'reset-password', 'reissuance'];
 
 const verify = async (req, res, next) => {
-  if (exception.indexOf(req.url.split('/')[3]) > -1 || req.url === '/v1/user') {
+  if (exceptionList.indexOf(req.url.split('/')[3]) > -1 || req.url === '/v1/user') {
     return next();
   }
+
   if (req.headers.authorization) {
     req.jwt = req.headers.authorization.split(' ')[1];
     try {
@@ -20,6 +21,15 @@ const verify = async (req, res, next) => {
   return authError(next, { message: 'jwt not exist' });
 };
 
+const idCompare = (req, res, next) => {
+  const id = req.params.id || req.query.id;
+  if (req.user.aud !== parseInt(id, 10)) {
+    return authError(next, { message: '권한이 없습니다 ' });
+  }
+  next();
+};
+
 module.exports = {
   verify,
+  idCompare,
 };
