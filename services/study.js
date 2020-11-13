@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 const studyDao = require('../dao/study');
-const { rowSplit, toBoolean } = require('../utils/query');
+const userDao = require('../dao/user');
+const { rowSplit, toBoolean, locationMerge, cutId, customSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 
 // 스터디 생성
@@ -17,12 +18,9 @@ const studyDetail = async ({ study_id }) => {
   if (studyRows.length === 0) {
     throw customError(404, '조회된 스터디가 없습니다');
   }
-  // 권한확인 -> 나중에 jwt 도입 후 인증처리할것 (dao자체는 잘 작동함)
-  // if (user_id === studyRows.leader) {
-  // studyRows.apply = await studyDao.getApplyList(study_id);
-  // }
-  studyRows = toBoolean(studyRows, ['Npinned', 'Pleader']);
-  return rowSplit(studyRows, ['participate', 'notice']);
+  studyRows = toBoolean(studyRows, ['Pleader']);
+  studyRows = rowSplit(studyRows, ['participate']);
+  return locationMerge(studyRows);
 };
 
 const studyUpdate = async ({ study_id }, updateData, filedata) => {
@@ -55,11 +53,16 @@ const myStudy = async ({ id }) => {
 };
 
 const studyList = async ({ category, sort }) => {
+  // 토큰과 함께 사라질 데이터
+  const user_id = 1;
+
   let studyListRows = '';
-  if (sort === 'new') {
+  if (sort === 'length') {
+    const userData = await userDao.getLocation(user_id);
+    studyListRows = await studyDao.getStudyListByLength(userData[0], category);
+    studyListRows = customSorting(userData[0].sigungu, studyListRows);
+  } else if (sort === 'new') {
     studyListRows = await studyDao.getStudyListByNew(category);
-  } else if (sort === 'length') {
-    // studyListRows = await studyDao.getStudyListByLength(category);
   } else {
     throw customError(404, 'sort 입력이 잘못되었습니다');
   }
@@ -67,7 +70,20 @@ const studyList = async ({ category, sort }) => {
   if (studyListRows.length === 0) {
     throw customError(404, '해당 카테고리에 스터디가 없습니다');
   }
-  return studyListRows;
+
+  return cutId(studyListRows);
 };
 
-module.exports = { createStudy, studyDetail, studyUpdate, myStudy, studyList };
+const studyPaging = async (studyKeys) => {
+  const studyList = await studyDao.studyPaging(studyKeys);
+  return studyList;
+};
+
+module.exports = {
+  createStudy,
+  studyDetail,
+  studyUpdate,
+  myStudy,
+  studyList,
+  studyPaging,
+};

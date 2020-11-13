@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const userDao = require('../dao/user');
-const { rowSplit, toBoolean } = require('../utils/query');
+const { toBoolean } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
 const { accessToken, refreshToken } = require('../utils/jwt.js');
 const { customError } = require('../utils/errors/customError');
@@ -59,8 +59,7 @@ const userDetail = async ({ id }) => {
   if (userDataRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-  userDataRows = toBoolean(userDataRows, ['email_verified']);
-  return rowSplit(userDataRows, ['project']);
+  return toBoolean(userDataRows, ['email_verified']);
 };
 
 // 수정 - (이메일, 비밀번호 제외)

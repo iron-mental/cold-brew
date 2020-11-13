@@ -9,8 +9,13 @@ const createStudy = async (req, res, next) => {
     introduce: Joi.string().required().max(200),
     progress: Joi.string().required().max(100),
     study_time: Joi.string().required().max(100),
-    location: Joi.string().required(),
-    location_detail: Joi.string().required(),
+    latitude: Joi.number().required(),
+    longitude: Joi.number().required(),
+    sido: Joi.string().max(20).required(),
+    sigungu: Joi.string().max(20).required(),
+    address_name: Joi.string().max(100).required(),
+    location_detail: Joi.string().max(30),
+    place_name: Joi.string().max(30),
     sns_notion: Joi.string().max(150),
     sns_evernote: Joi.string().max(60),
     sns_web: Joi.string().max(200),
@@ -46,8 +51,13 @@ const studyUpdate = async (req, res, next) => {
     introduce: Joi.string().max(200),
     progress: Joi.string().max(100),
     study_time: Joi.string().max(100),
-    location: Joi.string(),
-    location_detail: Joi.string(),
+    latitude: Joi.number(),
+    longitude: Joi.number(),
+    sido: Joi.string().max(20),
+    sigungu: Joi.string().max(20),
+    address_name: Joi.string().max(100),
+    location_detail: Joi.string().max(30),
+    place_name: Joi.string().max(30),
     sns_notion: Joi.string().max(150),
     sns_evernote: Joi.string().max(60),
     sns_web: Joi.string().max(200),
@@ -75,21 +85,35 @@ const myStudy = async (req, res, next) => {
 };
 
 const studyList = async (req, res, next) => {
-  const paramSchema = Joi.object({
+  const querySchema = Joi.object({
     category: Joi.string().required(),
     sort: Joi.string().required(),
   });
   try {
-    await paramSchema.validateAsync(req.params);
+    await querySchema.validateAsync(req.query);
     next();
   } catch (err) {
     validError(next, err);
   }
 };
+
+const studyPaging = async (req, res, next) => {
+  const querySchema = Joi.object({
+    values: Joi.string().min(1).required(),
+  });
+  try {
+    await querySchema.validateAsync(req.query);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
 module.exports = {
   createStudy,
   studyDetail,
   studyUpdate,
   myStudy,
   studyList,
+  studyPaging,
 };

@@ -81,16 +81,11 @@ const userDetail = async (id) => {
   try {
     const userSql = `
       SELECT 
-        u.id, u.nickname, u.email, u.image, u.introduce, u.location, u.career_title, u.career_contents, u.sns_github, u.sns_linkedin, u.sns_web, u.email_verified,
-        DATE_FORMAT(u.created_at, "%Y-%c-%d %H:%i:%s") created_at,
-        p.id Pid, p.title Ptitle, p.contents Pcontents, p.sns_github Psns_github, p.sns_appstore Psns_appstore, p.sns_playstore Psns_playstore,
-        DATE_FORMAT(p.created_at, "%Y-%c-%d %H:%i:%s") Pcreated_at
-      FROM
-        user u
-        LEFT JOIN project p
-        ON u.id = p.user_id
-      WHERE u.id = ?`;
-    const [userData] = await conn.query(userSql, id);
+        id, nickname, email, image, introduce, CONCAT(sido, ' ', sigungu) address, career_title, career_contents, sns_github, sns_linkedin, sns_web, email_verified,
+        DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at
+      FROM user 
+      WHERE ?`;
+    const [userData] = await conn.query(userSql, { id });
     return userData;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -201,6 +196,19 @@ const emailVerificationProcess = async (email) => {
   }
 };
 
+const getLocation = async (user_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const checkSql = 'SELECT latitude, longitude, sigungu FROM user WHERE id = ?';
+    const [checkRows] = await conn.query(checkSql, user_id);
+    return checkRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -212,4 +220,5 @@ module.exports = {
   withdraw,
   verifiedCheck,
   emailVerificationProcess,
+  getLocation,
 };
