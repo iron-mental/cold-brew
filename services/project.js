@@ -3,11 +3,10 @@ const { customError } = require('../utils/errors/customError');
 
 // 프로젝트 작성
 const createProject = async (createData) => {
-  // jwt 도입시 적용
-  // const projectRows = await projectDao.getProjectList(req.user.user_id);
-  // if (projectRows.length > 2) {
-  //   throw customError(400, '프로젝트는 3개까지 등록할 수 있습니다.');
-  // }
+  const projectRows = await projectDao.getProjectList(createData.user_id);
+  if (projectRows.length > 2) {
+    throw customError(400, '프로젝트는 3개까지 등록할 수 있습니다.');
+  }
   const createRows = await projectDao.createProject(createData);
   if (createRows.length === 0) {
     throw customError(400, '프로젝트 작성에 실패했습니다');
@@ -24,7 +23,7 @@ const updateProject = async ({ id, project_id }, updateData) => {
 // 프로젝트 목록 조회
 const getProjectList = async ({ id }) => {
   const projectRows = await projectDao.getProjectList(id);
-  if (deleteRows.length === 0) {
+  if (projectRows.length === 0) {
     throw customError(404, '조회된 프로젝트가 없습니다');
   }
   return projectRows;
