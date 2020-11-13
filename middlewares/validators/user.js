@@ -131,6 +131,18 @@ const emailVerificationProcess = async (req, res, next) => {
   }
 };
 
+const reissuance = async (req, res, next) => {
+  const bodySchema = Joi.object({
+    refresh_token: Joi.string().required(),
+  });
+  try {
+    await bodySchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -141,4 +153,5 @@ module.exports = {
   withdraw,
   emailVerification,
   emailVerificationProcess,
+  reissuance,
 };
