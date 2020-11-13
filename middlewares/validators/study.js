@@ -3,7 +3,6 @@ const { validError } = require('../../utils/errors/customError');
 
 const createStudy = async (req, res, next) => {
   const bodySchema = Joi.object({
-    user_id: Joi.number().required(),
     category: Joi.string().required(),
     title: Joi.string().required().min(2).max(10),
     introduce: Joi.string().required().max(200),

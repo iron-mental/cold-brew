@@ -2,7 +2,7 @@ const studyService = require('../services/study');
 const response = require('../utils/response');
 
 const createStudy = async (req, res) => {
-  await studyService.createStudy(req.body);
+  await studyService.createStudy(req.user, req.body);
   response(res, 201, '스터디 생성 완료');
 };
 
@@ -22,7 +22,8 @@ const myStudy = async (req, res) => {
 };
 
 const studyList = async (req, res) => {
-  const studyList = await studyService.studyList(req.query);
+  const studyList = await studyService.studyList(req.user, req.query);
+
   response(res, 200, studyList);
 };
 
