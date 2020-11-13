@@ -67,9 +67,30 @@ const applyDelete = async (study_id, apply_id) => {
   }
 };
 
+const getApplyList = async (study_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const applySql = `
+      SELECT 
+        a.id, u.id user_id, u.image, a.message
+      FROM
+        apply a
+        INNER JOIN user u
+        ON u.id = a.user_id
+      WHERE a.study_id = ?`;
+    const [apply] = await conn.query(applySql, study_id);
+    return apply;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   createApply,
   applyDetail,
   applyUpdate,
   applyDelete,
+  getApplyList,
 };

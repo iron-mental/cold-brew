@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
@@ -22,11 +24,11 @@ const upload = multer({
         _tmp: basename.concat('_tmp', ext),
       };
 
-      req.body.image = path.join(imagePath, file.uploadedFile.basename);
+      req.body.image = path.join(process.env.DOMAIN, imagePath, file.uploadedFile.basename);
 
       if (req.method === 'POST') {
         cb(null, file.uploadedFile.basename);
-      } else if (req.method === 'PATCH') {
+      } else if (req.method === 'PUT') {
         cb(null, file.uploadedFile._tmp);
       }
     },
@@ -52,4 +54,6 @@ const imageUpload = (req, res, next) => {
   });
 };
 
-module.exports = { imageUpload };
+module.exports = {
+  imageUpload,
+};

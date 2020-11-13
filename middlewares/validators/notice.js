@@ -64,9 +64,35 @@ const noticeDelete = async (req, res, next) => {
   }
 };
 
+const noticeList = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    study_id: Joi.number().required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
+const noticePaging = async (req, res, next) => {
+  const querySchema = Joi.object({
+    values: Joi.string().min(1).required(),
+  });
+  try {
+    await querySchema.validateAsync(req.query);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
 module.exports = {
   createNotice,
   noticeDetail,
   noticeUpdate,
   noticeDelete,
+  noticeList,
+  noticePaging,
 };
