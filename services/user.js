@@ -120,28 +120,29 @@ const emailVerificationProcess = async ({ email }) => {
 };
 
 // 검증 후 accessToken 발급
-const reissuance = async (access_token, { refresh_token }) => {
+const reissuance = async (expiredToken, { refresh_token }) => {
   let decoded = {};
   try {
     decoded = await jwt.verify(refresh_token, process.env.JWT_secret);
   } catch (err) {
     throw customError(401, 'Refresh Token이 만료되었습니다. 다시 로그인 하세요.');
   }
-
   const tokenRows = await userDao.checkToken(refresh_token);
   if (tokenRows.length === 0) {
     throw customError(401, 'Refresh Token이 유효하지 않습니다. 다시 로그인 하세요.');
-  } else if (tokenRows[0].access_token !== access_token) {
+  } else if (tokenRows[0].access_token !== expiredToken) {
     throw customError(401, 'Access Token이 일치하지 않습니다. 다시 로그인 하세요');
   }
 
-  const newAccessToken = {
-    access_token: getAccessToken(decoded),
-  };
+  const newToken = { access_token: getAccessToken(decoded) };
 
-  await userDao.userUpdate(decoded.aud, newAccessToken);
+  const timeGap = decoded.exp - Math.floor(new Date().getTime() / 1000);
+  if (timeGap < process.env.JWT_refreshCyle) {
+    newToken.refresh_token = getRefreshToken(decoded);
+  }
 
-  return newAccessToken;
+  await userDao.userUpdate(decoded.aud, newToken);
+  return newToken;
 };
 
 module.exports = {
