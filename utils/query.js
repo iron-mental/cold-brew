@@ -52,7 +52,7 @@ const locationMerge = (row) => {
 
 const cutId = (rows) => {
   for (let idx = 10; idx < rows.length; idx++) {
-    rows[idx] = rows[idx].id;
+    rows[idx] = { id: rows[idx].id };
   }
   return rows;
 };
