@@ -1,9 +1,9 @@
-require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 const secretKey = process.env.JWT_secret;
+const issuer = process.env.JWT_issuer;
 
-const accessToken = ({ id, email }) => {
+const getAccessToken = ({ id, email }) => {
   const data = {
     aud: id,
     email,
@@ -11,24 +11,24 @@ const accessToken = ({ id, email }) => {
   const options = {
     expiresIn: 60 * 15, // 15분
     subject: 'userInfo-access',
-    issuer: process.env.JWT_issuer,
+    issuer,
   };
   return jwt.sign(data, secretKey, options);
 };
 
-const refreshToken = ({ id, email }) => {
+const getRefreshToken = ({ id }) => {
   const data = {
     aud: id,
   };
   const options = {
     expiresIn: '15d', // 15일
     subject: 'userInfo-refresh',
-    issuer: process.env.JWT_issuer,
+    issuer,
   };
   return jwt.sign(data, secretKey, options);
 };
 
 module.exports = {
-  accessToken,
-  refreshToken,
+  getAccessToken,
+  getRefreshToken,
 };
