@@ -201,6 +201,19 @@ const emailVerificationProcess = async (email) => {
   }
 };
 
+const checkToken = async (refreshToken) => {
+  const conn = await pool.getConnection();
+  try {
+    const checkSql = 'SELECT access_token FROM user WHERE refresh_token = ?';
+    const [checkRows] = await conn.query(checkSql, refreshToken);
+    return checkRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -212,4 +225,5 @@ module.exports = {
   withdraw,
   verifiedCheck,
   emailVerificationProcess,
+  checkToken,
 };

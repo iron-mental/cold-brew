@@ -46,10 +46,10 @@ const emailVerificationProcess = async (req, res) => {
   response(res, 200, `${req.params.email}님의 이메일인증이 완료되었습니다`);
 };
 
-// refreshToken의 데이터 확인 후 새로운 토큰 리턴
 const reissuance = async (req, res) => {
-  const accessToken = await userService.reissuance(req.jwt, req.user);
-  response(res, 200, { accessToken });
+  const access_token = req.headers.authorization.split(' ')[1];
+  const new_token = await userService.reissuance(access_token, req.body);
+  response(res, 200, new_token);
 };
 
 module.exports = {

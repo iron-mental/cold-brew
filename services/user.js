@@ -1,10 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 
 const userDao = require('../dao/user');
 const { rowSplit, toBoolean } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
-const { accessToken, refreshToken } = require('../utils/jwt.js');
+const { getAccessToken, getRefreshToken } = require('../utils/jwt.js');
 const { customError } = require('../utils/errors/customError');
 
 // 닉네임 중복체크
@@ -45,13 +46,14 @@ const login = async ({ email, password }) => {
   if (loginRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-  const access = accessToken(loginRows[0]);
-  const refresh = refreshToken(loginRows[0]);
-  // 각 토큰을 mongoose를 통해 저장
-  return {
-    accessToken: access,
-    refreshToken: refresh,
+
+  const tokenSet = {
+    access_token: await getAccessToken(loginRows[0]),
+    refresh_token: await getRefreshToken(loginRows[0]),
   };
+
+  userDao.userUpdate(loginRows[0].id, tokenSet);
+  return tokenSet;
 };
 
 // 상세 조회
@@ -118,17 +120,28 @@ const emailVerificationProcess = async ({ email }) => {
 };
 
 // 검증 후 accessToken 발급
-const reissuance = async (jwt, decoded) => {
-  if (decoded.sub !== 'userInfo-refresh') {
-    console.log('리프레시 토큰이 아니므로 에러');
+const reissuance = async (access_token, { refresh_token }) => {
+  let decoded = {};
+  try {
+    decoded = await jwt.verify(refresh_token, process.env.JWT_secret);
+  } catch (err) {
+    throw customError(401, 'Refresh Token이 만료되었습니다. 다시 로그인 하세요.');
   }
-  // mongoose를 통해 refreshToken의 유효성 확인
 
-  // 새로운 access토큰 발급
-  return accessToken({
-    id: decoded.id,
-    email: decoded.email,
-  });
+  const tokenRows = await userDao.checkToken(refresh_token);
+  if (tokenRows.length === 0) {
+    throw customError(401, 'Refresh Token이 유효하지 않습니다. 다시 로그인 하세요.');
+  } else if (tokenRows[0].access_token !== access_token) {
+    throw customError(401, 'Access Token이 일치하지 않습니다. 다시 로그인 하세요');
+  }
+
+  const newAccessToken = {
+    access_token: getAccessToken(decoded),
+  };
+
+  await userDao.userUpdate(decoded.aud, newAccessToken);
+
+  return newAccessToken;
 };
 
 module.exports = {
