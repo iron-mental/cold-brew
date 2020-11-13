@@ -4,11 +4,11 @@ const router = express.Router();
 
 const { imageUpload } = require('../../utils/file');
 const asyncWrap = require('../../utils/errors/wrap');
-const studyValid = require('../../utils/validators/study');
+const studyValid = require('../../middlewares/validators/study');
 const studyController = require('../../controllers/study');
-const noticeValid = require('../../utils/validators/notice');
+const noticeValid = require('../../middlewares/validators/notice');
 const noticeController = require('../../controllers/notice');
-const applyValid = require('../../utils/validators/apply');
+const applyValid = require('../../middlewares/validators/apply');
 const applyController = require('../../controllers/apply');
 
 // Study

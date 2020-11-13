@@ -1,13 +1,14 @@
 const Joi = require('joi');
-const { validError } = require('../errors/customError');
+const { validError } = require('../../utils/errors/customError');
 
-const createApply = async (req, res, next) => {
+const createNotice = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
-    user_id: Joi.number().required(),
-    message: Joi.string().required().max(100),
+    title: Joi.string().required().max(30),
+    contents: Joi.string().required().max(200),
+    pinned: Joi.boolean().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -18,10 +19,10 @@ const createApply = async (req, res, next) => {
   }
 };
 
-const applyDetail = async (req, res, next) => {
+const noticeDetail = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
-    apply_id: Joi.number().required(),
+    notice_id: Joi.number().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -31,13 +32,15 @@ const applyDetail = async (req, res, next) => {
   }
 };
 
-const applyUpdate = async (req, res, next) => {
+const noticeUpdate = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
-    apply_id: Joi.number().required(),
+    notice_id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
-    message: Joi.string().required().max(100),
+    title: Joi.string().max(30),
+    contents: Joi.string().max(200),
+    pinned: Joi.boolean(),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);
@@ -48,10 +51,10 @@ const applyUpdate = async (req, res, next) => {
   }
 };
 
-const applyDelete = async (req, res, next) => {
+const noticeDelete = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
-    apply_id: Joi.number().required(),
+    notice_id: Joi.number().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -61,12 +64,24 @@ const applyDelete = async (req, res, next) => {
   }
 };
 
-const applyList = async (req, res, next) => {
+const noticeList = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
+const noticePaging = async (req, res, next) => {
+  const querySchema = Joi.object({
+    values: Joi.string().min(1).required(),
+  });
+  try {
+    await querySchema.validateAsync(req.query);
     next();
   } catch (err) {
     validError(next, err);
@@ -74,9 +89,10 @@ const applyList = async (req, res, next) => {
 };
 
 module.exports = {
-  createApply,
-  applyDetail,
-  applyUpdate,
-  applyDelete,
-  applyList,
+  createNotice,
+  noticeDetail,
+  noticeUpdate,
+  noticeDelete,
+  noticeList,
+  noticePaging,
 };

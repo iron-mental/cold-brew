@@ -2,9 +2,9 @@ const express = require('express');
 
 const { imageUpload } = require('../../utils/file');
 const asyncWrap = require('../../utils/errors/wrap');
-const userValid = require('../../utils/validators/user');
+const userValid = require('../../middlewares/validators/user');
 const userController = require('../../controllers/user');
-const studyValid = require('../../utils/validators/study');
+const studyValid = require('../../middlewares/validators/study');
 const studyController = require('../../controllers/study');
 const projectValid = require('../../utils/validators/project');
 const projectController = require('../../controllers/project');
@@ -23,6 +23,7 @@ router.get(
 
 router.post('/', userValid.signup, asyncWrap(userController.signup)); // 회원 가입
 router.post('/login', userValid.login, asyncWrap(userController.login)); // 로그인
+router.get('/reissuance', asyncWrap(userController.reissuance)); // accessToken 재발급
 
 router.get('/:id', userValid.userDetail, asyncWrap(userController.userDetail)); // 유저 상세조회
 router.put('/:id', imageUpload, userValid.userUpdate, asyncWrap(userController.userUpdate)); // 유저 정보수정
