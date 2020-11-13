@@ -47,6 +47,7 @@ const login = async ({ email, password }) => {
   }
   const access = accessToken(loginRows[0]);
   const refresh = refreshToken(loginRows[0]);
+  // 각 토큰을 mongoose를 통해 저장
   return {
     accessToken: access,
     refreshToken: refresh,
@@ -116,6 +117,20 @@ const emailVerificationProcess = async ({ email }) => {
   }
 };
 
+// 검증 후 accessToken 발급
+const reissuance = async (jwt, decoded) => {
+  if (decoded.sub !== 'userInfo-refresh') {
+    console.log('리프레시 토큰이 아니므로 에러');
+  }
+  // mongoose를 통해 refreshToken의 유효성 확인
+
+  // 새로운 access토큰 발급
+  return accessToken({
+    id: decoded.id,
+    email: decoded.email,
+  });
+};
+
 module.exports = {
   signup,
   login,
@@ -126,5 +141,5 @@ module.exports = {
   withdraw,
   emailVerification,
   emailVerificationProcess,
-  // reissuance,
+  reissuance,
 };
