@@ -100,7 +100,7 @@ const getMyStudy = async (id) => {
 const getStudyListByNew = async (category) => {
   const conn = await pool.getConnection();
   try {
-    const listSql = `
+    const studyListSql = `
       SELECT
         *, count(*) members
       FROM (
@@ -118,7 +118,7 @@ const getStudyListByNew = async (category) => {
       GROUP BY id
       ORDER BY id DESC
       `;
-    const [listRows] = await conn.query(listSql, { category });
+    const [listRows] = await conn.query(studyListSql, { category });
     return listRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -130,7 +130,7 @@ const getStudyListByNew = async (category) => {
 const getStudyListByLength = async ({ latitude, longitude }, category) => {
   const conn = await pool.getConnection();
   try {
-    const listSql = `
+    const studyListSql = `
       SELECT
         *, count(*) members
       FROM (
@@ -150,7 +150,7 @@ const getStudyListByLength = async ({ latitude, longitude }, category) => {
       GROUP BY id
       ORDER BY distance ASC;
     `;
-    const [listRows] = await conn.query(listSql, [latitude, longitude, latitude, { category }]);
+    const [listRows] = await conn.query(studyListSql, [latitude, longitude, latitude, { category }]);
     return listRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -163,7 +163,7 @@ const studyPaging = async (studyKeys) => {
   const params = studyKeys.concat(studyKeys);
   const conn = await pool.getConnection();
   try {
-    const listSql = `
+    const studyListSql = `
     SELECT
         *, count(*) members
       FROM (
@@ -181,7 +181,7 @@ const studyPaging = async (studyKeys) => {
       GROUP BY id
       ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    const [listRows] = await conn.query(listSql, params);
+    const [listRows] = await conn.query(studyListSql, params);
     return listRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
