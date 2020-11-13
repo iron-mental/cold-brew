@@ -112,7 +112,7 @@ const withdraw = async (req, res, next) => {
 
 const emailVerification = async (req, res, next) => {
   const paramSchema = Joi.object({
-    email: Joi.string().email().required(),
+    id: Joi.number().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
