@@ -1,7 +1,9 @@
 const noticeService = require('../services/notice');
+const { isHost } = require('../services/study');
 const response = require('../utils/response');
 
 const createNotice = async (req, res) => {
+  await isHost(req.user, req.params);
   await noticeService.createNotice(req.params, req.body);
   response(res, 201, '공지사항 작성 완료');
 };
@@ -12,11 +14,13 @@ const noticeDetail = async (req, res) => {
 };
 
 const noticeUpdate = async (req, res) => {
+  await isHost(req.user, req.params);
   await noticeService.noticeUpdate(req.params, req.body);
   response(res, 200, '공지사항 수정 완료');
 };
 
 const noticeDelete = async (req, res) => {
+  await isHost(req.user, req.params);
   await noticeService.noticeDelete(req.params);
   response(res, 200, '공지사항 삭제 완료');
 };

@@ -1,4 +1,5 @@
 const applyService = require('../services/apply');
+const { isHost } = require('../services/study');
 const response = require('../utils/response');
 
 const createApply = async (req, res) => {
@@ -7,10 +8,12 @@ const createApply = async (req, res) => {
 };
 
 const applyDetail = async (req, res) => {
+  await isHost(req.user, req.params);
   const applyData = await applyService.applyDetail(req.params);
   response(res, 200, applyData);
 };
 
+// 유저 측 수정
 const applyUpdate = async (req, res) => {
   await applyService.applyUpdate(req.params, req.body);
   response(res, 200, '가입신청 수정 완료');
@@ -22,6 +25,7 @@ const applyDelete = async (req, res) => {
 };
 
 const applyList = async (req, res) => {
+  await isHost(req.user, req.params);
   const applyList = await applyService.applyList(req.params);
   response(res, 200, applyList);
 };
