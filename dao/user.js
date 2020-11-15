@@ -157,7 +157,7 @@ const withdraw = async (id, email, password) => {
 const verifiedCheck = async (id) => {
   const conn = await pool.getConnection();
   try {
-    const checkSql = 'SELECT email ,email_verified FROM user WHERE ?';
+    const checkSql = 'SELECT email, email_verified FROM user WHERE ?';
     const [checkRows] = await conn.query(checkSql, { id });
     return checkRows;
   } catch (err) {
