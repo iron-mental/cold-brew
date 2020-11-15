@@ -52,6 +52,7 @@ const login = async ({ email, password }) => {
   };
 
   userDao.userUpdate(loginRows[0].id, tokenSet);
+  tokenSet.id = loginRows[0].id;
   return tokenSet;
 };
 
