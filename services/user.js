@@ -118,25 +118,24 @@ const emailVerificationProcess = async ({ email }) => {
 };
 
 // 검증 후 accessToken 발급
-const reissuance = async (expiredToken, { refresh_token }) => {
-  const refreshDecoded = verify(refresh_token);
-
+const reissuance = async (oldAccessToken, { refresh_token }) => {
+  const refreshDecoded = verify(refresh_token, 'refresh');
   const [userData] = await userDao.checkToken(refresh_token);
-  if (userData.length === 0) {
-    throw customError(401, 'Refresh Token이 유효하지 않습니다. 다시 로그인 하세요.');
-  } else if (userData.access_token !== expiredToken) {
-    throw customError(401, 'Access Token이 일치하지 않습니다. 다시 로그인 하세요');
+  if (!userData) {
+    throw customError(401, 'Refresh Token이 유효하지 않습니다. 다시 로그인 하세요.'); // 배포시 Token에 대한 내용은 제거할것
+  }
+  if (userData.access_token !== oldAccessToken) {
+    throw customError(401, 'Access Token이 일치하지 않습니다. 다시 로그인 하세요'); // 배포시 Token에 대한 내용은 제거할것
   }
 
-  const newToken = { access_token: getAccessToken(userData) };
-  const timeGap = refreshDecoded.exp - Math.floor(new Date().getTime() / 1000);
+  const newTokenSet = { access_token: getAccessToken(userData) };
 
-  if (timeGap < process.env.JWT_refreshCyle) {
-    newToken.refresh_token = getRefreshToken(userData);
+  if (refreshDecoded.exp - Math.floor(new Date().getTime() / 1000) < process.env.JWT_refreshCyle) {
+    newTokenSet.refresh_token = getRefreshToken(userData);
   }
 
-  await userDao.userUpdate(userData.id, newToken);
-  return newToken;
+  await userDao.userUpdate(userData.id, newTokenSet);
+  return newTokenSet;
 };
 
 module.exports = {
