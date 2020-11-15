@@ -1,11 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const jwt = require('jsonwebtoken');
 
 const userDao = require('../dao/user');
 const { toBoolean } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
-const { getAccessToken, getRefreshToken } = require('../utils/jwt.js');
+const { getAccessToken, getRefreshToken, verify } = require('../utils/jwt.js');
 const { customError } = require('../utils/errors/customError');
 
 // 닉네임 중복체크
@@ -120,12 +119,8 @@ const emailVerificationProcess = async ({ email }) => {
 
 // 검증 후 accessToken 발급
 const reissuance = async (expiredToken, { refresh_token }) => {
-  let decoded = {};
-  try {
-    decoded = await jwt.verify(refresh_token, process.env.JWT_secret);
-  } catch (err) {
-    throw customError(401, 'Refresh Token이 만료되었습니다. 다시 로그인 하세요.');
-  }
+  const refreshDecoded = verify(refresh_token);
+
   const [userData] = await userDao.checkToken(refresh_token);
   if (userData.length === 0) {
     throw customError(401, 'Refresh Token이 유효하지 않습니다. 다시 로그인 하세요.');
@@ -134,7 +129,7 @@ const reissuance = async (expiredToken, { refresh_token }) => {
   }
 
   const newToken = { access_token: getAccessToken(userData) };
-  const timeGap = decoded.exp - Math.floor(new Date().getTime() / 1000);
+  const timeGap = refreshDecoded.exp - Math.floor(new Date().getTime() / 1000);
 
   if (timeGap < process.env.JWT_refreshCyle) {
     newToken.refresh_token = getRefreshToken(userData);

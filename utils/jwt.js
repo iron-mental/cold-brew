@@ -24,7 +24,16 @@ const getRefreshToken = ({ id }) => {
   return jwt.sign(payload, secretKey, options);
 };
 
+const verify = (token) => {
+  try {
+    return jwt.verify(refresh_token, process.env.JWT_secret);
+  } catch (err) {
+    throw customError(401, 'Refresh Token이 만료되었습니다. 다시 로그인 하세요.');
+  }
+};
+
 module.exports = {
   getAccessToken,
   getRefreshToken,
+  verify,
 };
