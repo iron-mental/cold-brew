@@ -6,7 +6,6 @@ const userDao = require('../dao/user');
 const { rowSplit, toBoolean, locationMerge, cutId, customSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 
-// 스터디 생성
 const createStudy = async ({ aud: user_id }, createData) => {
   await studyDao.createStudy(user_id, createData);
 };
@@ -70,8 +69,14 @@ const studyList = async ({ aud: user_id }, { category, sort }) => {
 };
 
 const studyPaging = async (studyKeys) => {
-  const studyList = await studyDao.studyPaging(studyKeys);
-  return studyList;
+  return await studyDao.studyPaging(studyKeys);
+};
+
+const isHost = async ({ aud: user_id }, { study_id }) => {
+  const checkRows = await studyDao.isHost(user_id, study_id);
+  if (checkRows[0].isHost === 0) {
+    throw customError(401, '권한이 없습니다');
+  }
 };
 
 module.exports = {
@@ -81,4 +86,5 @@ module.exports = {
   myStudy,
   studyList,
   studyPaging,
+  isHost,
 };
