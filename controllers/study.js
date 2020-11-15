@@ -1,4 +1,5 @@
 const studyService = require('../services/study');
+const { isHost } = require('../services/common');
 const response = require('../utils/response');
 
 const createStudy = async (req, res) => {
@@ -12,7 +13,7 @@ const studyDetail = async (req, res) => {
 };
 
 const studyUpdate = async (req, res) => {
-  await studyService.isHost(req.user, req.params);
+  await isHost(req.user, req.params);
   await studyService.studyUpdate(req.params, req.body, req.file);
   response(res, 200, '스터디 수정 완료');
 };

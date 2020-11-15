@@ -1,5 +1,5 @@
 const applyService = require('../services/apply');
-const { isHost } = require('../services/study');
+const { isHost } = require('../services/common');
 const response = require('../utils/response');
 
 const createApply = async (req, res) => {
@@ -19,6 +19,7 @@ const applyUpdate = async (req, res) => {
   response(res, 200, '가입신청 수정 완료');
 };
 
+// 쓴 사람만 가능하게 설정
 const applyDelete = async (req, res) => {
   await applyService.applyDelete(req.params);
   response(res, 200, '가입신청 삭제 완료');

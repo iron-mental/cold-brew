@@ -1,5 +1,5 @@
 const noticeService = require('../services/notice');
-const { isHost } = require('../services/study');
+const { isHost } = require('../services/common');
 const response = require('../utils/response');
 
 const createNotice = async (req, res) => {
