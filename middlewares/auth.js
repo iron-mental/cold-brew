@@ -22,8 +22,7 @@ const verify = async (req, res, next) => {
 };
 
 const idCompare = (req, res, next) => {
-  const id = req.params.id || req.query.id;
-  if (req.user.aud !== parseInt(id, 10)) {
+  if (req.user.aud !== parseInt(req.params.id, 10)) {
     return authError(next, { message: '권한이 없습니다 ' });
   }
   next();
