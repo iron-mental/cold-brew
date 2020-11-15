@@ -17,8 +17,8 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const token = await userService.login(req.body);
-  response(res, 200, { token });
+  const tokenSet = await userService.login(req.body);
+  response(res, 200, tokenSet);
 };
 
 const userDetail = async (req, res) => {
