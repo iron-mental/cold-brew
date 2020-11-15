@@ -2,11 +2,11 @@ const fs = require('fs');
 const path = require('path');
 
 const studyDao = require('../dao/study');
-const userDao = require('../dao/user');
+const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, customSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 
-const createStudy = async ({ aud: user_id }, createData) => {
+const createStudy = async ({ id: user_id }, createData) => {
   await studyDao.createStudy(user_id, createData);
 };
 
@@ -49,10 +49,10 @@ const myStudy = async ({ id }) => {
   return myStudyList;
 };
 
-const studyList = async ({ aud: user_id }, { category, sort }) => {
+const studyList = async ({ id: user_id }, { category, sort }) => {
   let studyListRows = '';
   if (sort === 'length') {
-    const userData = await userDao.getLocation(user_id);
+    const userData = await getUserLocation(user_id);
     studyListRows = await studyDao.getStudyListByLength(userData[0], category);
     studyListRows = customSorting(userData[0].sigungu, studyListRows);
   } else if (sort === 'new') {
@@ -72,13 +72,6 @@ const studyPaging = async (studyKeys) => {
   return await studyDao.studyPaging(studyKeys);
 };
 
-const isHost = async ({ aud: user_id }, { study_id }) => {
-  const checkRows = await studyDao.isHost(user_id, study_id);
-  if (checkRows[0].isHost === 0) {
-    throw customError(401, '권한이 없습니다');
-  }
-};
-
 module.exports = {
   createStudy,
   studyDetail,
@@ -86,5 +79,4 @@ module.exports = {
   myStudy,
   studyList,
   studyPaging,
-  isHost,
 };

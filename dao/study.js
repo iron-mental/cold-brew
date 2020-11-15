@@ -190,24 +190,6 @@ const studyPaging = async (studyKeys) => {
   }
 };
 
-const isHost = async (user_id, study_id) => {
-  const conn = await pool.getConnection();
-  try {
-    const studyListSql = `
-      SELECT EXISTS (
-        SELECT user_id
-        FROM participate
-        WHERE leader = true and user_id = ? and study_id = ? ) isHost
-    `;
-    const [listRows] = await conn.query(studyListSql, [user_id, study_id]);
-    return listRows;
-  } catch (err) {
-    throw customError(500, err.sqlMessage);
-  } finally {
-    await conn.release();
-  }
-};
-
 module.exports = {
   createStudy,
   getStudy,
@@ -217,5 +199,4 @@ module.exports = {
   getStudyListByNew,
   getStudyListByLength,
   studyPaging,
-  isHost,
 };
