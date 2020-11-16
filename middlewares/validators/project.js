@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const { validError } = require('../errors/customError');
+const { validError } = require('../../utils/errors/customError');
 
 const createProject = async (req, res, next) => {
   const paramSchema = Joi.object({

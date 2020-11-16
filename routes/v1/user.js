@@ -7,7 +7,7 @@ const userValid = require('../../middlewares/validators/user');
 const userController = require('../../controllers/user');
 const studyValid = require('../../middlewares/validators/study');
 const studyController = require('../../controllers/study');
-const projectValid = require('../../utils/validators/project');
+const projectValid = require('../../middlewares/validators/project');
 const projectController = require('../../controllers/project');
 
 const router = express.Router();
