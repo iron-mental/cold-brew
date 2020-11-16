@@ -92,6 +92,19 @@ const firebaseError = (err) => {
     result.message = '조회된 사용자가 없습니다';
     throw result;
   }
+
+  if (err.code === 'auth/wrong-password') {
+    result.status = 400;
+    result.message = '비밀번호를 잘못 입력하였습니다';
+    throw result;
+  }
+
+  if (err.code === 'auth/too-many-requests') {
+    result.status = 400;
+    result.message = '잦은 로그인 시도로 인해 계정이 비활성화 되었습니다. 잠시 후 다시 시도하세요. ';
+    throw result;
+  }
+
   result.status = 500;
   result.message = err.message;
   throw result;
