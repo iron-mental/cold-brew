@@ -105,7 +105,7 @@ const emailVerification = async ({ id }) => {
     throw customError(404, '조회된 사용자가 없습니다');
   }
   if (verifyRows[0].email_verified === 1) {
-    throw customError(400, `${email} 님은 이미 인증이 완료된 사용자입니다`);
+    throw customError(400, `${verifyRows[0].email} 님은 이미 인증이 완료된 사용자입니다`);
   }
   await sendVerifyEmail(verifyRows[0].email);
 };
