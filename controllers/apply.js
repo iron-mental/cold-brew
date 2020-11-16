@@ -1,28 +1,36 @@
 const applyService = require('../services/apply');
-const { isHost } = require('../services/common');
+const { isHost, checkAuthority } = require('../services/common');
 const response = require('../utils/response');
 
 const createApply = async (req, res) => {
-  await applyService.createApply(req.params, req.body);
+  await checkAuthority(req.user, req.params, 'none');
+  req.body.user_id = req.user.id;
+  req.body.study_id = req.params.study_id;
+  await applyService.createApply(req.body);
   response(res, 201, '가입신청 완료');
 };
 
-const applyDetail = async (req, res) => {
-  await isHost(req.user, req.params);
-  const applyData = await applyService.applyDetail(req.params);
+const getApplyByUser = async (req, res) => {
+  const applyData = await applyService.getApplyByUser(req.params);
   response(res, 200, applyData);
 };
 
-// 유저 측 수정
 const applyUpdate = async (req, res) => {
-  await applyService.applyUpdate(req.params, req.body);
-  response(res, 200, '가입신청 수정 완료');
+  await checkAuthority(req.user, req.params, 'apply');
+  await applyService.applyUpdate(req.user, req.params, req.body);
+  response(res, 200, '가입신청 수정');
 };
 
-// 쓴 사람만 가능하게 설정
 const applyDelete = async (req, res) => {
-  await applyService.applyDelete(req.params);
-  response(res, 200, '가입신청 삭제 완료');
+  await checkAuthority(req.user, req.params, 'apply');
+  await applyService.applyDelete(req.user, req.params);
+  response(res, 200, '가입신청 취소');
+};
+
+const getApplyById = async (req, res) => {
+  await isHost(req.user, req.params);
+  const applyData = await applyService.getApplyById(req.params);
+  response(res, 200, applyData);
 };
 
 const applyList = async (req, res) => {
@@ -31,10 +39,18 @@ const applyList = async (req, res) => {
   response(res, 200, applyList);
 };
 
+const applyProcess = async (req, res) => {
+  await isHost(req.user, req.params);
+  const process = await applyService.applyProcess(req.params, req.query);
+  response(res, 200, `${process} 완료`);
+};
+
 module.exports = {
   createApply,
-  applyDetail,
+  getApplyByUser,
   applyUpdate,
   applyDelete,
+  getApplyById,
   applyList,
+  applyProcess,
 };
