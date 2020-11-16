@@ -1,5 +1,5 @@
 const studyService = require('../services/study');
-const { isHost, checkMember } = require('../services/common');
+const { isHost, checkAuth } = require('../services/common');
 const response = require('../utils/response');
 
 const createStudy = async (req, res) => {
@@ -9,7 +9,7 @@ const createStudy = async (req, res) => {
 
 const studyDetail = async (req, res) => {
   const studyData = await studyService.studyDetail(req.params);
-  studyData.status = await checkMember(req.user, req.params);
+  studyData.Authority = await checkAuth(req.user, req.params);
   response(res, 200, studyData);
 };
 
