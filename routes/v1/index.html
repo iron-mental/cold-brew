@@ -50,7 +50,10 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
       $(function () {
+        const jwt =
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJya2RjamYwMTIyQG5hdmVyLmNvbSIsIm5pY2tuYW1lIjoi64uJ64S067OA6rK97ZWoIiwiaWF0IjoxNjA1NTMwMjcxLCJleHAiOjE2MDY1MzkyNzEsImlzcyI6InRlcm1pbmFsLXNlcnZlciIsInN1YiI6InVzZXJJbmZvLWFjY2VzcyJ9.IBTgxCJgrlwEKSmbi77t1Fa-9jIZcm2ONRb3U3GWmyY';
         var socket = io('http://localhost:3000/terminal', {
+          query: { token: jwt },
           transports: ['websocket'],
         });
         $('form').submit(function (e) {
