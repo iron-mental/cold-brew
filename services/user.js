@@ -62,7 +62,8 @@ const userDetail = async ({ id }) => {
   if (userDataRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-  return toBoolean(userDataRows, ['email_verified']);
+  return toBoolean(userDataRows, ['email_verified'])[0];
+  // return toBoolean(userDataRows, ['email_verified']);
 };
 
 // 수정 - (이메일, 비밀번호 제외)
