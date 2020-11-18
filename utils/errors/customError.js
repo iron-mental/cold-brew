@@ -83,6 +83,16 @@ const validError = (next, err) => {
       result.label = err.details[0].context.label;
       result.message = `true/false만 입력 가능합니다`;
       return next(result);
+
+    case 'uri.invalidUri':
+      result.label = err.details[0].context.label;
+      result.message = `유효하지 않은 주소입니다`;
+      return next(result);
+
+    default:
+      result.label = err.details[0].context.label;
+      result.message = `유효성검사 에러`;
+      return next(result);
   }
 };
 
