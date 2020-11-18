@@ -17,9 +17,9 @@ const createStudy = async (req, res, next) => {
     address_name: Joi.string().max(100).required(),
     location_detail: Joi.string().max(30),
     place_name: Joi.string().max(30),
-    sns_notion: Joi.string().custom(commonValid.uriMethod).max(170),
-    sns_evernote: Joi.string().custom(commonValid.uriMethod).max(170),
-    sns_web: Joi.string().custom(commonValid.uriMethod).max(170),
+    sns_notion: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
+    sns_evernote: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
+    sns_web: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
     image: Joi.allow(),
   });
   try {
@@ -59,9 +59,9 @@ const studyUpdate = async (req, res, next) => {
     address_name: Joi.string().max(100),
     location_detail: Joi.string().max(30),
     place_name: Joi.string().max(30),
-    sns_notion: Joi.string().custom(commonValid.uriMethod).max(170),
-    sns_evernote: Joi.string().custom(commonValid.uriMethod).max(170),
-    sns_web: Joi.string().custom(commonValid.uriMethod).max(170),
+    sns_notion: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
+    sns_evernote: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
+    sns_web: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
     image: Joi.allow(),
   }).min(1);
   try {
