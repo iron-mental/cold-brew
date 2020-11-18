@@ -54,6 +54,11 @@ const validError = (next, err) => {
       result.message = `허용되지 않은 값입니다`;
       return next(result);
 
+    case 'string.empty':
+      result.label = err.details[0].context.label;
+      result.message = `공백은 허용되지 않습니다`;
+      return next(result);
+
     case 'string.email':
       result.label = err.details[0].context.label;
       result.message = `유효하지 않은 이메일입니다`;
@@ -76,7 +81,7 @@ const validError = (next, err) => {
 
     case 'boolean.base':
       result.label = err.details[0].context.label;
-      result.message = `true/false만 입력 가능합니다.`;
+      result.message = `true/false만 입력 가능합니다`;
       return next(result);
   }
 };
