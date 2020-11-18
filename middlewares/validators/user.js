@@ -1,5 +1,7 @@
 const Joi = require('joi');
+
 const { validError } = require('../../utils/errors/customError');
+const commonValid = require('./common');
 
 const checkNickname = async (req, res, next) => {
   const paramSchema = Joi.object({
@@ -79,8 +81,8 @@ const userUpdate = async (req, res, next) => {
     career_title: Joi.string().min(2).max(20),
     career_contents: Joi.string().max(200),
     sns_github: Joi.string().max(40),
-    sns_linkedin: Joi.string().max(40),
-    sns_web: Joi.string().max(200),
+    sns_linkedin: Joi.string().custom(commonValid.uriMethod).max(170),
+    sns_web: Joi.string().custom(commonValid.uriMethod).max(170),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);
