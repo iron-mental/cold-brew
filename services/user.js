@@ -98,10 +98,9 @@ const userUpdate = async ({ id }, updateData, filedata) => {
 
 // 회원탈퇴
 const withdraw = async ({ id }, { email, password }) => {
-  // 탈퇴 시 mongoDB - chat 컬렉션에 존재하는 모든 닉네임 -> (알수없음)으로 변경
+  await userDao.withdraw(id, email, password);
   User.remove({ user_id: id }).exec();
   Chat.updateMany({ user_id: id }, { nickname: '(알수없음)' }).exec();
-  await userDao.withdraw(id, email, password);
 };
 
 // 인증 이메일 전송
