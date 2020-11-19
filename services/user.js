@@ -76,27 +76,24 @@ const userUpdate = async ({ id }, updateData, filedata) => {
       throw customError(400, '중복된 닉네임이 존재합니다');
     }
   }
+
   if (filedata) {
     const { destination, uploadedFile, path: _tmpPath } = filedata;
     const previousPath = await userDao.getImage(id);
-    const updateRows = await userDao.userUpdate(id, updateData);
-    if (updateRows.affectedRows === 0) {
-      throw customError(404, '조회된 사용자가 없습니다');
-    }
-
-    User.updateOne({ user_id: id }, { nickname: updateData.nickname }).exec();
-    Chat.updateMany({ user_id: id }, { nickname: updateData.nickname }).exec();
 
     const oldImagePath = path.join(destination, path.basename(previousPath[0].image || 'nullFileName'));
     const newPath = path.join(destination, uploadedFile.basename);
     fs.rename(_tmpPath, newPath, (err) => {});
     fs.unlink(oldImagePath, (err) => {});
-  } else {
-    const updateRows = await userDao.userUpdate(id, updateData);
-    if (updateRows.affectedRows === 0) {
-      throw customError(404, '조회된 사용자가 없습니다');
-    }
   }
+
+  const updateRows = await userDao.userUpdate(id, updateData);
+  if (updateRows.affectedRows === 0) {
+    throw customError(404, '조회된 사용자가 없습니다');
+  }
+
+  User.updateOne({ user_id: id }, { nickname: updateData.nickname }).exec();
+  Chat.updateMany({ user_id: id }, { nickname: updateData.nickname }).exec();
 };
 
 // 회원탈퇴
