@@ -52,18 +52,26 @@
       $(function () {
         const jwt =
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJya2RjamYwMTIyQG5hdmVyLmNvbSIsIm5pY2tuYW1lIjoi64uJ64S067OA6rK97ZWoIiwiaWF0IjoxNjA1NTMwMjcxLCJleHAiOjE2MDY1MzkyNzEsImlzcyI6InRlcm1pbmFsLXNlcnZlciIsInN1YiI6InVzZXJJbmZvLWFjY2VzcyJ9.IBTgxCJgrlwEKSmbi77t1Fa-9jIZcm2ONRb3U3GWmyY';
-        var socket = io('http://localhost:3000/ios', {
+        var socket = io('http://localhost:3000/android', {
           query: { token: jwt, room: 10 },
           transports: ['websocket'],
         });
         $('form').submit(function (e) {
           e.preventDefault(); // prevents page reloading
-          socket.emit('chat message', $('#m').val());
+          socket.emit('message', $('#m').val());
           $('#m').val('');
           return false;
         });
         socket.on('message', function (msg) {
-          $('#messages').append($('<li>').text(msg));
+          data = JSON.parse(msg);
+
+          var date = new Date(data.date * 1000);
+          var hours = date.getHours();
+          var minutes = '0' + date.getMinutes();
+          var seconds = '0' + date.getSeconds();
+          var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+
+          $('#messages').append($('<li>').text(`${data.nickname}: ${data.message} / ${formattedTime}`));
         });
       });
     </script>

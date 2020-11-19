@@ -11,8 +11,12 @@ router.use('/study', studyRouter);
 router.use('/firebase', firebaseRouter);
 
 // 채팅 뷰 제공
-router.get('/chat', (req, res, next) => {
+router.get('/chat/ios', (req, res, next) => {
   res.sendFile(__dirname + '/index.html');
+});
+
+router.get('/chat/android', (req, res, next) => {
+  res.sendFile(__dirname + '/index1.html');
 });
 
 module.exports = router;
