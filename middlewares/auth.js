@@ -5,7 +5,7 @@ const { authError } = require('../utils/errors/customError');
 const exceptionList = ['check-nickname', 'check-email', 'login', 'reset-password', 'reissuance'];
 
 const verify = async (req, res, next) => {
-  if (exceptionList.indexOf(req.url.split('/')[3]) > -1 || req.url === '/v1/user') {
+  if (exceptionList.indexOf(req.url.split('/')[3]) > -1 || ['/v1/user', '/v1/chat'].indexOf(req.url)) {
     return next();
   }
 
