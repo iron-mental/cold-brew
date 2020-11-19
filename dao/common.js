@@ -40,7 +40,7 @@ const checkApply = async (user_id, study_id) => {
   const conn = await pool.getConnection();
   try {
     const studyListSql = `
-      SELECT user_id, rejected_status
+      SELECT user_id, apply_status
       FROM apply
       WHERE user_id = ? and study_id = ?
     `;

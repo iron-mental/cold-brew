@@ -19,7 +19,7 @@ const getApplyByUser = async (study_id, user_id) => {
   try {
     const detailSql = `
       SELECT
-        a.id, a.user_id, a.study_id, a.message, a.rejected_status,
+        a.id, a.user_id, a.study_id, a.message, a.apply_status,
         DATE_FORMAT(a.created_at, "%Y-%c-%d %H:%i:%s") created_at,
         DATE_FORMAT(a.rejected_at, "%Y-%c-%d %H:%i:%s") rejected_at,
         u.image, u.nickname, u.sns_github, u.sns_linkedin, u.sns_web,
@@ -47,7 +47,7 @@ const getApplyById = async (study_id, apply_id) => {
   try {
     const detailSql = `
       SELECT
-        a.id, a.user_id, a.study_id, a.message, a.rejected_status,
+        a.id, a.user_id, a.study_id, a.message, a.apply_status,
         DATE_FORMAT(a.created_at, "%Y-%c-%d %H:%i:%s") created_at,
         DATE_FORMAT(a.rejected_at, "%Y-%c-%d %H:%i:%s") rejected_at,
         u.image, u.nickname, u.sns_github, u.sns_linkedin, u.sns_web,
@@ -105,9 +105,9 @@ const getApplyList = async (study_id) => {
         apply a
         INNER JOIN user u
         ON u.id = a.user_id
-      WHERE a.study_id = ?`;
-    const [apply] = await conn.query(applySql, study_id);
-    return apply;
+      WHERE a.apply_status = 'apply' AND a.study_id = ?`;
+    const [applyRows] = await conn.query(applySql, study_id);
+    return applyRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
   } finally {
@@ -115,18 +115,15 @@ const getApplyList = async (study_id) => {
   }
 };
 
-const setAllow = async (study_id, apply_id) => {
+const setAllow = async (study_id, apply_id, user_id) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-    const getUserIdSql = `SELECT user_id FROM apply WHERE id = ?`;
-    const [idRows] = await conn.query(getUserIdSql, apply_id);
+    const updateSql = `UPDATE apply SET apply_status = 'allow' WHERE id = ?`;
+    await conn.query(updateSql, apply_id);
 
-    const deleteSql = ` DELETE FROM apply WHERE id = ? AND study_id = ?`;
-    await conn.query(deleteSql, [apply_id, study_id]);
-
-    const allowSql = `INSERT INTO participate SET ?`;
-    const [allowRows] = await conn.query(allowSql, { study_id, user_id: idRows[0].user_id });
+    const createdSql = `INSERT INTO participate SET ?`;
+    const [allowRows] = await conn.query(createdSql, { study_id, user_id });
     await conn.commit();
     return allowRows;
   } catch (err) {
@@ -140,7 +137,7 @@ const setAllow = async (study_id, apply_id) => {
 const setReject = async (apply_id) => {
   const conn = await pool.getConnection();
   try {
-    const applySql = 'UPDATE apply SET rejected_status = true WHERE ?';
+    const updateSql = 'UPDATE apply SET status = "reject" WHERE id = ?';
     const [apply] = await conn.query(applySql, { id: apply_id });
     return apply;
   } catch (err) {
