@@ -1,4 +1,5 @@
 const pool = require('./db');
+const { customError } = require('../utils/errors/customError');
 
 const createStudy = async (user_id, createData) => {
   const conn = await pool.getConnection();
@@ -16,106 +17,174 @@ const createStudy = async (user_id, createData) => {
     return createRows;
   } catch (err) {
     await conn.rollback();
-    throw { status: 500, message: err.sqlMessage };
+    if (err.errno === 1452) {
+      throw customError(500, '조회된 유저가 없습니다');
+    }
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
 };
 
 const getStudy = async (study_id) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const studySql = `
-      SELECT s.id, s.category, s.title ,s.introduce, s.image, s.progress, s.study_time, s.location, s.location_detail, s.sns_notion, s.sns_evernote, s.sns_web,
-      n.id AS N_id, n.title AS N_title, n.contents AS N_contents, n.pined AS N_pined, n.created_at AS N_created_at, n.updated_at AS N_updated_at,
-      p.id AS P_id, p.user_id AS P_user_id, u.nickname AS P_nickname, u.image AS P_image, p.leader AS P_leader
-      FROM study AS s
-      LEFT JOIN notice AS n
-      ON s.id = n.study_id
-      LEFT JOIN participate AS p
-      ON s.id = p.study_id
-      LEFT JOIN user AS u
-      ON u.id = p.user_id
+      SELECT
+        s.id, s.category, s.title ,s.introduce, s.image, s.progress, s.study_time, s.sns_notion, s.sns_evernote, s.sns_web,
+        s.latitude Llatitude, s.longitude Llongitude, s.address_name Laddress_name, s.place_name Lplace_name, s.location_detail Llocation_detail,
+        p.id Pid, p.user_id Puser_id, u.nickname Pnickname, u.image Pimage, p.leader Pleader
+      FROM
+        study s
+        LEFT JOIN participate p
+        ON s.id = p.study_id
+        LEFT JOIN user u
+        ON u.id = p.user_id
       WHERE s.id = ?`;
     const [studyRows] = await conn.query(studySql, study_id);
     return studyRows;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
-  } finally {
-    await conn.release();
-  }
-};
-
-const getNoticeList = async (study_id) => {
-  try {
-    var conn = await pool.getConnection();
-    const noticeSql = `SELECT id, title, contents, pined, created_at FROM notice WHERE ?`;
-    const [noticeRows] = await conn.query(noticeSql, { study_id });
-    return noticeRows;
-  } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
-  } finally {
-    await conn.release();
-  }
-};
-
-const getParticipateList = async (study_id) => {
-  try {
-    var conn = await pool.getConnection();
-    const participateSql = `
-      SELECT p.id, u.id AS user_id, u.nickname, u.image, p.leader
-      FROM participate AS p
-      INNER JOIN user AS u
-      ON p.user_id = u.id
-      WHERE p.study_id = ?`;
-    const [participateRows] = await conn.query(participateSql, study_id);
-    return participateRows;
-  } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
-  } finally {
-    await conn.release();
-  }
-};
-
-const getApplyList = async (study_id) => {
-  try {
-    var conn = await pool.getConnection();
-    const applySql = `
-      SELECT a.id, u.id AS user_id, u.image, a.message
-      FROM apply AS a
-      INNER JOIN user AS u
-      ON u.id = a.user_id
-      WHERE a.study_id = ?`;
-    const [apply] = await conn.query(applySql, study_id);
-    return apply;
-  } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
 };
 
 const getImage = async (study_id) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const imageSQL = 'SELECT image FROM study WHERE ?';
     const [imageRows] = await conn.query(imageSQL, { id: study_id });
     return imageRows;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
 };
 
 const studyUpdate = async (study_id, updateData) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const updateSQL = 'UPDATE study SET ? WHERE ?';
     const [updateRows] = await conn.query(updateSQL, [updateData, { id: study_id }]);
     return updateRows;
   } catch (err) {
-    throw { status: 500, message: err.sqlMessage };
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
+const getMyStudy = async (id) => {
+  const conn = await pool.getConnection();
+  try {
+    const myStudySql = `
+      SELECT
+        s.id, s.title, s.sigungu, s.image
+      FROM
+        participate p
+        INNER JOIN study s
+        ON p.study_id = s.id
+      WHERE p.user_id = ?
+      ORDER BY id DESC`;
+    const [myStudyRows] = await conn.query(myStudySql, id);
+    return myStudyRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
+const getStudyListByNew = async (category) => {
+  const conn = await pool.getConnection();
+  try {
+    const studyListSql = `
+      SELECT
+        *, count(*) members
+      FROM (
+        SELECT
+          s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
+          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
+        FROM
+          study s
+          LEFT JOIN participate p
+          ON s.id = p.study_id
+          LEFT JOIN user u
+          ON u.id = p.user_id
+        WHERE ?
+        ORDER BY p.leader DESC ) T
+      GROUP BY id
+      ORDER BY id DESC
+      `;
+    const [listRows] = await conn.query(studyListSql, { category });
+    return listRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
+const getStudyListByLength = async ({ latitude, longitude }, category) => {
+  const conn = await pool.getConnection();
+  try {
+    const studyListSql = `
+      SELECT
+        *, count(*) members
+      FROM (
+        SELECT
+          s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
+          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
+          (6371*acos(cos(radians(?))*cos(radians(s.latitude))*cos(radians(s.longitude)
+          -radians(?))+sin(radians(?))*sin(radians(s.latitude)))) AS distance
+        FROM
+          study s
+          LEFT JOIN participate p
+          ON s.id = p.study_id
+          LEFT JOIN user u
+          ON u.id = p.user_id
+        WHERE ?
+        ORDER BY p.leader DESC ) T
+      GROUP BY id
+      ORDER BY distance ASC;
+    `;
+    const [listRows] = await conn.query(studyListSql, [latitude, longitude, latitude, { category }]);
+    return listRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
+const studyPaging = async (studyKeys) => {
+  const params = studyKeys.concat(studyKeys);
+  const conn = await pool.getConnection();
+  try {
+    const studyListSql = `
+    SELECT
+        *, count(*) members
+      FROM (
+        SELECT
+          s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
+          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
+        FROM
+          study s
+          LEFT JOIN participate p
+          ON s.id = p.study_id
+          LEFT JOIN user u
+          ON u.id = p.user_id
+        WHERE s.id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) T
+      GROUP BY id
+      ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const [listRows] = await conn.query(studyListSql, params);
+    return listRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -124,9 +193,10 @@ const studyUpdate = async (study_id, updateData) => {
 module.exports = {
   createStudy,
   getStudy,
-  getNoticeList,
-  getApplyList,
-  getParticipateList,
   getImage,
   studyUpdate,
+  getMyStudy,
+  getStudyListByNew,
+  getStudyListByLength,
+  studyPaging,
 };

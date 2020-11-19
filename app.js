@@ -3,39 +3,53 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const firebase = require('firebase');
+const admin = require('firebase-admin');
+const fs = require('fs');
 
 const v1Router = require('./routes/v1');
 const config = require('./configs/config');
+const { verify } = require('./middlewares/auth');
+
+firebase.initializeApp(config.firebase);
+
+admin.initializeApp({
+  credential: admin.credential.cert(process.env.GOOGLE_APPLICATION_CREDENTIALS),
+  databaseURL: process.env.FIREBASE_databaseURL,
+});
 
 const app = express();
-firebase.initializeApp(config.firebase);
 
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(verify);
 
 app.use('/v1', v1Router);
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/../public'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// error handler
+// pre-error handler
 app.use((err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  if (!err.status) {
-    console.error(err);
+  if (req.file) {
+    fs.unlink(req.file.path, (err) => {});
   }
 
-  res.status(err.status || 500);
-  return res.json({ message: err.message });
+  if (err.type === 'validation-error') {
+    return res.status(422).json(err);
+  } else if (err.type === 'auth-error') {
+    return res.status(401).json(err);
+  }
+
+  const status = err.status || 500;
+  res.status(status);
+  delete err.status;
+  return res.json(err);
 });
 
 module.exports = app;

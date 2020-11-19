@@ -1,28 +1,30 @@
 const firebase = require('firebase');
+const admin = require('firebase-admin');
 
 const pool = require('./db');
+const { customError, firebaseError } = require('../utils/errors/customError');
 
 const checkNickname = async (nickname) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const checkSql = 'SELECT nickname FROM user WHERE ?';
     const [checkRows] = await conn.query(checkSql, { nickname });
     return checkRows;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
 };
 
 const checkEmail = async (email) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const checkSql = 'SELECT email FROM user WHERE ?';
     const [checkRows] = await conn.query(checkSql, { email });
     return checkRows;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -35,16 +37,17 @@ const signup = async (email, password, nickname) => {
     .then((userCredential) => {
       return userCredential.user;
     })
-    .catch((error) => {
-      throw { status: 400, message: 'Firebase Error: ' + error.code };
+    .catch((err) => {
+      throw firebaseError(err);
     });
+
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const sql = 'INSERT INTO user SET ?';
     const [rows] = await conn.query(sql, { uid, email, email_verified: emailVerified, nickname });
     return rows;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -57,64 +60,61 @@ const login = async (email, password) => {
     .then((userCredential) => {
       return userCredential.user;
     })
-    .catch((error) => {
-      throw { status: 400, message: 'Firebase Error: ' + error.code };
+    .catch((err) => {
+      throw firebaseError(err);
     });
 
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
-    const userSql = 'SELECT id FROM user WHERE ?';
+    const userSql = 'SELECT id, email, nickname FROM user WHERE ?';
     const [rows] = await conn.query(userSql, { uid });
     return rows;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
 };
 
 const userDetail = async (id) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const userSql = `
-    SELECT u.id, u.nickname, u.email, u.image, u.introduce, u.location, u.career_title, u.career_contents, u.sns_github, u.sns_linkedin, u.sns_web, u.email_verified,
-    FROM_UNIXTIME(UNIX_TIMESTAMP(u.created_at), '%Y-%m-%d %H:%i:%s') AS created_at,
-    p.id AS P_id, p.title AS P_title, p.contents AS P_contents, p.sns_github AS P_sns_github, p.sns_appstore AS P_sns_appstore, p.sns_playstore AS P_sns_playstore,
-    FROM_UNIXTIME(UNIX_TIMESTAMP(p.created_at), '%Y-%m-%d %H:%i:%s') AS P_created_at
-    FROM user AS u
-    LEFT JOIN project AS p
-    ON u.id = p.user_id
-    WHERE u.id = ?`;
-    const [userData] = await conn.query(userSql, id);
+      SELECT 
+        id, nickname, email, image, introduce, CONCAT(sido, ' ', sigungu) address, career_title, career_contents, sns_github, sns_linkedin, sns_web, email_verified,
+        DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at
+      FROM user 
+      WHERE ?`;
+    const [userData] = await conn.query(userSql, { id });
     return userData;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
 };
 
 const getImage = async (id) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const imageSQL = 'SELECT image FROM user WHERE ?';
     const [imageRows] = await conn.query(imageSQL, { id });
     return imageRows;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
 };
 
 const userUpdate = async (id, updateData) => {
+  const conn = await pool.getConnection();
   try {
-    var conn = await pool.getConnection();
     const updateSql = 'UPDATE user SET ? WHERE ? ';
     const [updateRows] = await conn.query(updateSql, [updateData, { id }]);
     return updateRows;
   } catch (err) {
-    throw { status: 500, message: 'DB Error' };
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -127,10 +127,7 @@ const withdraw = async (id, email, password) => {
     const withdrawSql = `DELETE FROM user WHERE ? AND ?`;
     const [withdrawRows] = await conn.query(withdrawSql, [{ id }, { email }]);
     if (!withdrawRows.affectedRows) {
-      throw {
-        status: 404,
-        message: '조회된 사용자가 없습니다',
-      };
+      throw customError(400, '조회된 사용자가 없습니다');
     }
     await firebase
       .auth()
@@ -139,8 +136,8 @@ const withdraw = async (id, email, password) => {
         const user = firebase.auth().currentUser;
         user.delete();
       })
-      .catch(function (error) {
-        throw { status: 400, message: 'Firebase Error: ' + error.code };
+      .catch((err) => {
+        throw firebaseError(err);
       });
     await conn.commit();
     return withdrawRows;
@@ -149,9 +146,64 @@ const withdraw = async (id, email, password) => {
     if (err.status) {
       throw err;
     } else if (err.errno === 1451) {
-      throw { status: 400, message: '해당 사용자에게 종속되어있는 데이터가 존재합니다' };
+      throw customError(400, '해당 사용자에게 종속되어있는 데이터가 존재합니다');
+    }
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
+const verifiedCheck = async (id) => {
+  const conn = await pool.getConnection();
+  try {
+    const checkSql = 'SELECT email, email_verified FROM user WHERE ?';
+    const [checkRows] = await conn.query(checkSql, { id });
+    return checkRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
+const emailVerificationProcess = async (email) => {
+  const conn = await pool.getConnection();
+  try {
+    const uidSql = 'SELECT uid FROM user WHERE ?';
+    const [uidRows] = await conn.query(uidSql, { email });
+    const result = await admin
+      .auth()
+      .updateUser(uidRows[0].uid, {
+        emailVerified: true,
+      })
+      .then(async () => {
+        const updateSql = 'UPDATE user SET ? WHERE ?';
+        const [updateRows] = await conn.query(updateSql, [{ email_verified: true }, { email }]);
+        return updateRows;
+      })
+      .catch((err) => {
+        throw firebaseError(err);
+      });
+    return result;
+  } catch (err) {
+    if (err.status) {
+      throw err;
     }
     throw { status: 500, message: 'DB Error' };
+  } finally {
+    await conn.release();
+  }
+};
+
+const checkToken = async (refreshToken) => {
+  const conn = await pool.getConnection();
+  try {
+    const checkSql = 'SELECT id, email, nickname, access_token FROM user WHERE refresh_token = ?';
+    const [checkRows] = await conn.query(checkSql, refreshToken);
+    return checkRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -166,4 +218,7 @@ module.exports = {
   checkNickname,
   checkEmail,
   withdraw,
+  verifiedCheck,
+  emailVerificationProcess,
+  checkToken,
 };
