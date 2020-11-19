@@ -52,7 +52,8 @@ const applyList = async ({ study_id }) => {
 
 const applyProcess = async ({ study_id, apply_id }, { status }) => {
   if (status === 'allow') {
-    const allowRows = await applyDao.setAllow(study_id, apply_id);
+    const userRows = await applyDao.getApplyById(study_id, apply_id);
+    const allowRows = await applyDao.setAllow(study_id, apply_id, userRows[0].user_id);
     if (allowRows.affectedRows === 0) {
       throw customError(404, '조회된 신청내역이 없습니다');
     }
