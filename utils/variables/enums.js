@@ -26,5 +26,3 @@ module.exports = {
   authEnum,
   categoryEnum,
 };
-
-console.log(authEnum);
