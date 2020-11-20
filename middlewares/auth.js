@@ -9,7 +9,7 @@ const exceptionList = [
 ];
 
 const verify = async (req, res, next) => {
-  if (exceptionList[0].indexOf(req.url.split('/')[3]) > -1 || exceptionList[1].indexOf(req.url) > 0) {
+  if (exceptionList[0].indexOf(req.url.split('/')[3]) > -1 || exceptionList[1].indexOf(req.url) > -1) {
     return next();
   }
 
