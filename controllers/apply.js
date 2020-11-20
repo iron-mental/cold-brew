@@ -42,8 +42,8 @@ const applyList = async (req, res) => {
 
 const applyProcess = async (req, res) => {
   await isHost(req.user, req.params);
-  const process = await applyService.applyProcess(req.params, req.query);
-  response(res, 200, `${process} 완료`);
+  await applyService.applyProcess(req.params, req.body);
+  response(res, 200, '처리 완료');
 };
 
 module.exports = {

@@ -90,8 +90,12 @@ const applyProcess = async (req, res, next) => {
     study_id: Joi.number().required(),
     apply_id: Joi.number().required(),
   });
+  const bodySchema = Joi.object({
+    status: Joi.bool().required(),
+  });
   try {
     await paramSchema.validateAsync(req.params);
+    await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
     validError(next, err);

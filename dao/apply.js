@@ -119,8 +119,8 @@ const setAllow = async (study_id, apply_id, user_id) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-    const updateSql = `UPDATE apply SET apply_status = 'allow' WHERE id = ?`;
-    await conn.query(updateSql, apply_id);
+    const allowSql = `UPDATE apply SET apply_status = 'allow' WHERE id = ?`;
+    await conn.query(allowSql, apply_id);
 
     const createdSql = `INSERT INTO participate SET ?`;
     const [allowRows] = await conn.query(createdSql, { study_id, user_id });
@@ -137,8 +137,8 @@ const setAllow = async (study_id, apply_id, user_id) => {
 const setReject = async (apply_id) => {
   const conn = await pool.getConnection();
   try {
-    const updateSql = 'UPDATE apply SET status = "reject" WHERE id = ?';
-    const [apply] = await conn.query(applySql, { id: apply_id });
+    const rejectSql = 'UPDATE apply SET apply_status = "reject" WHERE id = ?';
+    const [apply] = await conn.query(rejectSql, apply_id);
     return apply;
   } catch (err) {
     throw customError(500, err.sqlMessage);
