@@ -17,13 +17,13 @@ const getApplyByUser = async (req, res) => {
 };
 
 const applyUpdate = async (req, res) => {
-  await checkAuthority(req.user, req.params, authEnum.applicant);
+  await checkAuthority(req.user, req.params, authEnum.applier);
   await applyService.applyUpdate(req.user, req.params, req.body);
   response(res, 200, '가입신청 수정');
 };
 
 const applyDelete = async (req, res) => {
-  await checkAuthority(req.user, req.params, authEnum.applicant);
+  await checkAuthority(req.user, req.params, authEnum.applier);
   await applyService.applyDelete(req.user, req.params);
   response(res, 200, '가입신청 취소');
 };

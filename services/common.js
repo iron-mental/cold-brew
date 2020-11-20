@@ -17,7 +17,7 @@ const checkAuth = async ({ id: user_id }, { study_id }) => {
 
   const applyCheckRows = await commonDao.checkApply(user_id, study_id);
   if (applyCheckRows.length === 1) {
-    return authEnum[applyCheckRows[0].apply_status === 0 ? 'applicant' : 'rejected'];
+    return authEnum[applyCheckRows[0].apply_status === 0 ? 'applier' : 'rejected'];
   }
 
   return authEnum.none;
