@@ -6,6 +6,12 @@ const authEnum = Object.freeze({
   none: 'none',
 });
 
+const applyEnum = Object.freeze({
+  apply: 'apply',
+  allow: 'allow',
+  reject: 'reject',
+});
+
 const categoryEnum = Object.freeze({
   ai: 'ai',
   etc: 'etc',
@@ -24,5 +30,6 @@ const categoryEnum = Object.freeze({
 
 module.exports = {
   authEnum,
+  applyEnum,
   categoryEnum,
 };
