@@ -1,7 +1,7 @@
 const authEnum = Object.freeze({
   host: 'host',
   member: 'member',
-  applicant: 'applicant',
+  applier: 'applier',
   reject: 'reject',
   none: 'none',
 });
