@@ -1,11 +1,15 @@
 const jwt = require('jsonwebtoken');
 
 const { authError } = require('../utils/errors/customError');
+const { categoryEnum } = require('../utils/variables/enums');
 
-const exceptionList = ['check-nickname', 'check-email', 'login', 'reset-password', 'reissuance'];
+const exceptionList = [
+  ['check-nickname', 'check-email', 'login', 'reset-password', 'reissuance'].concat(Object.keys(categoryEnum)),
+  ['/v1/user', '/v1/chat'],
+];
 
 const verify = async (req, res, next) => {
-  if (exceptionList.indexOf(req.url.split('/')[3]) > -1 || ['/v1/user', '/v1/chat'].indexOf(req.url)) {
+  if (exceptionList[0].indexOf(req.url.split('/')[3]) > 0 || exceptionList[1].indexOf(req.url) > 0) {
     return next();
   }
 
