@@ -7,6 +7,10 @@ const { rowSplit, toBoolean, locationMerge, cutId, customSorting } = require('..
 const { customError } = require('../utils/errors/customError');
 
 const createStudy = async ({ id: user_id }, createData) => {
+  const checkRows = await studyDao.checkTitle(createData.title);
+  if (checkRows.length > 0) {
+    throw customError(400, '중복된 스터디 이름이 존재합니다');
+  }
   await studyDao.createStudy(user_id, createData);
 };
 
