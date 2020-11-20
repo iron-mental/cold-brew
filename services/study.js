@@ -6,12 +6,22 @@ const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, customSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 
+const User = require('../models/user');
+const Room = require('../models/room');
+
 const createStudy = async ({ id: user_id }, createData) => {
   const checkRows = await studyDao.checkTitle(createData.title);
   if (checkRows.length > 0) {
     throw customError(400, '중복된 스터디 이름이 존재합니다');
   }
-  await studyDao.createStudy(user_id, createData);
+  const createRows = await studyDao.createStudy(user_id, createData);
+
+  Room.create({
+    room_number: createRows.insertId,
+    room_name: createData.title,
+    members: [user_id],
+  });
+  User.updateOne({ user_id }, { $push: { rooms: createRows.insertId } }, { upsert: true }).exec();
 };
 
 const studyDetail = async ({ study_id }) => {
@@ -19,12 +29,21 @@ const studyDetail = async ({ study_id }) => {
   if (studyRows.length === 0) {
     throw customError(404, '조회된 스터디가 없습니다');
   }
+
   studyRows = toBoolean(studyRows, ['Pleader']);
   studyRows = rowSplit(studyRows, ['participate']);
   return locationMerge(studyRows);
 };
 
 const studyUpdate = async ({ study_id }, updateData, filedata) => {
+  if (updateData.title) {
+    const checkRows = await studyDao.checkTitle(updateData.title);
+    if (checkRows.length > 0) {
+      throw customError(400, '중복된 스터디 이름이 존재합니다');
+    }
+    Room.updateOne({ room_number: study_id }, { room_name: updateData.title }).exec();
+  }
+
   if (filedata) {
     const { destination, uploadedFile, path: _tmpPath } = filedata;
     const previousPath = await studyDao.getImage(study_id);
