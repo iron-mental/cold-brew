@@ -18,6 +18,7 @@ const categoryEnum = Object.freeze({
   web: 'web',
   ios: 'ios',
   arvr: 'arvr',
+  server: 'server',
   android: 'android',
   backend: 'backend',
   bigdata: 'bigdata',
