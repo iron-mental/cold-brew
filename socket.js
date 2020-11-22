@@ -1,7 +1,7 @@
+('use strict');
 const jwt = require('jsonwebtoken');
 const socketio = require('socket.io');
-
-const { categoryEnum } = require('./utils/variables/enums');
+const { EventEmitter } = require('events');
 
 const User = require('./models/user');
 const Room = require('./models/room');
@@ -42,29 +42,56 @@ const serverEvent = (socket) => {
   });
 
   socket.on('chat', (message) => {
+    console.log('socket chat! : ', message);
+    io.of('/terminal').to(10).emit('message', message);
+
     // msgData 중, message는 클라에게 받을 것
-    const msgData = {
-      room_number: socket.handshake.query.room,
-      user_id: socket.decoded.id,
-      nickname: socket.decoded.nickname,
-      message: message,
-      date: Math.floor(new Date().getTime() / 1000),
-    };
-    io.of(socket.nsp.name).to(msgData.room_number).emit('message', JSON.stringify(msgData));
-    Chat.create(msgData);
+    // const msgData = {
+    //   room_number: socket.handshake.query.room,
+    //   user_id: socket.decoded.id,
+    //   nickname: socket.decoded.nickname,
+    //   message: message,
+    //   date: Math.floor(new Date().getTime() / 1000),
+    // };
+    // io.of(socket.nsp.name).to(msgData.room_number).emit('message', JSON.stringify(msgData));
+    // Chat.create(msgData);
   });
 };
 
+class MyEvents extends EventEmitter {
+  constructor(io) {
+    super();
+  }
+
+  systemChatEnum = Object.freeze({
+    participate: 'participate',
+    leave: 'leave',
+  });
+
+  setEvents = () => {
+    this.on('participate', (data) => {
+      // data = {
+      //   from: systemChatEnum.participate,
+      //   nsp: '/terminal',
+      //   room: 10,
+      //   message: 'test_message',
+      // };
+
+      console.log('participate: ', data);
+      // terminal.to(data.room).emit('message', data.message);
+      io.of('/terminal').to(10).emit('message', data);
+    });
+  };
+}
+
 const listen = (server) => {
   io = socketio.listen(server);
-
-  Object.keys(categoryEnum).forEach((v, i) => {
-    io.of('/' + v)
-      .use(jwtVerify)
-      .on('connection', serverEvent);
-  });
+  io.of('/terminal').use(jwtVerify).on('connection', serverEvent);
 
   return io;
 };
 
-module.exports = { listen };
+module.exports = {
+  MyEvents,
+  listen,
+};

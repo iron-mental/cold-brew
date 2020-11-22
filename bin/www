@@ -27,7 +27,9 @@ const server = http.createServer(app);
  */
 
 const socketio = require('../socket');
-socketio.listen(server);
+const io = socketio.listen(server);
+const sEvents = new socketio.MyEvents(io);
+sEvents.setEvents();
 
 /**
  * Connect mongoDB serevr
@@ -99,3 +101,7 @@ function onListening() {
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+module.exports = {
+  sEvents,
+};
