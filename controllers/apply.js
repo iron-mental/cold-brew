@@ -17,13 +17,13 @@ const getApplyByUser = async (req, res) => {
 };
 
 const applyUpdate = async (req, res) => {
-  await checkAuthority(req.user, req.params, authEnum.applicant);
+  await checkAuthority(req.user, req.params, authEnum.applier);
   await applyService.applyUpdate(req.user, req.params, req.body);
   response(res, 200, '가입신청 수정');
 };
 
 const applyDelete = async (req, res) => {
-  await checkAuthority(req.user, req.params, authEnum.applicant);
+  await checkAuthority(req.user, req.params, authEnum.applier);
   await applyService.applyDelete(req.user, req.params);
   response(res, 200, '가입신청 취소');
 };
@@ -42,8 +42,8 @@ const applyList = async (req, res) => {
 
 const applyProcess = async (req, res) => {
   await isHost(req.user, req.params);
-  const process = await applyService.applyProcess(req.params, req.query);
-  response(res, 200, `${process} 완료`);
+  await applyService.applyProcess(req.params, req.body);
+  response(res, 200, '처리 완료');
 };
 
 module.exports = {

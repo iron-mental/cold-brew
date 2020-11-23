@@ -26,6 +26,19 @@ const createStudy = async (user_id, createData) => {
   }
 };
 
+const checkTitle = async (title) => {
+  const conn = await pool.getConnection();
+  try {
+    const checkSQL = 'SELECT id FROM study WHERE ?';
+    const [checkRows] = await conn.query(checkSQL, { title });
+    return checkRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
 const getStudy = async (study_id) => {
   const conn = await pool.getConnection();
   try {
@@ -199,4 +212,5 @@ module.exports = {
   getStudyListByNew,
   getStudyListByLength,
   studyPaging,
+  checkTitle,
 };

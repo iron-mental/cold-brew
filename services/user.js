@@ -7,6 +7,9 @@ const { sendVerifyEmail } = require('../utils/mailer');
 const { getAccessToken, getRefreshToken, verify } = require('../utils/jwt.js');
 const { customError } = require('../utils/errors/customError');
 
+const User = require('../models/user');
+const Chat = require('../models/chat');
+
 // 닉네임 중복체크
 const checkNickname = async ({ nickname }) => {
   const checkRows = await userDao.checkNickname(nickname);
@@ -63,7 +66,6 @@ const userDetail = async ({ id }) => {
     throw customError(404, '조회된 사용자가 없습니다');
   }
   return toBoolean(userDataRows, ['email_verified'])[0];
-  // return toBoolean(userDataRows, ['email_verified']);
 };
 
 // 수정 - (이메일, 비밀번호 제외)
@@ -74,29 +76,31 @@ const userUpdate = async ({ id }, updateData, filedata) => {
       throw customError(400, '중복된 닉네임이 존재합니다');
     }
   }
+
   if (filedata) {
     const { destination, uploadedFile, path: _tmpPath } = filedata;
     const previousPath = await userDao.getImage(id);
-    const updateRows = await userDao.userUpdate(id, updateData);
-    if (updateRows.affectedRows === 0) {
-      throw customError(404, '조회된 사용자가 없습니다');
-    }
 
     const oldImagePath = path.join(destination, path.basename(previousPath[0].image || 'nullFileName'));
     const newPath = path.join(destination, uploadedFile.basename);
     fs.rename(_tmpPath, newPath, (err) => {});
     fs.unlink(oldImagePath, (err) => {});
-  } else {
-    const updateRows = await userDao.userUpdate(id, updateData);
-    if (updateRows.affectedRows === 0) {
-      throw customError(404, '조회된 사용자가 없습니다');
-    }
   }
+
+  const updateRows = await userDao.userUpdate(id, updateData);
+  if (updateRows.affectedRows === 0) {
+    throw customError(404, '조회된 사용자가 없습니다');
+  }
+
+  User.updateOne({ user_id: id }, { nickname: updateData.nickname }).exec();
+  Chat.updateMany({ user_id: id }, { nickname: updateData.nickname }).exec();
 };
 
 // 회원탈퇴
 const withdraw = async ({ id }, { email, password }) => {
   await userDao.withdraw(id, email, password);
+  User.remove({ user_id: id }).exec();
+  Chat.updateMany({ user_id: id }, { nickname: '(알수없음)' }).exec();
 };
 
 // 인증 이메일 전송

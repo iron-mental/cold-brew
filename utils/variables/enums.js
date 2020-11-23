@@ -1,9 +1,15 @@
 const authEnum = Object.freeze({
   host: 'host',
   member: 'member',
-  applicant: 'applicant',
+  applier: 'applier',
   reject: 'reject',
   none: 'none',
+});
+
+const applyEnum = Object.freeze({
+  apply: 'apply',
+  allow: 'allow',
+  reject: 'reject',
 });
 
 const categoryEnum = Object.freeze({
@@ -12,6 +18,7 @@ const categoryEnum = Object.freeze({
   web: 'web',
   ios: 'ios',
   arvr: 'arvr',
+  server: 'server',
   android: 'android',
   backend: 'backend',
   bigdata: 'bigdata',
@@ -24,5 +31,6 @@ const categoryEnum = Object.freeze({
 
 module.exports = {
   authEnum,
+  applyEnum,
   categoryEnum,
 };
