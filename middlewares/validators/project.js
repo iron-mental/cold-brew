@@ -1,6 +1,7 @@
 const Joi = require('joi');
 
-const { validError } = require('../errors/customError');
+const { validError } = require('../../utils/errors/customError');
+const commonValid = require('./common');
 
 const createProject = async (req, res, next) => {
   const paramSchema = Joi.object({
@@ -9,9 +10,9 @@ const createProject = async (req, res, next) => {
   const bodySchema = Joi.object({
     title: Joi.string().max(20).required(),
     contents: Joi.string().max(200).required(),
-    sns_github: Joi.string().max(40),
-    sns_appstore: Joi.string().max(100),
-    sns_playstore: Joi.string().max(100),
+    sns_github: Joi.string().allow('').max(40),
+    sns_appstore: Joi.string().allow('').custom(commonValid.uriMethod).max(150),
+    sns_playstore: Joi.string().allow('').custom(commonValid.uriMethod).max(150),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -55,9 +56,9 @@ const updateProject = async (req, res, next) => {
   const bodySchema = Joi.object({
     title: Joi.string().max(20),
     contents: Joi.string().max(200),
-    sns_github: Joi.string().max(40),
-    sns_appstore: Joi.string().max(100),
-    sns_playstore: Joi.string().max(100),
+    sns_github: Joi.string().allow('').max(40),
+    sns_appstore: Joi.string().allow('').custom(commonValid.uriMethod).max(150),
+    sns_playstore: Joi.string().allow('').custom(commonValid.uriMethod).max(150),
   });
   try {
     await paramSchema.validateAsync(req.params);

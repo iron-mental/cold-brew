@@ -1,5 +1,7 @@
 const Joi = require('joi');
+
 const { validError } = require('../../utils/errors/customError');
+const commonValid = require('./common');
 
 const checkNickname = async (req, res, next) => {
   const paramSchema = Joi.object({
@@ -78,9 +80,9 @@ const userUpdate = async (req, res, next) => {
     sigungu: Joi.string().max(20),
     career_title: Joi.string().min(2).max(20),
     career_contents: Joi.string().max(200),
-    sns_github: Joi.string().max(40),
-    sns_linkedin: Joi.string().max(40),
-    sns_web: Joi.string().max(200),
+    sns_github: Joi.string().allow('').max(40),
+    sns_linkedin: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
+    sns_web: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);
@@ -112,7 +114,7 @@ const withdraw = async (req, res, next) => {
 
 const emailVerification = async (req, res, next) => {
   const paramSchema = Joi.object({
-    email: Joi.string().email().required(),
+    id: Joi.number().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -134,6 +136,18 @@ const emailVerificationProcess = async (req, res, next) => {
   }
 };
 
+const reissuance = async (req, res, next) => {
+  const bodySchema = Joi.object({
+    refresh_token: Joi.string().required(),
+  });
+  try {
+    await bodySchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -144,4 +158,5 @@ module.exports = {
   withdraw,
   emailVerification,
   emailVerificationProcess,
+  reissuance,
 };

@@ -2,14 +2,11 @@ const fs = require('fs');
 const path = require('path');
 
 const studyDao = require('../dao/study');
-const userDao = require('../dao/user');
+const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, customSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 
-// 스터디 생성
-const createStudy = async (createData) => {
-  const { user_id } = createData;
-  delete createData.user_id;
+const createStudy = async ({ id: user_id }, createData) => {
   await studyDao.createStudy(user_id, createData);
 };
 
@@ -52,13 +49,10 @@ const myStudy = async ({ id }) => {
   return myStudyList;
 };
 
-const studyList = async ({ category, sort }) => {
-  // 토큰과 함께 사라질 데이터
-  const user_id = 1;
-
+const studyList = async ({ id: user_id }, { category, sort }) => {
   let studyListRows = '';
   if (sort === 'length') {
-    const userData = await userDao.getLocation(user_id);
+    const userData = await getUserLocation(user_id);
     studyListRows = await studyDao.getStudyListByLength(userData[0], category);
     studyListRows = customSorting(userData[0].sigungu, studyListRows);
   } else if (sort === 'new') {
@@ -75,8 +69,7 @@ const studyList = async ({ category, sort }) => {
 };
 
 const studyPaging = async (studyKeys) => {
-  const studyList = await studyDao.studyPaging(studyKeys);
-  return studyList;
+  return await studyDao.studyPaging(studyKeys);
 };
 
 module.exports = {

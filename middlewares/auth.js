@@ -2,29 +2,34 @@ const jwt = require('jsonwebtoken');
 
 const { authError } = require('../utils/errors/customError');
 
-const exception = ['check-nickname', 'check-email', 'login', 'reset-password'];
+const exceptionList = ['check-nickname', 'check-email', 'login', 'reset-password', 'reissuance'];
 
 const verify = async (req, res, next) => {
-  // 토큰이 없어도 되는 APIs 확인
-  if (exception.indexOf(req.url.split('/')[3]) > -1 || req.url === '/v1/user') {
+  if (exceptionList.indexOf(req.url.split('/')[3]) > -1 || req.url === '/v1/user') {
     return next();
   }
-  // 토큰 유무 확인
-  else if (req.headers.authorization) {
+
+  if (req.headers.authorization) {
+    req.jwt = req.headers.authorization.split(' ')[1];
     try {
-      const decoded = await jwt.verify(req.headers.authorization.split(' ')[1], process.env.JWT_secret);
-      res.user = decoded;
+      req.user = await jwt.verify(req.jwt, process.env.JWT_secret);
       return next();
     } catch (err) {
       return authError(next, err);
     }
   }
-  // 나머지 에러처리
-  else {
-    return authError(next, { message: 'jwt not exist' });
+  return authError(next, { message: 'jwt not exist' });
+};
+
+const idCompare = (req, res, next) => {
+  const id = req.params.id || req.params.user_id;
+  if (req.user.id !== parseInt(id, 10)) {
+    return authError(next, { message: '권한이 없습니다' });
   }
+  next();
 };
 
 module.exports = {
   verify,
+  idCompare,
 };

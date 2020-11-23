@@ -17,8 +17,8 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const token = await userService.login(req.body);
-  response(res, 200, { token });
+  const tokenSet = await userService.login(req.body);
+  response(res, 200, tokenSet);
 };
 
 const userDetail = async (req, res) => {
@@ -46,6 +46,12 @@ const emailVerificationProcess = async (req, res) => {
   response(res, 200, `${req.params.email}님의 이메일인증이 완료되었습니다`);
 };
 
+const reissuance = async (req, res) => {
+  const oldAccessToken = req.headers.authorization.split(' ')[1];
+  const newToken = await userService.reissuance(oldAccessToken, req.body);
+  response(res, 200, newToken);
+};
+
 module.exports = {
   signup,
   login,
@@ -56,4 +62,5 @@ module.exports = {
   withdraw,
   emailVerification,
   emailVerificationProcess,
+  reissuance,
 };

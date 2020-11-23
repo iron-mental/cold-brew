@@ -54,6 +54,11 @@ const validError = (next, err) => {
       result.message = `허용되지 않은 값입니다`;
       return next(result);
 
+    case 'string.empty':
+      result.label = err.details[0].context.label;
+      result.message = `공백은 허용되지 않습니다`;
+      return next(result);
+
     case 'string.email':
       result.label = err.details[0].context.label;
       result.message = `유효하지 않은 이메일입니다`;
@@ -76,7 +81,17 @@ const validError = (next, err) => {
 
     case 'boolean.base':
       result.label = err.details[0].context.label;
-      result.message = `true/false만 입력 가능합니다.`;
+      result.message = `true/false만 입력 가능합니다`;
+      return next(result);
+
+    case 'uri.invalidUri':
+      result.label = err.details[0].context.label;
+      result.message = `유효하지 않은 주소입니다`;
+      return next(result);
+
+    default:
+      result.label = err.details[0].context.label;
+      result.message = `유효성검사 에러`;
       return next(result);
   }
 };
@@ -92,6 +107,19 @@ const firebaseError = (err) => {
     result.message = '조회된 사용자가 없습니다';
     throw result;
   }
+
+  if (err.code === 'auth/wrong-password') {
+    result.status = 400;
+    result.message = '비밀번호를 잘못 입력하였습니다';
+    throw result;
+  }
+
+  if (err.code === 'auth/too-many-requests') {
+    result.status = 400;
+    result.message = '잦은 로그인 시도로 인해 계정이 비활성화 되었습니다. 잠시 후 다시 시도하세요. ';
+    throw result;
+  }
+
   result.status = 500;
   result.message = err.message;
   throw result;

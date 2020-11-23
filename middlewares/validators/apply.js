@@ -6,7 +6,6 @@ const createApply = async (req, res, next) => {
     study_id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
-    user_id: Joi.number().required(),
     message: Joi.string().required().max(100),
   });
   try {
@@ -18,7 +17,20 @@ const createApply = async (req, res, next) => {
   }
 };
 
-const applyDetail = async (req, res, next) => {
+const getApplyByUser = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    study_id: Joi.number().required(),
+    user_id: Joi.number().required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
+const getApplyById = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
     apply_id: Joi.number().required(),
@@ -73,10 +85,25 @@ const applyList = async (req, res, next) => {
   }
 };
 
+const applyProcess = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    study_id: Joi.number().required(),
+    apply_id: Joi.number().required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
 module.exports = {
   createApply,
-  applyDetail,
+  getApplyByUser,
+  getApplyById,
   applyUpdate,
   applyDelete,
   applyList,
+  applyProcess,
 };

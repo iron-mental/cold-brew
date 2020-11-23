@@ -106,7 +106,7 @@ const getStudyListByNew = async (category) => {
       FROM (
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
-          DATE_FORMAT(s.created_at, '%Y-%c-%d %H:%i:%s') created_at
+          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
         FROM
           study s
           LEFT JOIN participate p
@@ -136,7 +136,7 @@ const getStudyListByLength = async ({ latitude, longitude }, category) => {
       FROM (
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
-          DATE_FORMAT(s.created_at, '%Y-%c-%d %H:%i:%s') created_at,
+          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
           (6371*acos(cos(radians(?))*cos(radians(s.latitude))*cos(radians(s.longitude)
           -radians(?))+sin(radians(?))*sin(radians(s.latitude)))) AS distance
         FROM
@@ -169,7 +169,7 @@ const studyPaging = async (studyKeys) => {
       FROM (
         SELECT
           s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
-          DATE_FORMAT(s.created_at, '%Y-%c-%d %H:%i:%s') created_at
+          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
         FROM
           study s
           LEFT JOIN participate p

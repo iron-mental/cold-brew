@@ -1,35 +1,39 @@
-require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 const secretKey = process.env.JWT_secret;
 
-const accessToken = ({ id, email }) => {
-  const data = {
-    aud: id,
-    email,
-  };
-  const options = {
-    expiresIn: 60 * 15, // 15분
-    subject: 'userInfo-access',
-    issuer: process.env.JWT_issuer,
-  };
-  return jwt.sign(data, secretKey, options);
+const options = {
+  issuer: process.env.JWT_issuer,
 };
 
-const refreshToken = ({ id, email }) => {
-  const data = {
-    aud: id,
-    email,
-  };
-  const options = {
-    expiresIn: '15d', // 15일
-    subject: 'userInfo-refresh',
-    issuer: process.env.JWT_issuer,
-  };
-  return jwt.sign(data, secretKey, options);
+const getAccessToken = ({ id, email, nickname }) => {
+  const payload = { id, email, nickname };
+
+  options.expiresIn = parseInt(process.env.JWT_accessExpire, 10); // 15분
+  options.subject = 'userInfo-access';
+
+  return jwt.sign(payload, secretKey, options);
+};
+
+const getRefreshToken = ({ id }) => {
+  const payload = { id };
+
+  options.expiresIn = process.env.JWT_refreshExpire; // 15일
+  options.subject = 'userInfo-refresh';
+
+  return jwt.sign(payload, secretKey, options);
+};
+
+const verify = (token, name) => {
+  try {
+    return jwt.verify(token, process.env.JWT_secret);
+  } catch (err) {
+    throw customError(401, `${name} Token이 만료되었습니다. 다시 로그인 하세요.`); // 배포시 Token에 대한 내용은 제거할것
+  }
 };
 
 module.exports = {
-  accessToken,
-  refreshToken,
+  getAccessToken,
+  getRefreshToken,
+  verify,
 };

@@ -66,7 +66,7 @@ const login = async (email, password) => {
 
   const conn = await pool.getConnection();
   try {
-    const userSql = 'SELECT id, email FROM user WHERE ?';
+    const userSql = 'SELECT id, email, nickname FROM user WHERE ?';
     const [rows] = await conn.query(userSql, { uid });
     return rows;
   } catch (err) {
@@ -154,11 +154,11 @@ const withdraw = async (id, email, password) => {
   }
 };
 
-const verifiedCheck = async (email) => {
+const verifiedCheck = async (id) => {
   const conn = await pool.getConnection();
   try {
-    const checkSql = 'SELECT email_verified FROM user WHERE ?';
-    const [checkRows] = await conn.query(checkSql, { email });
+    const checkSql = 'SELECT email, email_verified FROM user WHERE ?';
+    const [checkRows] = await conn.query(checkSql, { id });
     return checkRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -196,11 +196,11 @@ const emailVerificationProcess = async (email) => {
   }
 };
 
-const getLocation = async (user_id) => {
+const checkToken = async (refreshToken) => {
   const conn = await pool.getConnection();
   try {
-    const checkSql = 'SELECT latitude, longitude, sigungu FROM user WHERE id = ?';
-    const [checkRows] = await conn.query(checkSql, user_id);
+    const checkSql = 'SELECT id, email, nickname, access_token FROM user WHERE refresh_token = ?';
+    const [checkRows] = await conn.query(checkSql, refreshToken);
     return checkRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -220,5 +220,5 @@ module.exports = {
   withdraw,
   verifiedCheck,
   emailVerificationProcess,
-  getLocation,
+  checkToken,
 };
