@@ -4,9 +4,9 @@ const User = require('../models/user');
 const Room = require('../models/room');
 const Chat = require('../models/chat');
 
-const chatModel = require('../events/socket/chatModel');
+const chatModel = require('../utils/variables/chatModel');
 
-const jwtVerify = (socket, next) => {
+const verifyToken = (socket, next) => {
   if (socket.handshake.query.token) {
     jwt.verify(socket.handshake.query.token, process.env.JWT_secret, (err, decoded) => {
       if (err) {
@@ -27,7 +27,7 @@ const getHexTimestamp = () => {
 const socketConfig = (io) => {
   const terminal = io.of('/terminal');
 
-  terminal.use(jwtVerify).on('connection', (socket) => {
+  terminal.use(verifyToken).on('connection', (socket) => {
     User.findOneAndUpdate(
       { user_id: socket.decoded.id },
       { socket_id: socket.decoded.id, nickname: socket.decoded.nickname },
@@ -50,7 +50,7 @@ const socketConfig = (io) => {
     });
   });
 
-  require('../events/socket/socketEvents').register(io);
+  require('../events/socket').register(io);
 
   return io;
 };
