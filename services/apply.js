@@ -3,7 +3,7 @@ const applyDao = require('../dao/apply');
 const { rowSplit, toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 const { applyEnum } = require('../utils/variables/enums');
-const { broadcast } = require('../events/socket/socketEvents');
+const { broadcast } = require('../events/broadcast');
 
 const User = require('../models/user');
 const Room = require('../models/room');
@@ -71,6 +71,8 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
     broadcast.participate(study_id, userRows[0].user_id);
     Room.updateOne({ room_number: study_id }, { $addToSet: { members: user_id } }).exec();
     User.updateOne({ user_id }, { $addToSet: { rooms: study_id } }, { upsert: true }).exec();
+
+    broadcast.participate(study_id, userRows[0].user_id);
   } else {
     const rejectRows = await applyDao.setReject(apply_id);
     if (rejectRows.affectedRows === 0) {
