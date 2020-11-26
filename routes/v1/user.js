@@ -29,7 +29,7 @@ router.get('/emailVerify-process/:email', userValid.emailVerificationProcess, as
 router.get('/:id/study', idCompare, studyValid.myStudy, asyncWrap(studyController.myStudy)); // 내 스터디 조회
 
 router.post('/:id/project', idCompare, projectValid.createProject, asyncWrap(projectController.createProject)); // 프로젝트 작성
-router.get('/:id/project', idCompare, projectValid.getProjectList, asyncWrap(projectController.getProjectList)); // 내 프로젝트 목록 조회
+router.get('/:id/project', projectValid.getProjectList, asyncWrap(projectController.getProjectList)); // 내 프로젝트 목록 조회
 router.put('/:id/project/:project_id', idCompare, projectValid.updateProject, asyncWrap(projectController.updateProject)); // 프로젝트 수정
 router.delete('/:id/project/:project_id', idCompare, projectValid.deleteProject, asyncWrap(projectController.deleteProject)); // 프로젝트 삭제
 
