@@ -19,14 +19,16 @@ const getNotice = async (study_id, notice_id) => {
   try {
     const detailSQL = `
       SELECT
-        id, study_id, title, contents, pinned,
-        DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at,
-        DATE_FORMAT(updated_at, "%Y-%c-%d %H:%i:%s") updated_at
-      FROM
-        notice
+        n.id, n.study_id, n.title, n.contents, n.pinned, p.user_id leader_id, u.image leader_image, u.nickname leader_nickname,
+        DATE_FORMAT(n.updated_at, "%Y-%c-%d %H:%i:%s") updated_at
+      FROM notice n
+        LEFT JOIN participate p
+        ON n.study_id = p.study_id
+        LEFT JOIN user u
+        ON u.id = p.user_id
       WHERE
-        study_id = ? AND id = ?`;
-    const [detailRows] = await conn.query(detailSQL, [study_id, notice_id]);
+        n.study_id = ? AND n.id = ? AND leader = ?;`;
+    const [detailRows] = await conn.query(detailSQL, [study_id, notice_id, true]);
     return detailRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
