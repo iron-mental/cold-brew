@@ -3,8 +3,8 @@ const { isHost, checkAuth } = require('../services/common');
 const response = require('../utils/response');
 
 const createStudy = async (req, res) => {
-  await studyService.createStudy(req.user, req.body);
-  response(res, 201, '스터디 생성 완료');
+  const study_id = await studyService.createStudy(req.user, req.body);
+  response(res, 201, { study_id });
 };
 
 const studyDetail = async (req, res) => {
