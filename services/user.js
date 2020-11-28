@@ -43,20 +43,19 @@ const signup = async ({ email, password, nickname }) => {
 };
 
 // 로그인
-const login = async ({ email, password }) => {
+const login = async ({ email, password, push_token }, device) => {
   const loginRows = await userDao.login(email, password);
   if (loginRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
 
-  const tokenSet = {
-    access_token: await getAccessToken(loginRows[0]),
-    refresh_token: await getRefreshToken(loginRows[0]),
-  };
+  const id = loginRows[0].id;
+  const access_token = await getAccessToken(loginRows[0]);
+  const refresh_token = await getRefreshToken(loginRows[0]);
 
-  userDao.userUpdate(loginRows[0].id, tokenSet);
-  tokenSet.id = loginRows[0].id;
-  return tokenSet;
+  userDao.userUpdate(id, { access_token, refresh_token, push_token, device });
+
+  return { id, access_token, refresh_token };
 };
 
 // 상세 조회
