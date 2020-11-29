@@ -28,6 +28,7 @@ const checkAuthority = async ({ id: user_id }, { study_id }, ...authority) => {
   if (authority.indexOf(status) === -1) {
     throw customError(401, '권한이 없습니다');
   }
+  return status;
 };
 
 module.exports = {
