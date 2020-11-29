@@ -45,6 +45,7 @@ const login = async (req, res, next) => {
   const bodySchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().required().max(20),
+    push_token: Joi.string().required(),
   });
   try {
     await bodySchema.validateAsync(req.body);

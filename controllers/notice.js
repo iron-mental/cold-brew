@@ -4,8 +4,8 @@ const response = require('../utils/response');
 
 const createNotice = async (req, res) => {
   await isHost(req.user, req.params);
-  await noticeService.createNotice(req.params, req.body);
-  response(res, 201, '공지사항 작성 완료');
+  const notice_id = await noticeService.createNotice(req.params, req.body);
+  response(res, 201, { notice_id });
 };
 
 const noticeDetail = async (req, res) => {
