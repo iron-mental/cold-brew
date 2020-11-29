@@ -17,8 +17,8 @@ const createStudy = async ({ id: user_id }, createData) => {
   const createRows = await studyDao.createStudy(user_id, createData);
 
   Room.create({
-    room_number: createRows.insertId,
-    room_name: createData.title,
+    study_id: createRows.insertId,
+    study_title: createData.title,
     members: [user_id],
   });
   User.updateOne({ user_id }, { $push: { rooms: createRows.insertId } }, { upsert: true }).exec();
@@ -41,7 +41,7 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
     if (checkRows.length > 0) {
       throw customError(400, '중복된 스터디 이름이 존재합니다');
     }
-    Room.updateOne({ room_number: study_id }, { room_name: updateData.title }).exec();
+    Room.updateOne({ study_id }, { study_title: updateData.title }).exec();
   }
 
   if (filedata) {
