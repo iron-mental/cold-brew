@@ -1,18 +1,18 @@
 class Chat {
-  constructor(room, message, decoded) {
-    this.user_id = decoded.id || 0;
-    this.nickname = decoded.nickname || 'system';
-    this.room_number = room;
+  constructor(study_id, message, user_id = 0, nickname = '__SYSTEM__') {
+    this.study_id = study_id;
+    this.user_id = user_id;
+    this.nickname = nickname;
     this.message = message;
     this.date = new Date().getTime();
   }
 }
-const getUserChat = (socket, message) => {
-  return new Chat(socket.handshake.query.room, message, socket.decoded);
+const getUserChat = ({ study_id, message, user_id, nickname }) => {
+  return new Chat(study_id, message, user_id, nickname);
 };
 
-const getSystemChat = (room_number, message) => {
-  return new Chat(room_number, message, {});
+const getSystemChat = (study_id, message) => {
+  return new Chat(study_id, message);
 };
 
 module.exports = {
