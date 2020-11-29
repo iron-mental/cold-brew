@@ -46,7 +46,7 @@ const validError = (next, err) => {
 
     case 'any.required':
       result.label = err.details[0].path[0];
-      result.message = `값를 입력하세요`;
+      result.message = `값을 입력하세요`;
       return next(result);
 
     case 'object.unknown':

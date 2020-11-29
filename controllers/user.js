@@ -17,7 +17,8 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const tokenSet = await userService.login(req.body);
+  const device = 'iOS'; // device 동적지정
+  const tokenSet = await userService.login(req.body, device);
   response(res, 200, tokenSet);
 };
 
