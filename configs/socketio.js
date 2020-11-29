@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const redisAdapter = require('socket.io-redis');
 
 const User = require('../models/user');
 const Room = require('../models/room');
@@ -25,32 +26,42 @@ const getHexTimestamp = () => {
 };
 
 const socketConfig = (io) => {
-  const terminal = io.of('/terminal');
+  io.adapter(
+    redisAdapter({
+      host: process.env.REDIS_host,
+      port: process.env.REDIS_port,
+    })
+  );
+
+  const terminal = io.of(process.env.CHAT_nsp);
 
   terminal.use(jwtVerify).on('connection', (socket) => {
-    User.findOneAndUpdate(
-      { user_id: socket.decoded.id },
-      { socket_id: socket.decoded.id, nickname: socket.decoded.nickname },
-      { upsert: true, new: true }
-    ).then(() => {
-      socket.join(socket.handshake.query.room);
-      Room.updateOne({ room_number: socket.handshake.query.room }, { $pull: { off_members: socket.decoded.id } }).exec();
-    });
+    const {
+      id: socket_id,
+      decoded: { id: user_id, nickname },
+      handshake: {
+        query: { study_id },
+      },
+    } = socket;
+    socket.join(study_id);
+
+    User.findOneAndUpdate({ user_id }, { socket_id, nickname }, { upsert: true, new: true }).exec();
+    Room.updateOne({ study_id }, { $pull: { off_members: user_id } }).exec();
 
     socket.on('disconnect', () => {
-      User.findOneAndUpdate({ user_id: socket.decoded.id }, { disconnected_at: getHexTimestamp() }).then(() => {
-        Room.updateOne({ room_number: socket.handshake.query.room }, { $addToSet: { off_members: socket.decoded.id } }).exec();
-      });
+      User.findOneAndUpdate({ user_id }, { disconnected_at: getHexTimestamp() }).exec();
+      Room.updateOne({ study_id }, { $addToSet: { off_members: user_id } }).exec();
     });
 
     socket.on('chat', (message) => {
-      const chatData = chatModel.getUserChat(socket, message);
-      terminal.to(socket.handshake.query.room).emit('message', JSON.stringify(chatData));
+      const chatData = chatModel.getUserChat({ study_id, user_id, nickname, message });
+      terminal.to(study_id).emit('message', JSON.stringify(chatData));
+      // off_members 노티 전달 이벤트 호출
       Chat.create(chatData);
     });
   });
 
-  require('../events/socket/socketEvents').register(io);
+  require('../events/socket').register(io);
 
   return io;
 };
