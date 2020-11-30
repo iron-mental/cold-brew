@@ -17,8 +17,8 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const device = 'iOS'; // device 동적지정
-  const tokenSet = await userService.login(req.body, device);
+  req.body.device = req.headers['user-agent'].indexOf('iOS') === -1 ? 'android' : 'ios';
+  const tokenSet = await userService.login(req.body);
   response(res, 200, tokenSet);
 };
 

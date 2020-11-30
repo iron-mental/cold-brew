@@ -43,7 +43,7 @@ const signup = async ({ email, password, nickname }) => {
 };
 
 // 로그인
-const login = async ({ email, password, push_token }, device) => {
+const login = async ({ email, password, push_token, device }) => {
   const loginRows = await userDao.login(email, password);
   if (loginRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
