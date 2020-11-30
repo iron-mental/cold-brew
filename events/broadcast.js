@@ -8,12 +8,12 @@ class Broadcast extends EventEmitter {
     }
   }
 
-  participate = (room_number, nickname) => {
-    this.emit('system-notification', room_number, `${nickname}님이 참여했습니다`);
+  participate = (study_id, nickname) => {
+    this.emit('system-notification', study_id, `${nickname}님이 참여했습니다`);
   };
 
-  leave = (room_number, nickname) => {
-    this.emit('system-notification', room_number, `${nickname}님이 탈퇴했습니다`);
+  leave = (study_id, nickname) => {
+    this.emit('system-notification', study_id, `${nickname}님이 탈퇴했습니다`);
   };
 }
 
