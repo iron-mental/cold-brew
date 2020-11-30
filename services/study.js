@@ -126,10 +126,8 @@ const leaveStudy = async ({ id }, { study_id }, authority) => {
     throw customError(400, '스터디 탈퇴 실패');
   }
 
-  setTimeout(() => {
-    Room.updateOne({ study_id }, { $pull: { off_members: id, members: id } });
-    User.updateOne({ user_id: id }, { $pull: { rooms: study_id } }).exec();
-  }, 1000);
+  Room.updateOne({ study_id }, { $pull: { off_members: id, members: id } });
+  User.updateOne({ user_id: id }, { $pull: { rooms: study_id } }).exec();
 
   // 멤버에게 채팅 or 노티 전송부
 };
