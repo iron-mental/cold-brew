@@ -21,7 +21,9 @@ const createStudy = async ({ id: user_id }, createData) => {
     study_title: createData.title,
     members: [user_id],
   });
-  User.updateOne({ user_id }, { $push: { rooms: createRows.insertId } }, { upsert: true }).exec();
+  User.updateOne({ user_id }, { $push: { rooms: createRows.insertId } }, { upsert: true }, () => {});
+
+  return createRows.insertId;
 };
 
 const studyDetail = async ({ study_id }) => {

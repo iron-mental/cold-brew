@@ -19,4 +19,6 @@ class Broadcast extends EventEmitter {
 
 const broadcast = new Broadcast();
 
-module.exports = { broadcast };
+module.exports = {
+  broadcast,
+};

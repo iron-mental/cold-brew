@@ -9,6 +9,7 @@ const createNotice = async ({ study_id }, createData) => {
   if (newNotice.affectedRows === 0) {
     throw customError(400, '해당 id의 스터디가 없습니다');
   }
+  return newNotice.insertId;
 };
 
 const noticeDetail = async ({ study_id, notice_id }) => {

@@ -61,8 +61,9 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
     if (userRows[0].apply_status === applyEnum.allow) {
       throw customError(400, '이미 승인된 회원입니다');
     }
+    const { user_id, nickname } = userRows[0];
 
-    const allowRows = await applyDao.setAllow(study_id, apply_id, userRows[0].user_id);
+    const allowRows = await applyDao.setAllow(study_id, apply_id, user_id);
     if (allowRows.affectedRows === 0) {
       throw customError(404, '조회된 신청내역이 없습니다');
     }
@@ -70,7 +71,7 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
     Room.updateOne({ study_id }, { $addToSet: { members: user_id } }).exec();
     User.updateOne({ user_id }, { $addToSet: { rooms: study_id } }).exec();
 
-    broadcast.participate(study_id, userRows[0].nickname);
+    broadcast.participate(study_id, nickname);
   } else {
     const rejectRows = await applyDao.setReject(apply_id);
     if (rejectRows.affectedRows === 0) {
