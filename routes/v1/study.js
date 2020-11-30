@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const { imageUpload } = require('../../utils/file');
+const { imageUpload } = require('../../middlewares/file');
 const { idCompare } = require('../../middlewares/auth');
 const asyncWrap = require('../../utils/errors/wrap');
 const studyValid = require('../../middlewares/validators/study');
