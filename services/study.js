@@ -67,14 +67,14 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
   }
 };
 
-const studyDelete = async ({ study_id }) => {
+const studyDelete = async ({ id: user_id }, { study_id }) => {
   const studyRows = await studyDao.studyDelete(study_id);
   if (studyRows.affectedRows === 0) {
     throw customError(400, '스터디 삭제 실패');
   }
-  Room.remove({ study_id }).exec();
-  User.updateOne({ user_id }, { $pull: { rooms: study_id } }).exec();
 
+  Room.deleteOne({ study_id }).exec();
+  User.updateOne({ user_id }, { $pull: { rooms: study_id } }).exec();
   // 멤버에게 채팅 or 노티 전송부
 };
 
