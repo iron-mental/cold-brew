@@ -5,8 +5,6 @@ const User = require('../models/user');
 const Room = require('../models/room');
 const Chat = require('../models/chat');
 
-const chatModel = require('../events/socket/chatModel');
-
 const jwtVerify = (socket, next) => {
   if (socket.handshake.query.token) {
     jwt.verify(socket.handshake.query.token, process.env.JWT_secret, (err, decoded) => {
@@ -54,10 +52,12 @@ const socketConfig = (io) => {
     });
 
     socket.on('chat', (message) => {
-      const chatData = chatModel.getUserChat({ study_id, user_id, nickname, message });
+      const chatData = Chat.getInstance({ study_id, nickname, message });
       terminal.to(study_id).emit('message', JSON.stringify(chatData));
-      // off_members 노티 전달 이벤트 호출
+
       Chat.create(chatData);
+
+      // off_members 노티 전달 이벤트 호출
     });
   });
 
