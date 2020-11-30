@@ -3,7 +3,7 @@ const applyDao = require('../dao/apply');
 const { rowSplit, toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 const { applyEnum } = require('../utils/variables/enums');
-const { broadcast } = require('../events/broadcast');
+const broadcast = require('../events/broadcast');
 
 const User = require('../models/user');
 const Room = require('../models/room');

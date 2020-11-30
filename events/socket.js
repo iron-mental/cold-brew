@@ -1,4 +1,4 @@
-const { broadcast } = require('./broadcast');
+const broadcast = require('./broadcast');
 
 const Chat = require('../models/chat');
 
