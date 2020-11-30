@@ -22,7 +22,7 @@ const studyUpdate = async (req, res) => {
 
 const studyDelete = async (req, res) => {
   await isHost(req.user, req.params);
-  await studyService.studyDelete(req.params);
+  await studyService.studyDelete(req.user, req.params);
   response(res, 200, '스터디 삭제 완료');
 };
 
