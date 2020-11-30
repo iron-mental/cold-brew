@@ -92,24 +92,10 @@ const studyUpdate = async (study_id, updateData) => {
 const studyDelete = async (study_id) => {
   const conn = await pool.getConnection();
   try {
-    await conn.beginTransaction();
-
     const studySql = 'DELETE FROM study WHERE id = ?';
     const [studyRows] = await conn.query(studySql, study_id);
-
-    const participateSql = 'DELETE FROM participate WHERE ?';
-    await conn.query(participateSql, { study_id });
-
-    const applySql = 'DELETE FROM apply WHERE ?';
-    await conn.query(applySql, { study_id });
-
-    await conn.commit();
     return studyRows;
   } catch (err) {
-    await conn.rollback();
-    if (err.errno === 1452) {
-      throw customError(500, '조회된 유저가 없습니다');
-    }
     throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
