@@ -44,11 +44,11 @@ const socketConfig = (io) => {
     } = socket;
     socket.join(study_id);
 
-    User.findOneAndUpdate({ user_id }, { socket_id, nickname }, { upsert: true, new: true }).exec();
+    User.updateOne({ user_id }, { socket_id, nickname }).exec();
     Room.updateOne({ study_id }, { $pull: { off_members: user_id } }).exec();
 
     socket.on('disconnect', () => {
-      User.findOneAndUpdate({ user_id }, { disconnected_at: getHexTimestamp() }).exec();
+      User.updateOne({ user_id }, { disconnected_at: getHexTimestamp() }).exec();
       Room.updateOne({ study_id }, { $addToSet: { off_members: user_id } }).exec();
     });
 
