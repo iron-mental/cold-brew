@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const redisAdapter = require('socket.io-redis');
 
 const User = require('../models/user');
 const Room = require('../models/room');
@@ -25,13 +24,6 @@ const getHexTimestamp = () => {
 };
 
 const socketConfig = (io) => {
-  io.adapter(
-    redisAdapter({
-      host: process.env.REDIS_host,
-      port: process.env.REDIS_port,
-    })
-  );
-
   const terminal = io.of(process.env.CHAT_nsp);
 
   terminal.use(jwtVerify).on('connection', (socket) => {
@@ -43,11 +35,13 @@ const socketConfig = (io) => {
       },
     } = socket;
     socket.join(study_id);
+    console.log('커넥트: ', socket.id, new Date().toString());
 
     User.updateOne({ user_id }, { socket_id, nickname }).exec();
     Room.updateOne({ study_id }, { $pull: { off_members: user_id } }).exec();
 
     socket.on('disconnect', () => {
+      console.log('디스커넥트: ', socket.id, new Date().toString());
       User.updateOne({ user_id }, { disconnected_at: getHexTimestamp() }).exec();
       Room.updateOne({ study_id }, { $addToSet: { off_members: user_id } }).exec();
     });
@@ -56,7 +50,7 @@ const socketConfig = (io) => {
       const userChat = Chat.getInstance({ study_id, nickname, message });
 
       terminal.to(study_id).emit('message', JSON.stringify(userChat));
-      push.emit('send-offMembers', study_id, userChat);
+      // push.emit('send-offMembers', study_id, userChat);
 
       Chat.create(userChat);
     });

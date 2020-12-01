@@ -51,9 +51,8 @@
     <script>
       $(function () {
         const jwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwiZW1haWwiOiJya2RjamYwMTIyQGdtYWlsLmNvbSIsIm5pY2tuYW1lIjoi64uJ64S0IiwiaWF0IjoxNjA2NTc3NjgyLCJleHAiOjEwNjA2NTc3NjgyLCJpc3MiOiJ0ZXJtaW5hbC1zZXJ2ZXIiLCJzdWIiOiJ1c2VySW5mby1hY2Nlc3MifQ.f7OLZ_WqGgelD_Kz3v3cYKB9yV__USWFP6P3ALScH70`;
-        var socket = io('http://localhost:3000/terminal', {
-          transport: ['websocket'],
-          upgrade: false,
+        var socket = io('127.0.0.1:3000/terminal', {
+          transports: ['websocket'],
           query: { token: jwt, study_id: 1 },
         });
 
