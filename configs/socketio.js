@@ -4,6 +4,7 @@ const redisAdapter = require('socket.io-redis');
 const User = require('../models/user');
 const Room = require('../models/room');
 const Chat = require('../models/chat');
+const push = require('../events/push');
 
 const jwtVerify = (socket, next) => {
   if (socket.handshake.query.token) {
@@ -52,12 +53,12 @@ const socketConfig = (io) => {
     });
 
     socket.on('chat', (message) => {
-      const chatData = Chat.getInstance({ study_id, nickname, message });
-      terminal.to(study_id).emit('message', JSON.stringify(chatData));
+      const userChat = Chat.getInstance({ study_id, nickname, message });
 
-      Chat.create(chatData);
+      terminal.to(study_id).emit('message', JSON.stringify(userChat));
+      push.emit('send-offMembers', study_id, userChat);
 
-      // off_members 노티 전달 이벤트 호출
+      Chat.create(userChat);
     });
   });
 

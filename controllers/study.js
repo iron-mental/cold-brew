@@ -26,7 +26,6 @@ const myStudy = async (req, res) => {
 
 const studyList = async (req, res) => {
   const studyList = await studyService.studyList(req.user, req.query);
-
   response(res, 200, studyList);
 };
 
