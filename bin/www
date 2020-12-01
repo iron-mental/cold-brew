@@ -32,7 +32,7 @@ require('../configs/socketio').socketConfig(io);
  * Connect mongoDB serevr
  */
 
-const mongo = require('../dao/mongo');
+const mongo = require('../configs/mongo');
 mongo();
 
 /**
