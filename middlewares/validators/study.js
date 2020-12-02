@@ -73,6 +73,18 @@ const studyUpdate = async (req, res, next) => {
   }
 };
 
+const studyDelete = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    study_id: Joi.number().min(1).required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
 const myStudy = async (req, res, next) => {
   const paramSchema = Joi.object({
     id: Joi.number().required(),
@@ -110,11 +122,42 @@ const studyPaging = async (req, res, next) => {
   }
 };
 
+const leaveStudy = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    study_id: Joi.string().min(1).required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
+const delegate = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    study_id: Joi.number().min(1).required(),
+  });
+  const bodySchema = Joi.object({
+    new_leader: Joi.number().required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    await bodySchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
 module.exports = {
   createStudy,
   studyDetail,
   studyUpdate,
+  studyDelete,
   myStudy,
   studyList,
   studyPaging,
+  leaveStudy,
+  delegate,
 };

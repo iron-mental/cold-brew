@@ -5,13 +5,13 @@ const createStudy = async (user_id, createData) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-    const createSQL = 'INSERT INTO study SET ?'; // study insert
-    const [createRows] = await conn.query(createSQL, createData);
+    const createSql = 'INSERT INTO study SET ?'; // study insert
+    const [createRows] = await conn.query(createSql, createData);
     const { insertId } = createRows;
 
-    const participateSQL = 'INSERT INTO participate SET ?'; // participate insert
+    const participateSql = 'INSERT INTO participate SET ?'; // participate insert
     const participateData = { user_id, study_id: insertId, leader: true };
-    await conn.query(participateSQL, participateData);
+    await conn.query(participateSql, participateData);
 
     await conn.commit();
     return createRows;
@@ -29,8 +29,8 @@ const createStudy = async (user_id, createData) => {
 const checkTitle = async (title) => {
   const conn = await pool.getConnection();
   try {
-    const checkSQL = 'SELECT id FROM study WHERE ?';
-    const [checkRows] = await conn.query(checkSQL, { title });
+    const checkSql = 'SELECT id FROM study WHERE ?';
+    const [checkRows] = await conn.query(checkSql, { title });
     return checkRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -66,8 +66,8 @@ const getStudy = async (study_id) => {
 const getImage = async (study_id) => {
   const conn = await pool.getConnection();
   try {
-    const imageSQL = 'SELECT image FROM study WHERE ?';
-    const [imageRows] = await conn.query(imageSQL, { id: study_id });
+    const imageSql = 'SELECT image FROM study WHERE ?';
+    const [imageRows] = await conn.query(imageSql, { id: study_id });
     return imageRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -79,9 +79,22 @@ const getImage = async (study_id) => {
 const studyUpdate = async (study_id, updateData) => {
   const conn = await pool.getConnection();
   try {
-    const updateSQL = 'UPDATE study SET ? WHERE ?';
-    const [updateRows] = await conn.query(updateSQL, [updateData, { id: study_id }]);
+    const updateSql = 'UPDATE study SET ? WHERE ?';
+    const [updateRows] = await conn.query(updateSql, [updateData, { id: study_id }]);
     return updateRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
+const studyDelete = async (study_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const studySql = 'DELETE FROM study WHERE id = ?';
+    const [studyRows] = await conn.query(studySql, study_id);
+    return studyRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
   } finally {
@@ -203,14 +216,57 @@ const studyPaging = async (studyKeys) => {
   }
 };
 
+const leaveStudy = async (user_id, study_id) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const applySql = 'DELETE FROM apply WHERE user_id = ? AND study_id = ?';
+    const applyRows = await conn.query(applySql, [user_id, study_id]);
+
+    const participateSQL = 'DELETE FROM participate WHERE user_id = ? AND study_id = ?';
+    const participateRows = await conn.query(participateSQL, [user_id, study_id]);
+
+    await conn.commit();
+    return { applyRows, participateRows };
+  } catch (err) {
+    await conn.rollback();
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
+const delegate = async (study_id, old_leader, new_leader) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const updateSql = 'UPDATE participate SET leader = ? WHERE study_id = ? AND user_id = ?';
+    const toLeaderRows = await conn.query(updateSql, [true, study_id, new_leader]);
+    const toParticipateRows = await conn.query(updateSql, [false, study_id, old_leader]);
+
+    await conn.commit();
+    return { toLeaderRows, toParticipateRows };
+  } catch (err) {
+    await conn.rollback();
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   createStudy,
   getStudy,
   getImage,
   studyUpdate,
+  studyDelete,
   getMyStudy,
   getStudyListByNew,
   getStudyListByLength,
   studyPaging,
   checkTitle,
+  leaveStudy,
+  delegate,
 };
