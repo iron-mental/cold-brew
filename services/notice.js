@@ -45,8 +45,8 @@ const noticeList = async ({ study_id }) => {
 };
 
 const noticePaging = async (noticeKeys) => {
-  const noticeList = await noticeDao.noticePaging(noticeKeys);
-  return noticeList;
+  const noticeRows = await noticeDao.noticePaging(noticeKeys);
+  return toBoolean(noticeRows, ['pinned']);
 };
 
 module.exports = {
