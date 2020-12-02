@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-    "test": "mocha ./test/user.spec.js"
+    "test": "mocha ./test/search.spec.js"
   },
   "dependencies": {
     "apn": "^2.2.0",
