@@ -25,7 +25,7 @@ const server = http.createServer(app);
 /**
  * Open chatting server
  */
-const io = require('socket.io').listen(server);
+const io = require('socket.io')(server);
 require('../configs/socketio').socketConfig(io);
 
 /**
