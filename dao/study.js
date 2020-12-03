@@ -123,12 +123,12 @@ const getMyStudy = async (id) => {
   }
 };
 
-const getStudyListByNew = async (category) => {
+const getStudyListByNew = async (user_id, category) => {
   const conn = await pool.getConnection();
   try {
     const studyListSql = `
       SELECT
-        *, count(*) members
+        S.*, count(*) members, IF(user_id is not null, true, false) isMember
       FROM (
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
@@ -139,12 +139,16 @@ const getStudyListByNew = async (category) => {
           ON s.id = p.study_id
           LEFT JOIN user u
           ON u.id = p.user_id
-        WHERE ?
-        ORDER BY p.leader DESC ) T
-      GROUP BY id
-      ORDER BY id DESC
-      `;
-    const [listRows] = await conn.query(studyListSql, { category });
+        WHERE category = ?
+        ORDER BY p.leader DESC ) S
+      LEFT JOIN (
+        SELECT user_id, study_id
+        FROM participate
+        WHERE user_id = ? ) P
+      ON S.id = P.study_id
+      GROUP BY S.id
+      ORDER BY S.id DESC`;
+    const [listRows] = await conn.query(studyListSql, [category, user_id]);
     return listRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);

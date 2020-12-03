@@ -93,7 +93,7 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
     studyListRows = await studyDao.getStudyListByLength(userData[0], category);
     studyListRows = customSorting(userData[0].sigungu, studyListRows);
   } else if (sort === 'new') {
-    studyListRows = await studyDao.getStudyListByNew(category);
+    studyListRows = await studyDao.getStudyListByNew(user_id, category);
   } else {
     throw customError(404, 'sort 입력이 잘못되었습니다');
   }
@@ -102,11 +102,12 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
     throw customError(404, '해당 카테고리에 스터디가 없습니다');
   }
 
-  return cutId(studyListRows);
+  // return cutId(studyListRows);
+  return studyListRows;
 };
 
-const studyPaging = async (studyKeys) => {
-  return await studyDao.studyPaging(studyKeys);
+const studyPaging = async ({ id: user_id }, studyKeys) => {
+  return await studyDao.studyPaging(user_id, studyKeys);
 };
 
 const leaveStudy = async ({ id }, { study_id }, authority) => {
