@@ -192,28 +192,34 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
   }
 };
 
-const studyPaging = async (studyKeys) => {
-  const params = studyKeys.concat(studyKeys);
+const studyPaging = async (user_id, studyKeys) => {
+  const params = studyKeys.concat(studyKeys, user_id);
   const conn = await pool.getConnection();
   try {
     const studyListSql = `
-    SELECT
-        *, count(*) members
+      SELECT
+        S.*, IF(P.user_id is not null, true, false) isMember
       FROM (
         SELECT
-          s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
-          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
-        FROM
-          study s
-          LEFT JOIN participate p
-          ON s.id = p.study_id
-          LEFT JOIN user u
-          ON u.id = p.user_id
-        WHERE s.id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      ) T
-      GROUP BY id
-      ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+          *, count(*) members
+        FROM (
+          SELECT
+            s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
+            DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
+          FROM
+            study s
+            LEFT JOIN participate p
+            ON s.id = p.study_id
+            LEFT JOIN user u
+            ON u.id = p.user_id
+          WHERE s.id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)) A
+        GROUP BY id
+        ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)) S
+      LEFT JOIN (
+        SELECT user_id, study_id
+        FROM participate
+        WHERE user_id = ? ) P
+      ON S.id = P.study_id`;
     const [listRows] = await conn.query(studyListSql, params);
     return listRows;
   } catch (err) {
