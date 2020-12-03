@@ -90,7 +90,7 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
   let studyListRows = '';
   if (sort === 'length') {
     const userData = await getUserLocation(user_id);
-    studyListRows = await studyDao.getStudyListByLength(userData[0], category);
+    studyListRows = await studyDao.getStudyListByLength(userData[0], user_id, category);
     studyListRows = customSorting(userData[0].sigungu, studyListRows);
   } else if (sort === 'new') {
     studyListRows = await studyDao.getStudyListByNew(user_id, category);
