@@ -24,7 +24,7 @@ const login = async (req, res) => {
 
 const userDetail = async (req, res) => {
   const userData = await userService.userDetail(req.params);
-  response(res, 201, userData);
+  response(res, 200, userData);
 };
 
 const userUpdate = async (req, res) => {
@@ -53,6 +53,11 @@ const reissuance = async (req, res) => {
   response(res, 200, newToken);
 };
 
+const resetPassword = async (req, res) => {
+  await userService.resetPassword(req.params);
+  response(res, 200, '비밀번호 변경 메일 발송');
+};
+
 module.exports = {
   signup,
   login,
@@ -64,4 +69,5 @@ module.exports = {
   emailVerification,
   emailVerificationProcess,
   reissuance,
+  resetPassword,
 };

@@ -33,4 +33,6 @@ router.get('/:id/project', projectValid.getProjectList, idCompare, asyncWrap(pro
 router.put('/:id/project/:project_id', idCompare, projectValid.updateProject, asyncWrap(projectController.updateProject)); // 프로젝트 수정
 router.delete('/:id/project/:project_id', idCompare, projectValid.deleteProject, asyncWrap(projectController.deleteProject)); // 프로젝트 삭제
 
+router.post('/reset-password/:email', userValid.resetPassword, asyncWrap(userController.resetPassword)); // 비밀번호 리셋 요청
+
 module.exports = router;

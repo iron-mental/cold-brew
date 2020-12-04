@@ -1,11 +1,13 @@
 const fs = require('fs');
 const path = require('path');
+const firebase = require('firebase');
 
 const userDao = require('../dao/user');
 const { toBoolean } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
 const { getAccessToken, getRefreshToken, verify } = require('../utils/jwt.js');
 const { customError } = require('../utils/errors/customError');
+const { firebaseError } = require('../utils/errors/firebase');
 
 const User = require('../models/user');
 const Chat = require('../models/chat');
@@ -143,6 +145,15 @@ const reissuance = async (oldAccessToken, { refresh_token }) => {
   return newTokenSet;
 };
 
+const resetPassword = async ({ email }) => {
+  await firebase
+    .auth()
+    .sendPasswordResetEmail(email)
+    .catch(async (err) => {
+      throw firebaseError(err);
+    });
+};
+
 module.exports = {
   signup,
   login,
@@ -154,4 +165,5 @@ module.exports = {
   emailVerification,
   emailVerificationProcess,
   reissuance,
+  resetPassword,
 };

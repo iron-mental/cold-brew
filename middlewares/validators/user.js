@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const { validError } = require('../../utils/errors/customError');
+const { validError } = require('../../utils/errors/validation');
 const commonValid = require('./common');
 
 const checkNickname = async (req, res, next) => {
@@ -11,7 +11,7 @@ const checkNickname = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -23,7 +23,7 @@ const checkEmail = async (req, res, next) => {
     await querySchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -37,7 +37,7 @@ const signup = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -51,7 +51,7 @@ const login = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -63,7 +63,7 @@ const userDetail = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -90,7 +90,7 @@ const userUpdate = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -109,7 +109,7 @@ const withdraw = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -121,7 +121,7 @@ const emailVerification = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -133,7 +133,7 @@ const emailVerificationProcess = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -145,7 +145,19 @@ const reissuance = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
+  }
+};
+
+const resetPassword = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    email: Joi.string().required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    next(validError(err));
   }
 };
 
@@ -160,4 +172,5 @@ module.exports = {
   emailVerification,
   emailVerificationProcess,
   reissuance,
+  resetPassword,
 };
