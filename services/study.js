@@ -101,13 +101,13 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
   if (studyListRows.length === 0) {
     throw customError(404, '해당 카테고리에 스터디가 없습니다');
   }
-
-  // return cutId(studyListRows);
-  return studyListRows;
+  studyListRows = toBoolean(studyListRows, ['isMember']);
+  return cutId(studyListRows);
 };
 
 const studyPaging = async ({ id: user_id }, studyKeys) => {
-  return await studyDao.studyPaging(user_id, studyKeys);
+  const studyListRows = await studyDao.studyPaging(user_id, studyKeys);
+  return toBoolean(studyListRows, ['isMember']);
 };
 
 const leaveStudy = async ({ id }, { study_id }, authority) => {
