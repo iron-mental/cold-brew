@@ -13,7 +13,7 @@ const createApply = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -26,7 +26,7 @@ const getApplyByUser = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -39,7 +39,7 @@ const getApplyById = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -56,7 +56,7 @@ const applyUpdate = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -69,7 +69,7 @@ const applyDelete = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -81,7 +81,7 @@ const applyList = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -98,7 +98,7 @@ const applyProcess = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
