@@ -2,7 +2,8 @@ const firebase = require('firebase');
 const admin = require('firebase-admin');
 
 const pool = require('./db');
-const { customError, firebaseError } = require('../utils/errors/customError');
+const { firebaseError } = require('../utils/errors/firebase');
+const { customError } = require('../utils/errors/customError');
 
 const checkNickname = async (nickname) => {
   const conn = await pool.getConnection();
