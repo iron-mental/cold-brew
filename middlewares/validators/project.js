@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const { validError } = require('../../utils/errors/customError');
+const { validError } = require('../../utils/errors/validation');
 const commonValid = require('./common');
 
 const createProject = async (req, res, next) => {
@@ -19,7 +19,7 @@ const createProject = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -31,7 +31,7 @@ const getProjectList = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -44,7 +44,7 @@ const deleteProject = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -65,7 +65,7 @@ const updateProject = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 

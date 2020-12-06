@@ -1,5 +1,6 @@
 const Joi = require('joi');
-const { validError } = require('../../utils/errors/customError');
+
+const { validError } = require('../../utils/errors/validation');
 
 const createNotice = async (req, res, next) => {
   const paramSchema = Joi.object({
@@ -15,7 +16,7 @@ const createNotice = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -28,7 +29,7 @@ const noticeDetail = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -47,7 +48,7 @@ const noticeUpdate = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -60,7 +61,7 @@ const noticeDelete = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -72,7 +73,7 @@ const noticeList = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -84,7 +85,7 @@ const noticePaging = async (req, res, next) => {
     await querySchema.validateAsync(req.query);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
