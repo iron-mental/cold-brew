@@ -29,17 +29,7 @@ firebaseError = (err) => {
       return new FirebaseError(err);
   }
 };
-
-const firebaseErrorHandler = (err, req, res, next) => {
-  if (err instanceof FirebaseError) {
-    res.status = err.status;
-    delete err.status;
-    return res.json(err);
-  }
-  return next(err);
-};
-
 module.exports = {
+  FirebaseError,
   firebaseError,
-  firebaseErrorHandler,
 };

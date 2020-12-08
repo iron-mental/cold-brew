@@ -40,14 +40,7 @@ authError = (err) => {
   }
 };
 
-const authErrorHandler = (err, req, res, next) => {
-  if (err instanceof AuthError) {
-    return res.status(401).json(err);
-  }
-  return next(err);
-};
-
 module.exports = {
+  AuthError,
   authError,
-  authErrorHandler,
 };
