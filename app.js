@@ -17,6 +17,6 @@ app.use('/v1', v1Router);
 app.use(express.static(__dirname + '/../public'));
 
 // error handler
-require('./utils/errors/handler')(app);
+require('./middlewares/error_handler')(app);
 
 module.exports = app;
