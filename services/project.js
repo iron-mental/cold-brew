@@ -1,5 +1,5 @@
 const projectDao = require('../dao/project');
-const { customError } = require('../utils/errors/customError');
+const { customError } = require('../utils/errors/custom');
 
 // 프로젝트 작성
 const createProject = async (createData) => {

@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { customError } = require('../utils/errors/customError');
+const { customError } = require('../utils/errors/custom');
 
 const createStudy = async (user_id, createData) => {
   const conn = await pool.getConnection();
@@ -199,7 +199,7 @@ const studyPaging = async (studyKeys) => {
         FROM
           study s
           LEFT JOIN participate p
-          ON s.id = p.study_id
+          ON s.id = p.stud y_id
           LEFT JOIN user u
           ON u.id = p.user_id
         WHERE s.id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -210,7 +210,9 @@ const studyPaging = async (studyKeys) => {
     const [listRows] = await conn.query(studyListSql, params);
     return listRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    const temp = customError(500, err.sqlMessage);
+    console.log('temp: ', temp);
+    throw temp;
   } finally {
     await conn.release();
   }

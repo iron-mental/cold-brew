@@ -4,7 +4,7 @@ const path = require('path');
 const studyDao = require('../dao/study');
 const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, customSorting } = require('../utils/query');
-const { customError } = require('../utils/errors/customError');
+const { customError } = require('../utils/errors/custom');
 const { authEnum } = require('../utils/variables/enums');
 
 const User = require('../models/user');

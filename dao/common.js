@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { customError } = require('../utils/errors/customError');
+const { customError } = require('../utils/errors/custom');
 
 const isHost = async (user_id, study_id) => {
   const conn = await pool.getConnection();

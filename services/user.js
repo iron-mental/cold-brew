@@ -6,7 +6,7 @@ const userDao = require('../dao/user');
 const { toBoolean } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
 const { getAccessToken, getRefreshToken, verify } = require('../utils/jwt.js');
-const { customError } = require('../utils/errors/customError');
+const { customError } = require('../utils/errors/custom');
 const { firebaseError } = require('../utils/errors/firebase');
 
 const User = require('../models/user');

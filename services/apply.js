@@ -1,7 +1,7 @@
 const applyDao = require('../dao/apply');
 
 const { rowSplit, toBoolean } = require('../utils/query');
-const { customError } = require('../utils/errors/customError');
+const { customError } = require('../utils/errors/custom');
 const { applyEnum } = require('../utils/variables/enums');
 const { broadcast } = require('../events/broadcast');
 
