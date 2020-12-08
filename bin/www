@@ -47,8 +47,7 @@ require('../configs/socketio').socketConfig(io);
  * Connect mongoDB serevr
  */
 
-const mongo = require('../dao/mongo');
-mongo();
+require('../configs/mongo')();
 
 /**
  * Listen on provided port, on all network interfaces.
