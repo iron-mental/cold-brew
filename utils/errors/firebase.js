@@ -4,6 +4,7 @@ class FirebaseError extends Error {
     this.result = false;
     this.type = 'auth-error';
     this.message = err.message;
+    this.status = err.status;
   }
 }
 
