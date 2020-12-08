@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { customError } = require('../utils/errors/custom');
+const { databaseError } = require('../utils/errors/database');
 const { applyEnum } = require('../utils/variables/enums');
 
 const createApply = async (createData) => {
@@ -9,7 +9,7 @@ const createApply = async (createData) => {
     const [createRows] = await conn.query(createSql, createData);
     return createRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -37,7 +37,7 @@ const getApplyByUser = async (study_id, user_id) => {
 
     return detailRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -64,7 +64,7 @@ const getApplyById = async (study_id, apply_id) => {
     const [detailRows] = await conn.query(detailSql, [study_id, apply_id]);
     return detailRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -77,7 +77,7 @@ const applyUpdate = async (user_id, apply_id, updateData) => {
     const [updateRows] = await conn.query(updateSql, [updateData, apply_id, user_id]);
     return updateRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -90,7 +90,7 @@ const applyDelete = async (user_id, apply_id) => {
     const [deleteRows] = await conn.query(deleteSql, [apply_id, user_id]);
     return deleteRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -110,7 +110,7 @@ const getApplyList = async (study_id) => {
     const [applyRows] = await conn.query(applySql, [applyEnum.apply, study_id]);
     return applyRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -130,7 +130,7 @@ const setAllow = async (study_id, apply_id, user_id) => {
     return allowRows;
   } catch (err) {
     await conn.rollback();
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -143,7 +143,7 @@ const setReject = async (apply_id) => {
     const [apply] = await conn.query(rejectSql, [applyEnum.reject, apply_id]);
     return apply;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }

@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { customError } = require('../utils/errors/custom');
+const { databaseError } = require('../utils/errors/database');
 
 const isHost = async (user_id, study_id) => {
   const conn = await pool.getConnection();
@@ -13,7 +13,7 @@ const isHost = async (user_id, study_id) => {
     const [listRows] = await conn.query(studyListSql, [user_id, study_id]);
     return listRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -30,7 +30,7 @@ const checkMember = async (user_id, study_id) => {
     const [listRows] = await conn.query(studyListSql, [user_id, study_id]);
     return listRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -47,7 +47,7 @@ const checkApply = async (user_id, study_id) => {
     const [listRows] = await conn.query(studyListSql, [user_id, study_id]);
     return listRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -60,7 +60,7 @@ const getUserLocation = async (user_id) => {
     const [checkRows] = await conn.query(checkSql, user_id);
     return checkRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }

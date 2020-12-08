@@ -3,7 +3,8 @@ const admin = require('firebase-admin');
 
 const pool = require('./db');
 const { firebaseError } = require('../utils/errors/firebase');
-const { customError } = require('../utils/errors/custom');
+// const { customError } = require('../utils/errors/custom');
+const { databaseError } = require('../utils/errors/database');
 
 const checkNickname = async (nickname) => {
   const conn = await pool.getConnection();
@@ -12,7 +13,7 @@ const checkNickname = async (nickname) => {
     const [checkRows] = await conn.query(checkSql, { nickname });
     return checkRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -25,7 +26,7 @@ const checkEmail = async (email) => {
     const [checkRows] = await conn.query(checkSql, { email });
     return checkRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -48,7 +49,7 @@ const signup = async (email, password, nickname) => {
     const [rows] = await conn.query(sql, { uid, email, email_verified: emailVerified, nickname });
     return rows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -64,14 +65,13 @@ const login = async (email, password) => {
     .catch((err) => {
       throw firebaseError(err);
     });
-
   const conn = await pool.getConnection();
   try {
     const userSql = 'SELECT id, email, nickname FROM user WHERE ?';
     const [rows] = await conn.query(userSql, { uid });
     return rows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -89,7 +89,7 @@ const userDetail = async (id) => {
     const [userData] = await conn.query(userSql, { id });
     return userData;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -102,7 +102,7 @@ const getImage = async (id) => {
     const [imageRows] = await conn.query(imageSQL, { id });
     return imageRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -115,7 +115,7 @@ const userUpdate = async (id, updateData) => {
     const [updateRows] = await conn.query(updateSql, [updateData, { id }]);
     return updateRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -145,11 +145,10 @@ const withdraw = async (id, email, password) => {
   } catch (err) {
     await conn.rollback();
     if (err.status) {
-      throw err;
-    } else if (err.errno === 1451) {
-      throw customError(400, '해당 사용자에게 종속되어있는 데이터가 존재합니다');
+      throw firebaseError(err);
+    } else {
+      throw databaseError(err);
     }
-    throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
   }
@@ -162,7 +161,7 @@ const verifiedCheck = async (id) => {
     const [checkRows] = await conn.query(checkSql, { id });
     return checkRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -189,9 +188,10 @@ const emailVerificationProcess = async (email) => {
     return result;
   } catch (err) {
     if (err.status) {
-      throw err;
+      throw firebaseError(err);
+    } else {
+      throw databaseError(err);
     }
-    throw { status: 500, message: 'DB Error' };
   } finally {
     await conn.release();
   }
@@ -204,7 +204,7 @@ const checkToken = async (refreshToken) => {
     const [checkRows] = await conn.query(checkSql, refreshToken);
     return checkRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
