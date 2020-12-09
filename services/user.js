@@ -127,14 +127,14 @@ const emailVerificationProcess = async ({ email }) => {
 };
 
 // 검증 후 accessToken 발급
-const reissuance = async (oldAccessToken, { refresh_token }) => {
+const reissuance = async (expired_access_token, { refresh_token }) => {
   const refreshDecoded = jwt.verify(refresh_token, 'refresh');
 
   const [userData] = await userDao.checkToken(refresh_token);
   if (!userData) {
     throw customError(400, 'Refresh Token이 일치하지 않습니다. 다시 로그인 하세요', 101);
   }
-  if (userData.access_token !== oldAccessToken) {
+  if (userData.access_token !== expired_access_token) {
     throw customError(400, 'Access Token이 일치하지 않습니다. 다시 로그인 하세요', 102);
   }
 
