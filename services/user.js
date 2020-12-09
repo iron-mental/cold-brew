@@ -50,7 +50,7 @@ const login = async ({ email, password, push_token, device }) => {
     throw customError(404, '조회된 사용자가 없습니다');
   }
 
-  const id = loginRows[0].id;
+  const { id } = loginRows[0];
   const access_token = await getAccessToken(loginRows[0]);
   const refresh_token = await getRefreshToken(loginRows[0]);
 
