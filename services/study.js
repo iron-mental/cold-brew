@@ -6,6 +6,7 @@ const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, customSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
 const { authEnum, categoryEnum } = require('../utils/variables/enums');
+const broadcast = require('../events/broadcast');
 
 const User = require('../models/user');
 const Room = require('../models/room');
@@ -111,7 +112,7 @@ const studyPaging = async ({ id: user_id }, studyKeys) => {
   return toBoolean(studyListRows, ['isMember']);
 };
 
-const leaveStudy = async ({ id }, { study_id }, authority) => {
+const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
   if (authority === authEnum.host) {
     const participateRows = await studyDao.getStudy(study_id);
     if (participateRows.length > 1) {
@@ -132,6 +133,7 @@ const leaveStudy = async ({ id }, { study_id }, authority) => {
   User.updateOne({ user_id: id }, { $pull: { rooms: study_id } }).exec();
 
   // 멤버에게 채팅 or 노티 전송부
+  broadcast.leave(study_id, nickname);
 };
 
 const delegate = async ({ id: old_leader }, { study_id }, { new_leader }) => {
