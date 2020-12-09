@@ -24,6 +24,20 @@ const getRefreshToken = ({ id }) => {
   return jwt.sign(payload, secretKey, options);
 };
 
+const socketVerify = (socket, next) => {
+  if (socket.handshake.query.token) {
+    jwt.verify(socket.handshake.query.token, process.env.JWT_secret, (err, decoded) => {
+      if (err) {
+        return next(err);
+      }
+      socket.decoded = decoded;
+      return next();
+    });
+  } else {
+    return next('not exist token');
+  }
+};
+
 const verify = (token, name) => {
   try {
     return jwt.verify(token, process.env.JWT_secret);
@@ -35,5 +49,6 @@ const verify = (token, name) => {
 module.exports = {
   getAccessToken,
   getRefreshToken,
+  socketVerify,
   verify,
 };
