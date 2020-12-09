@@ -71,7 +71,8 @@ const getNoticeList = async (study_id) => {
         DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at,
         DATE_FORMAT(updated_at, "%Y-%c-%d %H:%i:%s") updated_at
       FROM notice
-      WHERE ?`;
+      WHERE ?
+      ORDER BY  pinned DESC, id DESC`;
     const [deleteRows] = await conn.query(deleteSQL, { study_id });
     return deleteRows;
   } catch (err) {

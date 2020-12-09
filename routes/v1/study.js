@@ -16,6 +16,10 @@ const applyController = require('../../controllers/apply');
 router.post('/', imageUpload, studyValid.createStudy, asyncWrap(studyController.createStudy)); // 스터디 추가
 router.get('/:study_id', studyValid.studyDetail, asyncWrap(studyController.studyDetail)); // 스터디 상세조회
 router.put('/:study_id', imageUpload, studyValid.studyUpdate, asyncWrap(studyController.studyUpdate)); // 스터디 수정
+router.delete('/:study_id', studyValid.studyDelete, asyncWrap(studyController.studyDelete)); // 스터디 수정
+
+router.put('/:study_id/delegate', studyValid.delegate, asyncWrap(studyController.delegate)); // 방장 위임
+router.post('/:study_id/leave', studyValid.leaveStudy, asyncWrap(studyController.leaveStudy)); // 스터디 탈퇴
 
 // StudyList
 router.get('/', studyValid.studyList, asyncWrap(studyController.studyList)); // 스터디 목록 조회

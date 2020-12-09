@@ -17,14 +17,14 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const device = 'iOS'; // device 동적지정
-  const tokenSet = await userService.login(req.body, device);
+  req.body.device = req.headers['user-agent'].indexOf('iOS') === -1 ? 'android' : 'ios';
+  const tokenSet = await userService.login(req.body);
   response(res, 200, tokenSet);
 };
 
 const userDetail = async (req, res) => {
   const userData = await userService.userDetail(req.params);
-  response(res, 201, userData);
+  response(res, 200, userData);
 };
 
 const userUpdate = async (req, res) => {

@@ -5,13 +5,13 @@ const createStudy = async (user_id, createData) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-    const createSQL = 'INSERT INTO study SET ?'; // study insert
-    const [createRows] = await conn.query(createSQL, createData);
+    const createSql = 'INSERT INTO study SET ?'; // study insert
+    const [createRows] = await conn.query(createSql, createData);
     const { insertId } = createRows;
 
-    const participateSQL = 'INSERT INTO participate SET ?'; // participate insert
+    const participateSql = 'INSERT INTO participate SET ?'; // participate insert
     const participateData = { user_id, study_id: insertId, leader: true };
-    await conn.query(participateSQL, participateData);
+    await conn.query(participateSql, participateData);
 
     await conn.commit();
     return createRows;
@@ -29,8 +29,8 @@ const createStudy = async (user_id, createData) => {
 const checkTitle = async (title) => {
   const conn = await pool.getConnection();
   try {
-    const checkSQL = 'SELECT id FROM study WHERE ?';
-    const [checkRows] = await conn.query(checkSQL, { title });
+    const checkSql = 'SELECT id FROM study WHERE ?';
+    const [checkRows] = await conn.query(checkSql, { title });
     return checkRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -66,8 +66,8 @@ const getStudy = async (study_id) => {
 const getImage = async (study_id) => {
   const conn = await pool.getConnection();
   try {
-    const imageSQL = 'SELECT image FROM study WHERE ?';
-    const [imageRows] = await conn.query(imageSQL, { id: study_id });
+    const imageSql = 'SELECT image FROM study WHERE ?';
+    const [imageRows] = await conn.query(imageSql, { id: study_id });
     return imageRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -79,9 +79,22 @@ const getImage = async (study_id) => {
 const studyUpdate = async (study_id, updateData) => {
   const conn = await pool.getConnection();
   try {
-    const updateSQL = 'UPDATE study SET ? WHERE ?';
-    const [updateRows] = await conn.query(updateSQL, [updateData, { id: study_id }]);
+    const updateSql = 'UPDATE study SET ? WHERE ?';
+    const [updateRows] = await conn.query(updateSql, [updateData, { id: study_id }]);
     return updateRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
+const studyDelete = async (study_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const studySql = 'DELETE FROM study WHERE id = ?';
+    const [studyRows] = await conn.query(studySql, study_id);
+    return studyRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
   } finally {
@@ -110,12 +123,12 @@ const getMyStudy = async (id) => {
   }
 };
 
-const getStudyListByNew = async (category) => {
+const getStudyListByNew = async (user_id, category) => {
   const conn = await pool.getConnection();
   try {
     const studyListSql = `
       SELECT
-        *, count(*) members
+        S.*, count(*) members, IF(user_id is not null, true, false) isMember
       FROM (
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
@@ -126,12 +139,16 @@ const getStudyListByNew = async (category) => {
           ON s.id = p.study_id
           LEFT JOIN user u
           ON u.id = p.user_id
-        WHERE ?
-        ORDER BY p.leader DESC ) T
-      GROUP BY id
-      ORDER BY id DESC
-      `;
-    const [listRows] = await conn.query(studyListSql, { category });
+        WHERE category = ?
+        ORDER BY p.leader DESC ) S
+      LEFT JOIN (
+        SELECT user_id, study_id
+        FROM participate
+        WHERE user_id = ? ) P
+      ON S.id = P.study_id
+      GROUP BY S.id
+      ORDER BY S.id DESC`;
+    const [listRows] = await conn.query(studyListSql, [category, user_id]);
     return listRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -140,16 +157,16 @@ const getStudyListByNew = async (category) => {
   }
 };
 
-const getStudyListByLength = async ({ latitude, longitude }, category) => {
+const getStudyListByLength = async ({ latitude, longitude }, user_id, category) => {
   const conn = await pool.getConnection();
   try {
     const studyListSql = `
       SELECT
-        *, count(*) members
+        S.*, count(*) members, IF(user_id is not null, true, false) isMember
       FROM (
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
-          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
+          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at,
           (6371*acos(cos(radians(?))*cos(radians(s.latitude))*cos(radians(s.longitude)
           -radians(?))+sin(radians(?))*sin(radians(s.latitude)))) AS distance
         FROM
@@ -158,12 +175,15 @@ const getStudyListByLength = async ({ latitude, longitude }, category) => {
           ON s.id = p.study_id
           LEFT JOIN user u
           ON u.id = p.user_id
-        WHERE ?
-        ORDER BY p.leader DESC ) T
-      GROUP BY id
-      ORDER BY distance ASC;
-    `;
-    const [listRows] = await conn.query(studyListSql, [latitude, longitude, latitude, { category }]);
+        WHERE category = ?
+        ORDER BY p.leader DESC) AS S
+      LEFT JOIN (
+        SELECT user_id, study_id
+        FROM participate
+        WHERE user_id = ?) AS P
+      ON S.id = P.study_id
+      GROUP BY S.id`;
+    const [listRows] = await conn.query(studyListSql, [latitude, longitude, latitude, category, user_id]);
     return listRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -172,31 +192,77 @@ const getStudyListByLength = async ({ latitude, longitude }, category) => {
   }
 };
 
-const studyPaging = async (studyKeys) => {
-  const params = studyKeys.concat(studyKeys);
+const studyPaging = async (user_id, studyKeys) => {
+  const params = studyKeys.concat(studyKeys, user_id);
   const conn = await pool.getConnection();
   try {
     const studyListSql = `
-    SELECT
-        *, count(*) members
+      SELECT
+        S.*, IF(P.user_id is not null, true, false) isMember
       FROM (
         SELECT
-          s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
-          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
-        FROM
-          study s
-          LEFT JOIN participate p
-          ON s.id = p.study_id
-          LEFT JOIN user u
-          ON u.id = p.user_id
-        WHERE s.id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      ) T
-      GROUP BY id
-      ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+          *, count(*) members
+        FROM (
+          SELECT
+            s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
+            DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
+          FROM
+            study s
+            LEFT JOIN participate p
+            ON s.id = p.study_id
+            LEFT JOIN user u
+            ON u.id = p.user_id
+          WHERE s.id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)) A
+        GROUP BY id
+        ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)) S
+      LEFT JOIN (
+        SELECT user_id, study_id
+        FROM participate
+        WHERE user_id = ? ) P
+      ON S.id = P.study_id`;
     const [listRows] = await conn.query(studyListSql, params);
     return listRows;
   } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
+const leaveStudy = async (user_id, study_id) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const applySql = 'DELETE FROM apply WHERE user_id = ? AND study_id = ?';
+    const applyRows = await conn.query(applySql, [user_id, study_id]);
+
+    const participateSQL = 'DELETE FROM participate WHERE user_id = ? AND study_id = ?';
+    const participateRows = await conn.query(participateSQL, [user_id, study_id]);
+
+    await conn.commit();
+    return { applyRows, participateRows };
+  } catch (err) {
+    await conn.rollback();
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
+const delegate = async (study_id, old_leader, new_leader) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const updateSql = 'UPDATE participate SET leader = ? WHERE study_id = ? AND user_id = ?';
+    const toLeaderRows = await conn.query(updateSql, [true, study_id, new_leader]);
+    const toParticipateRows = await conn.query(updateSql, [false, study_id, old_leader]);
+
+    await conn.commit();
+    return { toLeaderRows, toParticipateRows };
+  } catch (err) {
+    await conn.rollback();
     throw customError(500, err.sqlMessage);
   } finally {
     await conn.release();
@@ -208,9 +274,12 @@ module.exports = {
   getStudy,
   getImage,
   studyUpdate,
+  studyDelete,
   getMyStudy,
   getStudyListByNew,
   getStudyListByLength,
   studyPaging,
   checkTitle,
+  leaveStudy,
+  delegate,
 };
