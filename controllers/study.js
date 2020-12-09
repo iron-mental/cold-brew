@@ -17,13 +17,13 @@ const studyDetail = async (req, res) => {
 const studyUpdate = async (req, res) => {
   await isHost(req.user, req.params);
   await studyService.studyUpdate(req.params, req.body, req.file);
-  response(res, 200, '스터디 수정 완료');
+  response(res, 204, '스터디 수정 완료');
 };
 
 const studyDelete = async (req, res) => {
   await isHost(req.user, req.params);
   await studyService.studyDelete(req.user, req.params);
-  response(res, 200, '스터디 삭제 완료');
+  response(res, 204, '스터디 삭제 완료');
 };
 
 const myStudy = async (req, res) => {
@@ -49,13 +49,13 @@ const studyPaging = async (req, res) => {
 const leaveStudy = async (req, res) => {
   const authority = await checkAuthority(req.user, req.params, authEnum.host, authEnum.member);
   await studyService.leaveStudy(req.user, req.params, authority);
-  response(res, 200, '탈퇴 완료');
+  response(res, 204, '탈퇴 완료');
 };
 
 const delegate = async (req, res) => {
   await isHost(req.user, req.params);
   await studyService.delegate(req.user, req.params, req.body);
-  response(res, 200, '위임 완료');
+  response(res, 204, '위임 완료');
 };
 
 module.exports = {

@@ -29,12 +29,12 @@ const userDetail = async (req, res) => {
 
 const userUpdate = async (req, res) => {
   await userService.userUpdate(req.params, req.body, req.file);
-  response(res, 200, '회원정보 수정 완료');
+  response(res, 204, '회원정보 수정 완료');
 };
 
 const withdraw = async (req, res) => {
   await userService.withdraw(req.params, req.body);
-  response(res, 200, '회원 탈퇴 완료');
+  response(res, 204, '회원 탈퇴 완료');
 };
 
 const emailVerification = async (req, res) => {
