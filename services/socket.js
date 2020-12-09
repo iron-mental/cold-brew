@@ -20,7 +20,7 @@ const chat = (terminal, study_id, nickname, message) => {
   terminal.to(study_id).emit('message', JSON.stringify(userChat));
   Chat.create(userChat);
 
-  push.emit('offMembers', study_id, nickname, userChat);
+  push.emit('offMembers', study_id, userChat, nickname);
 };
 
 const disconnection = (study_id, user_id) => {

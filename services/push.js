@@ -57,10 +57,10 @@ const getNote = (chat, badge) => {
   });
 };
 
-const offMembers = async (study_id, nickname, userChat) => {
-  const memberRows = await pushDao.getOffMembers(study_id, nickname);
+const offMembers = async (study_id, chat) => {
+  const memberRows = await pushDao.getOffMembers(study_id, chat.nickname);
   const [apns_token, fcm_token] = division(memberRows);
-  send(apns_token, fcm_token, userChat);
+  send(apns_token, fcm_token, chat);
 };
 
 module.exports = {
