@@ -123,12 +123,12 @@ const getMyStudy = async (id) => {
   }
 };
 
-const getStudyListByNew = async (category) => {
+const getStudyListByNew = async (user_id, category) => {
   const conn = await pool.getConnection();
   try {
     const studyListSql = `
       SELECT
-        *, count(*) members
+        S.*, count(*) members, IF(user_id is not null, true, false) isMember
       FROM (
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
@@ -139,12 +139,16 @@ const getStudyListByNew = async (category) => {
           ON s.id = p.study_id
           LEFT JOIN user u
           ON u.id = p.user_id
-        WHERE ?
-        ORDER BY p.leader DESC ) T
-      GROUP BY id
-      ORDER BY id DESC
-      `;
-    const [listRows] = await conn.query(studyListSql, { category });
+        WHERE category = ?
+        ORDER BY p.leader DESC ) S
+      LEFT JOIN (
+        SELECT user_id, study_id
+        FROM participate
+        WHERE user_id = ? ) P
+      ON S.id = P.study_id
+      GROUP BY S.id
+      ORDER BY S.id DESC`;
+    const [listRows] = await conn.query(studyListSql, [category, user_id]);
     return listRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -153,16 +157,16 @@ const getStudyListByNew = async (category) => {
   }
 };
 
-const getStudyListByLength = async ({ latitude, longitude }, category) => {
+const getStudyListByLength = async ({ latitude, longitude }, user_id, category) => {
   const conn = await pool.getConnection();
   try {
     const studyListSql = `
       SELECT
-        *, count(*) members
+        S.*, count(*) members, IF(user_id is not null, true, false) isMember
       FROM (
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
-          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
+          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at,
           (6371*acos(cos(radians(?))*cos(radians(s.latitude))*cos(radians(s.longitude)
           -radians(?))+sin(radians(?))*sin(radians(s.latitude)))) AS distance
         FROM
@@ -171,12 +175,15 @@ const getStudyListByLength = async ({ latitude, longitude }, category) => {
           ON s.id = p.study_id
           LEFT JOIN user u
           ON u.id = p.user_id
-        WHERE ?
-        ORDER BY p.leader DESC ) T
-      GROUP BY id
-      ORDER BY distance ASC;
-    `;
-    const [listRows] = await conn.query(studyListSql, [latitude, longitude, latitude, { category }]);
+        WHERE category = ?
+        ORDER BY p.leader DESC) AS S
+      LEFT JOIN (
+        SELECT user_id, study_id
+        FROM participate
+        WHERE user_id = ?) AS P
+      ON S.id = P.study_id
+      GROUP BY S.id`;
+    const [listRows] = await conn.query(studyListSql, [latitude, longitude, latitude, category, user_id]);
     return listRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -185,28 +192,34 @@ const getStudyListByLength = async ({ latitude, longitude }, category) => {
   }
 };
 
-const studyPaging = async (studyKeys) => {
-  const params = studyKeys.concat(studyKeys);
+const studyPaging = async (user_id, studyKeys) => {
+  const params = studyKeys.concat(studyKeys, user_id);
   const conn = await pool.getConnection();
   try {
     const studyListSql = `
-    SELECT
-        *, count(*) members
+      SELECT
+        S.*, IF(P.user_id is not null, true, false) isMember
       FROM (
         SELECT
-          s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
-          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
-        FROM
-          study s
-          LEFT JOIN participate p
-          ON s.id = p.study_id
-          LEFT JOIN user u
-          ON u.id = p.user_id
-        WHERE s.id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      ) T
-      GROUP BY id
-      ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+          *, count(*) members
+        FROM (
+          SELECT
+            s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
+            DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
+          FROM
+            study s
+            LEFT JOIN participate p
+            ON s.id = p.study_id
+            LEFT JOIN user u
+            ON u.id = p.user_id
+          WHERE s.id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)) A
+        GROUP BY id
+        ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)) S
+      LEFT JOIN (
+        SELECT user_id, study_id
+        FROM participate
+        WHERE user_id = ? ) P
+      ON S.id = P.study_id`;
     const [listRows] = await conn.query(studyListSql, params);
     return listRows;
   } catch (err) {

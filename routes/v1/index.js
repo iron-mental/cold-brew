@@ -19,4 +19,10 @@ router.get('/chat/android', (req, res, next) => {
   res.sendFile(__dirname + '/index1.html');
 });
 
+router.get('/push/test', (req, res, next) => {
+  const broadcast = require('../../events/broadcast');
+  broadcast.participate(1, 'testNickname');
+  return res.json({ message: 1 });
+});
+
 module.exports = router;

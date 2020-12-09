@@ -45,7 +45,7 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
     if (checkRows.length > 0) {
       throw customError(400, '중복된 스터디 이름이 존재합니다');
     }
-    Room.updateOne({ room_number: study_id }, { room_name: updateData.title }).exec();
+    Room.updateOne({ study_id }, { study_title: updateData.title }).exec();
   }
 
   if (filedata) {
@@ -91,10 +91,10 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
   let studyListRows = '';
   if (sort === 'length') {
     const userData = await getUserLocation(user_id);
-    studyListRows = await studyDao.getStudyListByLength(userData[0], category);
+    studyListRows = await studyDao.getStudyListByLength(userData[0], user_id, category);
     studyListRows = customSorting(userData[0].sigungu, studyListRows);
   } else if (sort === 'new') {
-    studyListRows = await studyDao.getStudyListByNew(category);
+    studyListRows = await studyDao.getStudyListByNew(user_id, category);
   } else {
     throw customError(404, 'sort 입력이 잘못되었습니다');
   }
@@ -102,12 +102,13 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
   if (studyListRows.length === 0) {
     throw customError(404, '해당 카테고리에 스터디가 없습니다');
   }
-
+  studyListRows = toBoolean(studyListRows, ['isMember']);
   return cutId(studyListRows);
 };
 
-const studyPaging = async (studyKeys) => {
-  return await studyDao.studyPaging(studyKeys);
+const studyPaging = async ({ id: user_id }, studyKeys) => {
+  const studyListRows = await studyDao.studyPaging(user_id, studyKeys);
+  return toBoolean(studyListRows, ['isMember']);
 };
 
 const leaveStudy = async ({ id }, { study_id }, authority) => {

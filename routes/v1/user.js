@@ -1,7 +1,7 @@
 const express = require('express');
 
 const { idCompare } = require('../../middlewares/auth');
-const { imageUpload } = require('../../utils/file');
+const { imageUpload } = require('../../middlewares/file');
 const asyncWrap = require('../../utils/errors/wrap');
 const userValid = require('../../middlewares/validators/user');
 const userController = require('../../controllers/user');

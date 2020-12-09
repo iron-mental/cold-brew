@@ -38,8 +38,9 @@ const signup = async ({ email, password, nickname }) => {
   }
   const createRows = await userDao.signup(email, password, nickname);
   if (createRows.affectedRows === 0) {
-    throw customError(400, '회원가입에 실패했습니다'); // 실패 할게 있나? -> 제거 고민중
+    throw customError(400, '회원가입에 실패했습니다');
   }
+  User.create({ user_id: createRows.insertId, nickname });
 };
 
 // 로그인

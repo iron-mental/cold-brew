@@ -42,7 +42,7 @@ const studyPaging = async (req, res) => {
     studyKeys[key] = value;
   }
 
-  const studyList = await studyService.studyPaging(studyKeys);
+  const studyList = await studyService.studyPaging(req.user, studyKeys);
   response(res, 200, studyList);
 };
 

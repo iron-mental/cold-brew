@@ -3,10 +3,9 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Room = require('../models/room');
 const Chat = require('../models/chat');
+const push = require('../events/push');
 
-const chatModel = require('../utils/variables/chatModel');
-
-const verifyToken = (socket, next) => {
+const jwtVerify = (socket, next) => {
   if (socket.handshake.query.token) {
     jwt.verify(socket.handshake.query.token, process.env.JWT_secret, (err, decoded) => {
       if (err) {
@@ -25,28 +24,35 @@ const getHexTimestamp = () => {
 };
 
 const socketConfig = (io) => {
-  const terminal = io.of('/terminal');
+  const terminal = io.of(process.env.CHAT_nsp);
 
-  terminal.use(verifyToken).on('connection', (socket) => {
-    User.findOneAndUpdate(
-      { user_id: socket.decoded.id },
-      { socket_id: socket.decoded.id, nickname: socket.decoded.nickname },
-      { upsert: true, new: true }
-    ).then(() => {
-      socket.join(socket.handshake.query.room);
-      Room.updateOne({ room_number: socket.handshake.query.room }, { $pull: { off_members: socket.decoded.id } }).exec();
-    });
+  terminal.use(jwtVerify).on('connection', (socket) => {
+    const {
+      id: socket_id,
+      decoded: { id: user_id, nickname },
+      handshake: {
+        query: { study_id },
+      },
+    } = socket;
+    socket.join(study_id);
+    console.log('커넥트: ', socket.id, new Date().toString());
+
+    User.updateOne({ user_id }, { socket_id, nickname }).exec();
+    Room.updateOne({ study_id }, { $pull: { off_members: user_id } }).exec();
 
     socket.on('disconnect', () => {
-      User.findOneAndUpdate({ user_id: socket.decoded.id }, { disconnected_at: getHexTimestamp() }).then(() => {
-        Room.updateOne({ room_number: socket.handshake.query.room }, { $addToSet: { off_members: socket.decoded.id } }).exec();
-      });
+      console.log('디스커넥트: ', socket.id, new Date().toString());
+      User.updateOne({ user_id }, { disconnected_at: getHexTimestamp() }).exec();
+      Room.updateOne({ study_id }, { $addToSet: { off_members: user_id } }).exec();
     });
 
     socket.on('chat', (message) => {
-      const chatData = chatModel.getUserChat(socket, message);
-      terminal.to(socket.handshake.query.room).emit('message', JSON.stringify(chatData));
-      Chat.create(chatData);
+      const userChat = Chat.getInstance({ study_id, nickname, message });
+
+      terminal.to(study_id).emit('message', JSON.stringify(userChat));
+      // push.emit('send-offMembers', study_id, userChat);
+
+      Chat.create(userChat);
     });
   });
 

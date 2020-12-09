@@ -71,7 +71,8 @@ const getNoticeList = async (study_id) => {
         DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at,
         DATE_FORMAT(updated_at, "%Y-%c-%d %H:%i:%s") updated_at
       FROM notice
-      WHERE ?`;
+      WHERE ?
+      ORDER BY  pinned DESC, id DESC`;
     const [deleteRows] = await conn.query(deleteSQL, { study_id });
     return deleteRows;
   } catch (err) {
@@ -82,7 +83,7 @@ const getNoticeList = async (study_id) => {
 };
 
 const noticePaging = async (noticeKeys) => {
-  const params = noticeKeys.concat(noticeKeys);
+  const keys = noticeKeys.concat(noticeKeys);
   const conn = await pool.getConnection();
   try {
     const listSql = `
@@ -93,7 +94,7 @@ const noticePaging = async (noticeKeys) => {
     WHERE id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    const [listRows] = await conn.query(listSql, params);
+    const [listRows] = await conn.query(listSql, keys);
     return listRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
