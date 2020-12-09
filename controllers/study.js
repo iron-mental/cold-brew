@@ -59,7 +59,7 @@ const delegate = async (req, res) => {
 };
 
 const search = async (req, res) => {
-  const studyList = await studyService.search(req.query);
+  const studyList = await studyService.search(req.user, req.query);
   response(res, 200, studyList);
 };
 

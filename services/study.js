@@ -5,7 +5,7 @@ const studyDao = require('../dao/study');
 const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, customSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
-const { authEnum } = require('../utils/variables/enums');
+const { authEnum, categoryEnum } = require('../utils/variables/enums');
 
 const User = require('../models/user');
 const Room = require('../models/room');
@@ -142,10 +142,11 @@ const delegate = async ({ id: old_leader }, { study_id }, { new_leader }) => {
   // 멤버에게 채팅 or 노티 전송부
 };
 
-const search = async ({ word, category, sigungu }) => {
-  Search.updateOne({ word, category, sigungu }, { $inc: { count: 1 } }, { upsert: true }).exec();
+const search = async ({ id: user_id }, { word, category, sigungu }) => {
+  Search.updateOne({ user_id, word, category, sigungu }, { $inc: { count: 1 } }, { upsert: true }).exec();
+
   word = '%' + word + '%';
-  category = category || '%';
+  category = categoryEnum(category) || '%';
   sigungu = sigungu || '%';
 
   const searchRows = await studyDao.search(word, category, sigungu);
