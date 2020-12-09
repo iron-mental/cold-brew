@@ -1,18 +1,20 @@
 const pool = require('./db');
 const { customError } = require('../utils/errors/customError');
 
-const getPushInfo = async (members) => {
+const getOffMembers = async (study_id, nickname) => {
   const conn = await pool.getConnection();
   try {
-    const pushSql = `
+    const getMemberSql = `
       SELECT
-        id, device, push_token
+        u.device, u.push_token
       FROM
-        user
-      WHERE
-        id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    const [pushInfoRows] = await conn.query(pushSql, members);
-    return pushInfoRows;
+        participate p
+          LEFT JOIN user u
+          ON p.user_id = u.id
+      WHERE p.study_id = ? AND p.chat_status = false AND nickname != ?
+      ORDER BY u.device`;
+    const [offMemberRows] = await conn.query(getMemberSql, [study_id, nickname]);
+    return offMemberRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
   } finally {
@@ -20,4 +22,6 @@ const getPushInfo = async (members) => {
   }
 };
 
-module.exports = { getPushInfo };
+module.exports = {
+  getOffMembers,
+};
