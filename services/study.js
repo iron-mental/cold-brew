@@ -44,7 +44,7 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
     if (checkRows.length > 0) {
       throw customError(400, '중복된 스터디 이름이 존재합니다');
     }
-    Room.updateOne({ room_number: study_id }, { room_name: updateData.title }).exec();
+    Room.updateOne({ study_id }, { study_title: updateData.title }).exec();
   }
 
   if (filedata) {

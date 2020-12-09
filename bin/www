@@ -26,13 +26,16 @@ const server = http.createServer(app);
  * Open chatting server
  */
 const io = require('socket.io')(server);
+const redis = require('socket.io-redis');
+io.adapter(redis({ host: process.env.REDIS_host, port: process.env.REDIS_port }));
+
 require('../configs/socketio').socketConfig(io);
 
 /**
  * Connect mongoDB serevr
  */
 
-const mongo = require('../dao/mongo');
+const mongo = require('../configs/mongo');
 mongo();
 
 /**
