@@ -24,7 +24,7 @@ const login = async (req, res) => {
 
 const userDetail = async (req, res) => {
   const userData = await userService.userDetail(req.params);
-  response(res, 201, userData);
+  response(res, 200, userData);
 };
 
 const userUpdate = async (req, res) => {
