@@ -269,6 +269,38 @@ const delegate = async (study_id, old_leader, new_leader) => {
   }
 };
 
+const search = async (word, category, sigungu) => {
+  const conn = await pool.getConnection();
+  try {
+    const searchSql = `
+    SELECT
+      *, count(*) members
+    FROM (
+      SELECT
+        s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
+        DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
+      FROM
+        study s
+        LEFT JOIN participate p
+        ON s.id = p.study_id
+        LEFT JOIN user u
+        ON u.id = p.user_id
+      WHERE
+        s.title like ? AND s.category like ? AND s.sigungu like ?
+      ORDER BY p.leader DESC ) T
+    GROUP BY id
+    ORDER BY id DESC
+    `;
+    const [searchRows] = await conn.query(searchSql, [word, category, sigungu]);
+    return searchRows;
+  } catch (err) {
+    console.log('err: ', err);
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   createStudy,
   getStudy,
@@ -282,4 +314,5 @@ module.exports = {
   checkTitle,
   leaveStudy,
   delegate,
+  search,
 };

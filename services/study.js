@@ -5,10 +5,11 @@ const studyDao = require('../dao/study');
 const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, customSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
-const { authEnum } = require('../utils/variables/enums');
+const { authEnum, categoryEnum } = require('../utils/variables/enums');
 
 const User = require('../models/user');
 const Room = require('../models/room');
+const Search = require('../models/search');
 
 const createStudy = async ({ id: user_id }, createData) => {
   const checkRows = await studyDao.checkTitle(createData.title);
@@ -75,7 +76,7 @@ const studyDelete = async ({ id: user_id }, { study_id }) => {
 
   Room.deleteOne({ study_id }).exec();
   User.updateOne({ user_id }, { $pull: { rooms: study_id } }).exec();
-  // 멤버에게 채팅 or 노티 전송부
+  // 멤버에게 노티 전송부
 };
 
 const myStudy = async ({ id }) => {
@@ -142,6 +143,24 @@ const delegate = async ({ id: old_leader }, { study_id }, { new_leader }) => {
   // 멤버에게 채팅 or 노티 전송부
 };
 
+const search = async ({ id: user_id }, { word, category, sigungu }) => {
+  Search.updateOne({ user_id, word, category, sigungu }, { $inc: { count: 1 } }, { upsert: true }).exec();
+
+  word = '%' + word + '%';
+  category = categoryEnum(category) || '%';
+  sigungu = sigungu || '%';
+
+  const searchRows = await studyDao.search(word, category, sigungu);
+  if (searchRows.length === 0) {
+    throw customError(404, '검색 결과가 없습니다');
+  }
+  return searchRows;
+};
+
+const ranking = async () => {
+  return await Search.find().sort({ count: -1 }).limit(5);
+};
+
 module.exports = {
   createStudy,
   studyDetail,
@@ -152,4 +171,6 @@ module.exports = {
   studyPaging,
   leaveStudy,
   delegate,
+  search,
+  ranking,
 };

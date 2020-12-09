@@ -13,6 +13,9 @@ const applyValid = require('../../middlewares/validators/apply');
 const applyController = require('../../controllers/apply');
 
 // Study
+router.get('/search', studyValid.search, asyncWrap(studyController.search)); // 검색
+router.get('/ranking', asyncWrap(studyController.ranking)); // 핫 등록 키워드
+
 router.post('/', imageUpload, studyValid.createStudy, asyncWrap(studyController.createStudy)); // 스터디 추가
 router.get('/:study_id', studyValid.studyDetail, asyncWrap(studyController.studyDetail)); // 스터디 상세조회
 router.put('/:study_id', imageUpload, studyValid.studyUpdate, asyncWrap(studyController.studyUpdate)); // 스터디 수정
