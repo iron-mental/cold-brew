@@ -9,7 +9,7 @@ const register = (io) => {
   broadcast.on('system-notification', (study_id, message) => {
     const systemChat = Chat.getInstance({ study_id, message });
     terminal.to(study_id).emit('message', JSON.stringify(systemChat));
-    push.emit('send-offMembers', study_id, systemChat);
+    push.emit('offMembers', study_id, systemChat);
     Chat.create(systemChat);
   });
 };
