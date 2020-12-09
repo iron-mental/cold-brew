@@ -7,7 +7,7 @@ const createNotice = async ({ study_id }, createData) => {
   createData.study_id = study_id;
   const newNotice = await noticeDao.createNotice(createData);
   if (newNotice.affectedRows === 0) {
-    throw customError(400, '해당 id의 스터디가 없습니다');
+    throw customError(404, '조회된 스터디가 없습니다');
   }
   return newNotice.insertId;
 };

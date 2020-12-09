@@ -95,7 +95,7 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
   } else if (sort === 'new') {
     studyListRows = await studyDao.getStudyListByNew(category);
   } else {
-    throw customError(404, 'sort 입력이 잘못되었습니다');
+    throw customError(400, 'sort 입력이 잘못되었습니다');
   }
 
   if (studyListRows.length === 0) {
@@ -111,13 +111,14 @@ const studyPaging = async (studyKeys) => {
 
 const leaveStudy = async ({ id }, { study_id }, authority) => {
   if (authority === authEnum.host) {
+    // 참여자 수만큼 리턴
     const participateRows = await studyDao.getStudy(study_id);
     if (participateRows.length > 1) {
-      throw customError(400, '탈퇴할 수 없습니다. 스터디 장을 위임한 뒤 탈퇴하세요.');
+      throw customError(400, '탈퇴할 수 없습니다. 스터디 장을 위임한 뒤 탈퇴하세요', 101);
     }
     const studyRows = await studyDao.studyDelete(study_id);
     if (studyRows.affectedRows === 0) {
-      throw customError(400, '스터디 탈퇴 실패');
+      throw customError(400, '스터디 탈퇴 실패', 102);
     }
   }
 
