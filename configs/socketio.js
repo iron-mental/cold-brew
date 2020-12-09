@@ -1,12 +1,10 @@
-const jwt = require('jsonwebtoken');
-
-const { jwtVerify } = require('../utils/jwt');
+const { socketVerify } = require('../utils/jwt');
 const socketService = require('../services/socket');
 
 const socketConfig = (io) => {
   const terminal = io.of(process.env.CHAT_nsp);
 
-  terminal.use(jwtVerify).on('connection', (socket) => {
+  terminal.use(socketVerify).on('connection', (socket) => {
     const {
       id: socket_id,
       decoded: { id: user_id, nickname },
