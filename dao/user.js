@@ -3,7 +3,6 @@ const admin = require('firebase-admin');
 
 const pool = require('./db');
 const { firebaseError } = require('../utils/errors/firebase');
-// const { customError } = require('../utils/errors/custom');
 const { databaseError } = require('../utils/errors/database');
 
 const checkNickname = async (nickname) => {
