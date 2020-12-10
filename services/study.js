@@ -3,9 +3,9 @@ const path = require('path');
 
 const studyDao = require('../dao/study');
 const { getUserLocation } = require('../dao/common');
-const { rowSplit, toBoolean, locationMerge, cutId, customSorting } = require('../utils/query');
+const { rowSplit, toBoolean, locationMerge, cutId, lengthSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/customError');
-const { authEnum, categoryEnum } = require('../utils/variables/enums');
+const { authEnum, categoryEnum } = require('../utils/variables/enum');
 const broadcast = require('../events/broadcast');
 
 const User = require('../models/user');
@@ -93,7 +93,7 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
   if (sort === 'length') {
     const userData = await getUserLocation(user_id);
     studyListRows = await studyDao.getStudyListByLength(userData[0], user_id, category);
-    studyListRows = customSorting(userData[0].sigungu, studyListRows);
+    studyListRows = lengthSorting(userData[0].sigungu, studyListRows);
   } else if (sort === 'new') {
     studyListRows = await studyDao.getStudyListByNew(user_id, category);
   } else {
@@ -132,7 +132,6 @@ const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
   Room.updateOne({ study_id }, { $pull: { off_members: id, members: id } });
   User.updateOne({ user_id: id }, { $pull: { rooms: study_id } }).exec();
 
-  // 멤버에게 채팅 or 노티 전송부
   broadcast.leave(study_id, nickname);
 };
 

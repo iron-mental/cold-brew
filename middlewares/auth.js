@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const { authError } = require('../utils/errors/customError');
-const { categoryEnum } = require('../utils/variables/enums');
+const { categoryEnum } = require('../utils/variables/enum');
 
 const exceptionList = [
   ['check-nickname', 'check-email', 'login', 'reset-password', 'reissuance'].concat(Object.keys(categoryEnum)),

@@ -1,6 +1,6 @@
 const pool = require('./db');
 const { customError } = require('../utils/errors/customError');
-const { applyEnum } = require('../utils/variables/enums');
+const { applyEnum } = require('../utils/variables/enum');
 
 const createApply = async (createData) => {
   const conn = await pool.getConnection();

@@ -1,6 +1,6 @@
 const commonDao = require('../dao/common');
 const { customError } = require('../utils/errors/customError');
-const { authEnum, applyEnum } = require('../utils/variables/enums');
+const { authEnum, applyEnum } = require('../utils/variables/enum');
 
 const isHost = async ({ id: user_id }, { study_id }) => {
   const checkRows = await commonDao.isHost(user_id, study_id);

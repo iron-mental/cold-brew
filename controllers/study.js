@@ -1,6 +1,6 @@
 const studyService = require('../services/study');
 const { isHost, checkAuth, checkAuthority } = require('../services/common');
-const { authEnum } = require('../utils/variables/enums');
+const { authEnum } = require('../utils/variables/enum');
 const response = require('../utils/response');
 
 const createStudy = async (req, res) => {

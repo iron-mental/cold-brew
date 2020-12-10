@@ -1,6 +1,6 @@
 const applyService = require('../services/apply');
 const { isHost, checkAuthority } = require('../services/common');
-const { authEnum } = require('../utils/variables/enums');
+const { authEnum } = require('../utils/variables/enum');
 const response = require('../utils/response');
 
 const createApply = async (req, res) => {
