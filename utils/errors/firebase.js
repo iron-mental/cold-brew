@@ -8,8 +8,14 @@ class FirebaseError extends Error {
   }
 }
 
+const firebaseErrorEnum = Object.freeze({
+  'auth/user-not-found': 'auth/user-not-found',
+  'auth/wrong-password': 'auth/wrong-password',
+  'auth/too-many-requests': 'auth/too-many-requests',
+});
+
 firebaseError = (err) => {
-  switch (err.code) {
+  switch (firebaseErrorEnum[err.code]) {
     case 'auth/user-not-found':
       err.status = 404;
       err.message = '조회된 사용자가 없습니다';

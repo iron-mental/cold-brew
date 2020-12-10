@@ -8,9 +8,21 @@ class ValidError extends Error {
     this.message = err.message;
   }
 }
+const validErrorHandler = Object.freeze({
+  'object.min': 'object.min',
+  'any.required': 'any.required',
+  'object.unknown': 'object.unknown',
+  'string.empty': 'string.empty',
+  'string.email': 'string.email',
+  'string.max': 'string.max',
+  'string.min': 'string.min',
+  'number.base': 'number.base',
+  'boolean.base': 'boolean.base',
+  'uri.invalidUri': 'uri.invalidUri',
+});
 
 validError = (err) => {
-  switch (err.details[0].type) {
+  switch (validErrorHandler[err.details[0].type]) {
     case 'object.min':
       err.code = 101;
       err.label = 'too few value';
