@@ -1,27 +1,40 @@
-require('dotenv').config();
 const apn = require('apn');
 
-const options = {
-  token: {
-    key: process.env.APNS_key,
-    keyId: process.env.APNS_keyId,
-    teamId: process.env.APNS_teamId,
-  },
-  production: false, // NODE_ENV 변경되면 같이 변경
-};
+const pushDao = require('../dao/push');
+const { apn: options } = require('../configs/config');
+
 const apnProvider = new apn.Provider(options);
 
-let pushDeviceToken = ['token1', 'token2'];
+/*
+  FCM 초기화
+*/
+const send = async (userList, chat) => {
+  const pushInfoRows = await pushDao.getPushInfo(userList);
 
-let note = new apn.Notification();
+  for (row of pushInfoRows) {
+    if (row.device === 'ios') {
+      apnProvider.send(getNote(chat, row.badge), row.push_token).then((result) => {
+        if (result.failed.length > 0) {
+          // apns 에러
+        }
+        console.log('결과: ', result);
+      });
+    } else {
+      // fcm push
+    }
+  }
+};
 
-note.expiry = Math.floor(Date.now() / 1000) + 3600;
-note.badge = 50;
-note.sound = 'default';
-note.alert = 'Hello world';
-note.pay = { messageFrom: 'Terminal Server' };
-note.topic = process.env.APNS_bundleId;
+const getNote = (chat, badge) => {
+  return new apn.Notification({
+    topic: process.env.APNS_bundleId,
+    sound: 'default',
+    badge: 50,
+    // badge,
+    pay: chat,
+    expiry: Math.floor(Date.now() / 1000) + 3600,
+    alert: chat.nickname === '__SYSTEM__' ? chat.message : chat.nickname.concat(' ', chat.message),
+  });
+};
 
-apnProvider.send(note, pushDeviceToken).then((result) => {
-  console.log('## result: ', result);
-});
+module.exports = { send };

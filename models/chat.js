@@ -2,8 +2,7 @@ const mongoose = require('mongoose');
 
 const chatSchema = new mongoose.Schema(
   {
-    room_number: Number, // study_id
-    user_id: Number, // 유저 아이디
+    study_id: Number, // study_id
     nickname: String, // 유저 닉네임
     message: String, // 내용
     date: String, // unixtime
@@ -13,4 +12,19 @@ const chatSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('Chat', chatSchema);
+const Chat = mongoose.model('Chat', chatSchema);
+
+Chat.getInstance = ({ study_id, nickname = '__SYSTEM__', message }) => {
+  let chat = new Chat({
+    _id: null,
+    study_id,
+    nickname,
+    message,
+    date: new Date().getTime(),
+  })._doc;
+
+  delete chat._id;
+  return chat;
+};
+
+module.exports = Chat;

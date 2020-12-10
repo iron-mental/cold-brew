@@ -4,11 +4,12 @@ const path = require('path');
 const studyDao = require('../dao/study');
 const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, customSorting } = require('../utils/query');
-const { customError } = require('../utils/errors/custom');
-const { authEnum } = require('../utils/variables/enums');
+const { customError } = require('../utils/errors/customError');
+const { authEnum, categoryEnum } = require('../utils/variables/enums');
 
 const User = require('../models/user');
 const Room = require('../models/room');
+const Search = require('../models/search');
 
 const createStudy = async ({ id: user_id }, createData) => {
   const checkRows = await studyDao.checkTitle(createData.title);
@@ -44,7 +45,7 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
     if (checkRows.length > 0) {
       throw customError(400, '중복된 스터디 이름이 존재합니다');
     }
-    Room.updateOne({ room_number: study_id }, { room_name: updateData.title }).exec();
+    Room.updateOne({ study_id }, { study_title: updateData.title }).exec();
   }
 
   if (filedata) {
@@ -75,7 +76,7 @@ const studyDelete = async ({ id: user_id }, { study_id }) => {
 
   Room.deleteOne({ study_id }).exec();
   User.updateOne({ user_id }, { $pull: { rooms: study_id } }).exec();
-  // 멤버에게 채팅 or 노티 전송부
+  // 멤버에게 노티 전송부
 };
 
 const myStudy = async ({ id }) => {
@@ -90,10 +91,10 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
   let studyListRows = '';
   if (sort === 'length') {
     const userData = await getUserLocation(user_id);
-    studyListRows = await studyDao.getStudyListByLength(userData[0], category);
+    studyListRows = await studyDao.getStudyListByLength(userData[0], user_id, category);
     studyListRows = customSorting(userData[0].sigungu, studyListRows);
   } else if (sort === 'new') {
-    studyListRows = await studyDao.getStudyListByNew(category);
+    studyListRows = await studyDao.getStudyListByNew(user_id, category);
   } else {
     throw customError(400, 'sort 입력이 잘못되었습니다');
   }
@@ -101,12 +102,13 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
   if (studyListRows.length === 0) {
     throw customError(404, '해당 카테고리에 스터디가 없습니다');
   }
-
+  studyListRows = toBoolean(studyListRows, ['isMember']);
   return cutId(studyListRows);
 };
 
-const studyPaging = async (studyKeys) => {
-  return await studyDao.studyPaging(studyKeys);
+const studyPaging = async ({ id: user_id }, studyKeys) => {
+  const studyListRows = await studyDao.studyPaging(user_id, studyKeys);
+  return toBoolean(studyListRows, ['isMember']);
 };
 
 const leaveStudy = async ({ id }, { study_id }, authority) => {
@@ -142,6 +144,24 @@ const delegate = async ({ id: old_leader }, { study_id }, { new_leader }) => {
   // 멤버에게 채팅 or 노티 전송부
 };
 
+const search = async ({ id: user_id }, { word, category, sigungu }) => {
+  Search.updateOne({ user_id, word, category, sigungu }, { $inc: { count: 1 } }, { upsert: true }).exec();
+
+  word = '%' + word + '%';
+  category = categoryEnum(category) || '%';
+  sigungu = sigungu || '%';
+
+  const searchRows = await studyDao.search(word, category, sigungu);
+  if (searchRows.length === 0) {
+    throw customError(404, '검색 결과가 없습니다');
+  }
+  return searchRows;
+};
+
+const ranking = async () => {
+  return await Search.find().sort({ count: -1 }).limit(5);
+};
+
 module.exports = {
   createStudy,
   studyDetail,
@@ -152,4 +172,6 @@ module.exports = {
   studyPaging,
   leaveStudy,
   delegate,
+  search,
+  ranking,
 };

@@ -83,7 +83,7 @@ const getNoticeList = async (study_id) => {
 };
 
 const noticePaging = async (noticeKeys) => {
-  const params = noticeKeys.concat(noticeKeys);
+  const keys = noticeKeys.concat(noticeKeys);
   const conn = await pool.getConnection();
   try {
     const listSql = `
@@ -94,7 +94,7 @@ const noticePaging = async (noticeKeys) => {
     WHERE id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    const [listRows] = await conn.query(listSql, params);
+    const [listRows] = await conn.query(listSql, keys);
     return listRows;
   } catch (err) {
     throw databaseError(err);

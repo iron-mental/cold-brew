@@ -42,7 +42,7 @@ const studyPaging = async (req, res) => {
     studyKeys[key] = value;
   }
 
-  const studyList = await studyService.studyPaging(studyKeys);
+  const studyList = await studyService.studyPaging(req.user, studyKeys);
   response(res, 200, studyList);
 };
 
@@ -58,6 +58,16 @@ const delegate = async (req, res) => {
   response(res, 204, '위임 완료');
 };
 
+const search = async (req, res) => {
+  const studyList = await studyService.search(req.user, req.query);
+  response(res, 200, studyList);
+};
+
+const ranking = async (req, res) => {
+  const rankingList = await studyService.ranking();
+  response(res, 200, rankingList);
+};
+
 module.exports = {
   createStudy,
   studyDetail,
@@ -68,4 +78,6 @@ module.exports = {
   studyPaging,
   leaveStudy,
   delegate,
+  search,
+  ranking,
 };

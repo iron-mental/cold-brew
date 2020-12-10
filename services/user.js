@@ -44,6 +44,7 @@ const signup = async ({ email, password, nickname }) => {
   if (createRows.affectedRows === 0) {
     throw customError(400, '회원가입에 실패했습니다', 103);
   }
+  User.create({ user_id: createRows.insertId, nickname });
 };
 
 // 로그인

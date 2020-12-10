@@ -1,20 +1,19 @@
-const { broadcast } = require('./broadcast');
+const broadcast = require('./broadcast');
+const push = require('./push');
 
-const chatModel = require('../utils/variables/chatModel');
+const Chat = require('../models/chat');
 
 const register = (io) => {
-  broadcast.on('participate', (room_number, message) => {
-    const systemChat = chatModel.getSystemChat(room_number, message);
-    io.of('/terminal').to(room_number).emit('message', JSON.stringify(systemChat));
-  });
+  const terminal = io.of(process.env.CHAT_nsp);
 
-  broadcast.on('leave', (room_number, message) => {
-    const systemChat = chatModel.getSystemChat(room_number, message);
-    io.of('/terminal').to(room_number).emit('message', JSON.stringify(systemChat));
+  broadcast.on('system-notification', (study_id, message) => {
+    const systemChat = Chat.getInstance({ study_id, message });
+    terminal.to(study_id).emit('message', JSON.stringify(systemChat));
+    push.emit('send-offMembers', study_id, systemChat);
+    Chat.create(systemChat);
   });
 };
 
 module.exports = {
   register,
-  broadcast,
 };
