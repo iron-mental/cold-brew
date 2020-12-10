@@ -22,6 +22,13 @@ class Note {
     const note = new Note(alert, payload);
     return new apn.Notification(note);
   };
+
+  getSend = (user_id, message, data) => {
+    const alert = message;
+    const payload = { user_id, message, data };
+    const note = new Note(alert, payload);
+    return new apn.Notification(note);
+  };
 }
 
 class Payload {
@@ -44,6 +51,12 @@ class Payload {
   getAlert = (study_id, message) => {
     const body = message;
     const payload = JSON.stringify({ study_id, message });
+    return new Payload(body, payload);
+  };
+
+  getSend = (user_id, message, data) => {
+    const body = message;
+    const payload = JSON.stringify({ user_id, message, data });
     return new Payload(body, payload);
   };
 }

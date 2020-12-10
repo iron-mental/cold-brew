@@ -50,7 +50,19 @@ const alert = async (study_id, message, nickname) => {
   }
 };
 
+const send = async (user_id, message, data) => {
+  const tokenRows = await pushDao.getPushToken(user_id);
+  const { device, push_token } = tokenRows[0];
+
+  if (device === 'ios') {
+    apnSender([push_token], note.getSend(user_id, message, data));
+  } else {
+    fcmSender([push_token], payload.getSend(user_id, message, data));
+  }
+};
+
 module.exports = {
   chat,
   alert,
+  send,
 };

@@ -43,7 +43,24 @@ const getOffMembers = async (study_id, nickname) => {
   }
 };
 
+const getPushToken = async (user_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const getTokenSql = `
+      SELECT device, push_token
+      FROM user
+      WHERE id = ?`;
+    const [tokenRows] = await conn.query(getTokenSql, user_id);
+    return tokenRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   getMembers,
   getOffMembers,
+  getPushToken,
 };
