@@ -159,7 +159,7 @@ const search = async ({ id: user_id }, { word, category, sigungu }) => {
 };
 
 const ranking = async () => {
-  return await Search.find().sort({ count: -1 }).limit(5);
+  return await Search.find({}, { word: true, _id: false }).sort({ count: -1 }).limit(5);
 };
 
 module.exports = {
