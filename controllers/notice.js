@@ -16,13 +16,13 @@ const noticeDetail = async (req, res) => {
 const noticeUpdate = async (req, res) => {
   await isHost(req.user, req.params);
   await noticeService.noticeUpdate(req.params, req.body);
-  response(res, 200, '공지사항 수정 완료');
+  response(res, 204, '공지사항 수정 완료');
 };
 
 const noticeDelete = async (req, res) => {
   await isHost(req.user, req.params);
   await noticeService.noticeDelete(req.params);
-  response(res, 200, '공지사항 삭제 완료');
+  response(res, 204, '공지사항 삭제 완료');
 };
 
 const noticeList = async (req, res) => {

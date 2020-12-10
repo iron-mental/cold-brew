@@ -3,7 +3,7 @@ require('dotenv').config();
 const nodemailer = require('nodemailer');
 
 const { mailer } = require('../configs/config');
-const customError = require('./errors/customError');
+const customError = require('./errors/custom');
 
 const transporter = nodemailer.createTransport(mailer);
 

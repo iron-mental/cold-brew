@@ -14,12 +14,12 @@ const getProjectList = async (req, res) => {
 
 const updateProject = async (req, res) => {
   await userService.updateProject(req.params, req.body);
-  response(res, 200, '프로젝트 수정 성공');
+  response(res, 204, '프로젝트 수정 성공');
 };
 
 const deleteProject = async (req, res) => {
   await userService.deleteProject(req.params);
-  response(res, 200, '프로젝트 삭제 성공');
+  response(res, 204, '프로젝트 삭제 성공');
 };
 
 module.exports = {

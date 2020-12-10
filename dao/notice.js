@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { customError } = require('../utils/errors/customError');
+const { databaseError } = require('../utils/errors/database');
 
 const createNotice = async (createData) => {
   const conn = await pool.getConnection();
@@ -8,7 +8,7 @@ const createNotice = async (createData) => {
     const [createRows] = await conn.query(createSQL, createData);
     return createRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -31,7 +31,7 @@ const getNotice = async (study_id, notice_id) => {
     const [detailRows] = await conn.query(detailSQL, [study_id, notice_id, true]);
     return detailRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -44,7 +44,7 @@ const noticeUpdate = async (study_id, notice_id, updateData) => {
     const [updateRows] = await conn.query(updateSQL, [updateData, study_id, notice_id]);
     return updateRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -57,7 +57,7 @@ const noticeDelete = async (study_id, notice_id) => {
     const [deleteRows] = await conn.query(deleteSQL, [study_id, notice_id]);
     return deleteRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -76,7 +76,7 @@ const getNoticeList = async (study_id) => {
     const [deleteRows] = await conn.query(deleteSQL, { study_id });
     return deleteRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -97,7 +97,7 @@ const noticePaging = async (noticeKeys) => {
     const [listRows] = await conn.query(listSql, keys);
     return listRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }

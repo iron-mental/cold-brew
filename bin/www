@@ -23,6 +23,21 @@ app.set('port', port);
 const server = http.createServer(app);
 
 /**
+ * Firebase init
+ */
+
+const firebase = require('firebase');
+const admin = require('firebase-admin');
+const config = require('../configs/config');
+
+firebase.initializeApp(config.firebase);
+
+admin.initializeApp({
+  credential: admin.credential.cert(process.env.GOOGLE_APPLICATION_CREDENTIALS),
+  databaseURL: process.env.FIREBASE_databaseURL,
+});
+
+/**
  * Open chatting server
  */
 const io = require('socket.io')(server);
@@ -35,8 +50,7 @@ require('../configs/socketio').socketConfig(io);
  * Connect mongoDB serevr
  */
 
-const mongo = require('../configs/mongo');
-mongo();
+require('../configs/mongo')();
 
 /**
  * Listen on provided port, on all network interfaces.

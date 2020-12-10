@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const { validError } = require('../../utils/errors/customError');
+const { validError } = require('../../utils/errors/validation');
 const commonValid = require('./common');
 
 const createStudy = async (req, res, next) => {
@@ -26,7 +26,7 @@ const createStudy = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -38,7 +38,7 @@ const studyDetail = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -69,7 +69,7 @@ const studyUpdate = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -81,7 +81,7 @@ const studyDelete = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -93,7 +93,7 @@ const myStudy = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -106,7 +106,7 @@ const studyList = async (req, res, next) => {
     await querySchema.validateAsync(req.query);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -118,7 +118,7 @@ const studyPaging = async (req, res, next) => {
     await querySchema.validateAsync(req.query);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -130,7 +130,7 @@ const leaveStudy = async (req, res, next) => {
     await paramSchema.validateAsync(req.params);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -146,7 +146,7 @@ const delegate = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 

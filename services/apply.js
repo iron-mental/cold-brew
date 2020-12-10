@@ -1,7 +1,7 @@
 const applyDao = require('../dao/apply');
 
 const { rowSplit, toBoolean } = require('../utils/query');
-const { customError } = require('../utils/errors/customError');
+const { customError } = require('../utils/errors/custom');
 const { applyEnum } = require('../utils/variables/enums');
 const broadcast = require('../events/broadcast');
 
@@ -11,7 +11,7 @@ const Room = require('../models/room');
 const createApply = async (createData) => {
   const newApply = await applyDao.createApply(createData);
   if (newApply.affectedRows === 0) {
-    throw customError(400, '해당 id의 스터디가 없습니다');
+    throw customError(400, '조회된 스터디가 없습니다');
   }
 };
 
@@ -58,6 +58,9 @@ const applyList = async ({ study_id }) => {
 const applyProcess = async ({ study_id, apply_id }, { allow }) => {
   if (allow) {
     const userRows = await applyDao.getApplyById(study_id, apply_id);
+    if (userRows.length === 0) {
+      throw customError(404, '조회된 신청내역이 없습니다');
+    }
     if (userRows[0].apply_status === applyEnum.allow) {
       throw customError(400, '이미 승인된 회원입니다');
     }
@@ -65,7 +68,7 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
 
     const allowRows = await applyDao.setAllow(study_id, apply_id, user_id);
     if (allowRows.affectedRows === 0) {
-      throw customError(404, '조회된 신청내역이 없습니다');
+      throw customError(400, '수락 실패');
     }
 
     Room.updateOne({ study_id }, { $addToSet: { members: user_id } }).exec();
