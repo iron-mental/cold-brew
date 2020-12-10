@@ -9,7 +9,7 @@ class DatabaseError extends Error {
 
 const databaseError = (err) => {
   if (err.errno === 1451) {
-    err.sqlMessage = '해당 사용자에게 종속되어있는 데이터가 존재합니다';
+    err.sqlMessage = '데이터를 삭제한 뒤 다시 시도해주세요.';
     return new DatabaseError(err);
   }
 
