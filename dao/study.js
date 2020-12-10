@@ -292,8 +292,7 @@ const search = async (word, category, sigungu) => {
     const [searchRows] = await conn.query(searchSql, [word, category, sigungu]);
     return searchRows;
   } catch (err) {
-    console.log('err: ', err);
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
