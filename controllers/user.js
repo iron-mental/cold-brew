@@ -48,8 +48,8 @@ const emailVerificationProcess = async (req, res) => {
 };
 
 const reissuance = async (req, res) => {
-  const expired_access_token = req.headers.authorization.split(' ')[1];
-  const newToken = await userService.reissuance(expired_access_token, req.body);
+  const expiredAccessToken = req.headers.authorization.split(' ')[1];
+  const newToken = await userService.reissuance(expiredAccessToken, req.body);
   response(res, 200, newToken);
 };
 
