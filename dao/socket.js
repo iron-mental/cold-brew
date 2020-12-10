@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { customError } = require('../utils/errors/customError');
+const { customError } = require('../utils/errors/custom');
 
 const updateChatStatus = async (status, study_id, user_id) => {
   const conn = await pool.getConnection();

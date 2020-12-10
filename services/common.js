@@ -1,11 +1,11 @@
 const commonDao = require('../dao/common');
-const { customError } = require('../utils/errors/customError');
+const { authError } = require('../utils/errors/auth');
 const { authEnum, applyEnum } = require('../utils/variables/enum');
 
 const isHost = async ({ id: user_id }, { study_id }) => {
   const checkRows = await commonDao.isHost(user_id, study_id);
   if (checkRows[0].isHost === 0) {
-    throw customError(401, '권한이 없습니다');
+    throw authError({ message: 'permission error' });
   }
 };
 
@@ -26,7 +26,7 @@ const checkAuth = async ({ id: user_id }, { study_id }) => {
 const checkAuthority = async ({ id: user_id }, { study_id }, ...authority) => {
   const status = await checkAuth({ id: user_id }, { study_id });
   if (authority.indexOf(status) === -1) {
-    throw customError(401, '권한이 없습니다');
+    throw authError({ message: 'permission error' });
   }
   return status;
 };

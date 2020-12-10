@@ -29,12 +29,12 @@ const userDetail = async (req, res) => {
 
 const userUpdate = async (req, res) => {
   await userService.userUpdate(req.params, req.body, req.file);
-  response(res, 200, '회원정보 수정 완료');
+  response(res, 204, '회원정보 수정 완료');
 };
 
 const withdraw = async (req, res) => {
   await userService.withdraw(req.params, req.body);
-  response(res, 200, '회원 탈퇴 완료');
+  response(res, 204, '회원 탈퇴 완료');
 };
 
 const emailVerification = async (req, res) => {
@@ -48,9 +48,14 @@ const emailVerificationProcess = async (req, res) => {
 };
 
 const reissuance = async (req, res) => {
-  const oldAccessToken = req.headers.authorization.split(' ')[1];
-  const newToken = await userService.reissuance(oldAccessToken, req.body);
+  const expiredAccessToken = req.headers.authorization.split(' ')[1];
+  const newToken = await userService.reissuance(expiredAccessToken, req.body);
   response(res, 200, newToken);
+};
+
+const resetPassword = async (req, res) => {
+  await userService.resetPassword(req.params);
+  response(res, 200, '비밀번호 변경 메일 발송');
 };
 
 module.exports = {
@@ -64,4 +69,5 @@ module.exports = {
   emailVerification,
   emailVerificationProcess,
   reissuance,
+  resetPassword,
 };

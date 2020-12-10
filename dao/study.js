@@ -1,5 +1,5 @@
 const pool = require('./db');
-const { customError } = require('../utils/errors/customError');
+const { databaseError } = require('../utils/errors/database');
 
 const createStudy = async (user_id, createData) => {
   const conn = await pool.getConnection();
@@ -17,10 +17,7 @@ const createStudy = async (user_id, createData) => {
     return createRows;
   } catch (err) {
     await conn.rollback();
-    if (err.errno === 1452) {
-      throw customError(500, '조회된 유저가 없습니다');
-    }
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -33,7 +30,7 @@ const checkTitle = async (title) => {
     const [checkRows] = await conn.query(checkSql, { title });
     return checkRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -57,7 +54,7 @@ const getStudy = async (study_id) => {
     const [studyRows] = await conn.query(studySql, study_id);
     return studyRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -70,7 +67,7 @@ const getImage = async (study_id) => {
     const [imageRows] = await conn.query(imageSql, { id: study_id });
     return imageRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -83,7 +80,7 @@ const studyUpdate = async (study_id, updateData) => {
     const [updateRows] = await conn.query(updateSql, [updateData, { id: study_id }]);
     return updateRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -96,7 +93,7 @@ const studyDelete = async (study_id) => {
     const [studyRows] = await conn.query(studySql, study_id);
     return studyRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -117,7 +114,7 @@ const getMyStudy = async (id) => {
     const [myStudyRows] = await conn.query(myStudySql, id);
     return myStudyRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -151,7 +148,7 @@ const getStudyListByNew = async (user_id, category) => {
     const [listRows] = await conn.query(studyListSql, [category, user_id]);
     return listRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -186,7 +183,7 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
     const [listRows] = await conn.query(studyListSql, [latitude, longitude, latitude, category, user_id]);
     return listRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -223,7 +220,8 @@ const studyPaging = async (user_id, studyKeys) => {
     const [listRows] = await conn.query(studyListSql, params);
     return listRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
+    throw temp;
   } finally {
     await conn.release();
   }
@@ -244,7 +242,7 @@ const leaveStudy = async (user_id, study_id) => {
     return { applyRows, participateRows };
   } catch (err) {
     await conn.rollback();
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -263,7 +261,7 @@ const delegate = async (study_id, old_leader, new_leader) => {
     return { toLeaderRows, toParticipateRows };
   } catch (err) {
     await conn.rollback();
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -294,8 +292,7 @@ const search = async (word, category, sigungu) => {
     const [searchRows] = await conn.query(searchSql, [word, category, sigungu]);
     return searchRows;
   } catch (err) {
-    console.log('err: ', err);
-    throw customError(500, err.sqlMessage);
+    throw databaseError(err);
   } finally {
     await conn.release();
   }

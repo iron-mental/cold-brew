@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const { authError } = require('../utils/errors/customError');
+const { authError } = require('../utils/errors/auth');
 const { categoryEnum } = require('../utils/variables/enum');
 
 const exceptionList = [
@@ -19,16 +19,16 @@ const verify = async (req, res, next) => {
       req.user = await jwt.verify(req.jwt, process.env.JWT_secret);
       return next();
     } catch (err) {
-      return authError(next, err);
+      return next(authError(err));
     }
   }
-  return authError(next, { message: 'jwt not exist' });
+  return next(authError({ message: 'jwt not exist' }));
 };
 
 const idCompare = (req, res, next) => {
   const id = req.params.id || req.params.user_id;
   if (req.user.id !== parseInt(id, 10)) {
-    return authError(next, { message: '권한이 없습니다' });
+    next(authError({ message: 'permission error' }));
   }
   next();
 };

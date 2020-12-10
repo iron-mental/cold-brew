@@ -1,22 +1,22 @@
 const projectDao = require('../dao/project');
-const { customError } = require('../utils/errors/customError');
+const { customError } = require('../utils/errors/custom');
 
 // 프로젝트 작성
 const createProject = async (createData) => {
   const projectRows = await projectDao.getProjectList(createData.user_id);
   if (projectRows.length > 2) {
-    throw customError(400, '프로젝트는 3개까지 등록할 수 있습니다.');
+    throw customError(400, '프로젝트는 3개까지 등록할 수 있습니다', 101);
   }
   const createRows = await projectDao.createProject(createData);
   if (createRows.length === 0) {
-    throw customError(400, '프로젝트 작성에 실패했습니다');
+    throw customError(400, '프로젝트 작성에 실패했습니다', 102);
   }
 };
 
 const updateProject = async ({ id, project_id }, updateData) => {
   const updateRows = await projectDao.updateProject(id, project_id, updateData);
   if (updateRows.affectedRows === 0) {
-    throw customError(400, '프로젝트 작성에 실패했습니다');
+    throw customError(400, '프로젝트 수정에 실패했습니다');
   }
 };
 

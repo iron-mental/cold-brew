@@ -1,7 +1,7 @@
 const applyDao = require('../dao/apply');
 
 const { rowSplit, toBoolean } = require('../utils/query');
-const { customError } = require('../utils/errors/customError');
+const { customError } = require('../utils/errors/custom');
 const { applyEnum } = require('../utils/variables/enum');
 const broadcast = require('../events/broadcast');
 
@@ -11,7 +11,7 @@ const Room = require('../models/room');
 const createApply = async (createData) => {
   const newApply = await applyDao.createApply(createData);
   if (newApply.affectedRows === 0) {
-    throw customError(400, '해당 id의 스터디가 없습니다');
+    throw customError(400, '조회된 스터디가 없습니다');
   }
 };
 
