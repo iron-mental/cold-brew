@@ -101,9 +101,13 @@ const userUpdate = async ({ id }, updateData, filedata) => {
 
 // 회원탈퇴
 const withdraw = async ({ id }, { email, password }) => {
-  await userDao.withdraw(id, email, password);
-  User.remove({ user_id: id }).exec();
-  Chat.updateMany({ user_id: id }, { nickname: '(알수없음)' }).exec();
+  try {
+    await userDao.withdraw(id, email, password);
+    User.remove({ user_id: id }).exec();
+    Chat.updateMany({ user_id: id }, { nickname: '(알수없음)' }).exec();
+  } catch (err) {
+    throw err;
+  }
 };
 
 // 인증 이메일 전송

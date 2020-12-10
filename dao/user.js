@@ -2,6 +2,7 @@ const firebase = require('firebase');
 const admin = require('firebase-admin');
 
 const pool = require('./db');
+const { customError } = require('../utils/errors/custom');
 const { firebaseError } = require('../utils/errors/firebase');
 const { databaseError } = require('../utils/errors/database');
 
@@ -127,7 +128,7 @@ const withdraw = async (id, email, password) => {
     const withdrawSql = `DELETE FROM user WHERE ? AND ?`;
     const [withdrawRows] = await conn.query(withdrawSql, [{ id }, { email }]);
     if (!withdrawRows.affectedRows) {
-      throw customError(400, '조회된 사용자가 없습니다');
+      throw customError(404, '조회된 사용자가 없습니다');
     }
     await firebase
       .auth()
@@ -143,11 +144,7 @@ const withdraw = async (id, email, password) => {
     return withdrawRows;
   } catch (err) {
     await conn.rollback();
-    if (err.status) {
-      throw firebaseError(err);
-    } else {
-      throw databaseError(err);
-    }
+    throw err;
   } finally {
     await conn.release();
   }
