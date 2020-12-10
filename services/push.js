@@ -2,67 +2,55 @@ const apn = require('apn');
 const admin = require('firebase-admin');
 
 const pushDao = require('../dao/push');
+const { tokenDivision } = require('../utils/query');
 const { apn: options } = require('../configs/config');
+const { note, payload } = require('../utils/variables/push_payload');
 
 const apnProvider = new apn.Provider(options);
 
-const send = (apns_token, fcm_token, chat) => {
-  apnProvider.send(getNote(chat), apns_token).then((result) => {
+const apnSender = (apns_token, note) => {
+  apnProvider.send(note, apns_token).then((result) => {
     if (result.failed.length > 0) {
       console.log('## APNs 에러: ', result.failed); // BadDeviceToken
     }
   });
+};
 
+const fcmSender = (fcm_token, payload) => {
+  payload.tokens = fcm_token;
   admin
     .messaging()
-    .sendMulticast({
-      notification: {
-        title: '터미널 푸시',
-        body: chat.nickname.concat(' ', chat.message),
-      },
-      data: { chat: JSON.stringify(chat) },
-      tokens: fcm_token,
-    })
-    .then((response) => {
-      console.log(response.successCount + ' messages were sent successfully');
-    })
-    .catch((error) => {
-      console.log('Error sending message:', error);
+    .sendMulticast(payload)
+    .catch((err) => {
+      console.log('Error sending message:', err);
     });
 };
 
-const division = (memberRows) => {
-  const [fcm_token, apns_token] = [[], []];
-
-  memberRows.forEach((v) => {
-    if (v.device === 'ios') {
-      apns_token.push(v.push_token);
-    } else {
-      fcm_token.push(v.push_token);
-    }
-  });
-
-  return [apns_token, fcm_token];
-};
-
-const getNote = (chat, badge) => {
-  return new apn.Notification({
-    topic: process.env.APNS_bundleId,
-    sound: 'default',
-    badge: 50,
-    // badge,
-    pay: chat,
-    expiry: Math.floor(Date.now() / 1000) + 3600,
-    alert: chat.nickname === '__SYSTEM__' ? chat.message : chat.nickname.concat(' ', chat.message),
-  });
-};
-
-const offMembers = async (study_id, chat) => {
+const chat = async (study_id, chat) => {
   const memberRows = await pushDao.getOffMembers(study_id, chat.nickname);
-  const [apns_token, fcm_token] = division(memberRows);
-  send(apns_token, fcm_token, chat);
+  const [apns_token, fcm_token] = tokenDivision(memberRows);
+
+  if (apns_token.length > 0) {
+    apnSender(apns_token, note.getChat(chat));
+  }
+  if (fcm_token.length > 0) {
+    fcmSender(fcm_token, payload.getChat(chat));
+  }
+};
+
+const alert = async (study_id, message, nickname) => {
+  const memberRows = await pushDao.getMembers(study_id, nickname);
+  const [apns_token, fcm_token] = tokenDivision(memberRows);
+
+  if (apns_token.length > 0) {
+    apnSender(apns_token, note.getAlert(study_id, message));
+  }
+  if (fcm_token.length > 0) {
+    fcmSender(fcm_token, payload.getAlert(study_id, message));
+  }
 };
 
 module.exports = {
-  offMembers,
+  chat,
+  alert,
 };
