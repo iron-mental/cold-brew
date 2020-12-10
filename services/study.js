@@ -148,7 +148,7 @@ const search = async ({ id: user_id }, { word, category, sigungu }) => {
   Search.updateOne({ user_id, word, category, sigungu }, { $inc: { count: 1 } }, { upsert: true }).exec();
 
   word = '%' + word + '%';
-  category = categoryEnum(category) || '%';
+  category = category ? (category = categoryEnum[category] || '%') : '%';
   sigungu = sigungu || '%';
 
   const searchRows = await studyDao.search(word, category, sigungu);
