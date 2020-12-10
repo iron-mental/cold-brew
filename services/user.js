@@ -3,6 +3,7 @@ const path = require('path');
 const firebase = require('firebase');
 
 const userDao = require('../dao/user');
+const push = require('../events/push');
 const { toBoolean } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
 const { getAccessToken, getRefreshToken } = require('../utils/jwt.js');
@@ -125,10 +126,13 @@ const emailVerification = async ({ id }) => {
 
 // 이메일 인증 처리
 const emailVerificationProcess = async ({ email }) => {
-  const updateRows = await userDao.emailVerificationProcess(email);
+  const [updateRows, userRows] = await userDao.emailVerificationProcess(email);
+
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
+
+  push.emit('send', userRows[0].id, '이메일 인증완료', { email_verified: true });
 };
 
 // 검증 후 accessToken 발급
