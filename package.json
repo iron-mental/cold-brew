@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "npx pm2 start -i 4 ./bin/www",
+    "start": "nodemon ./bin/www",
     "test": "mocha ./test/user.spec.js"
   },
   "dependencies": {
