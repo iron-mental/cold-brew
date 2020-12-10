@@ -150,11 +150,11 @@ const withdraw = async (id, email, password) => {
   }
 };
 
-const verifiedCheck = async (id) => {
+const verifiedCheck = async (userData) => {
   const conn = await pool.getConnection();
   try {
     const checkSql = 'SELECT email, email_verified FROM user WHERE ?';
-    const [checkRows] = await conn.query(checkSql, { id });
+    const [checkRows] = await conn.query(checkSql, userData);
     return checkRows;
   } catch (err) {
     throw databaseError(err);
@@ -168,7 +168,7 @@ const emailVerificationProcess = async (email) => {
   try {
     const uidSql = 'SELECT uid FROM user WHERE ?';
     const [uidRows] = await conn.query(uidSql, { email });
-    admin
+    const result = admin
       .auth()
       .updateUser(uidRows[0].uid, {
         emailVerified: true,
@@ -184,6 +184,7 @@ const emailVerificationProcess = async (email) => {
       .catch((err) => {
         throw firebaseError(err);
       });
+    return result;
   } catch (err) {
     if (err.status) {
       throw firebaseError(err);
