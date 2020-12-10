@@ -17,6 +17,8 @@ const databaseError = (err) => {
     err.sqlMessage = '조회된 사용자가 없습니다.';
     return new DatabaseError(err);
   }
+
+  return new DatabaseError(err);
 };
 module.exports = {
   DatabaseError,
