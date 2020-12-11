@@ -101,7 +101,7 @@ const applyListByHost = async (study_id) => {
   try {
     const applySql = `
       SELECT 
-        a.id, u.id user_id, u.image, a.message
+        a.id, u.id user_id, u.nickname, u.image, a.message
       FROM
         apply a
         INNER JOIN user u
