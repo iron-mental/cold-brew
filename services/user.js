@@ -13,7 +13,6 @@ const { firebaseError } = require('../utils/errors/firebase');
 
 const User = require('../models/user');
 const Chat = require('../models/chat');
-const { custom } = require('joi');
 
 // 닉네임 중복체크
 const checkNickname = async ({ nickname }) => {
