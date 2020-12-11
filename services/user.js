@@ -6,9 +6,8 @@ const userDao = require('../dao/user');
 const push = require('../events/push');
 const { toBoolean } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
-const { getAccessToken, getRefreshToken } = require('../utils/jwt.js');
+const { verify, getAccessToken, getRefreshToken } = require('../utils/jwt.js');
 const { customError } = require('../utils/errors/custom');
-const { authError } = require('../utils/errors/auth');
 const { firebaseError } = require('../utils/errors/firebase');
 
 const User = require('../models/user');
@@ -139,7 +138,7 @@ const emailVerificationProcess = async ({ email }) => {
 
 // 검증 후 accessToken 발급
 const reissuance = async (expiredAccessToken, { refresh_token }) => {
-  const refreshDecoded = jwt.verify(refresh_token, 'refresh');
+  const refreshDecoded = verify(refresh_token, 'refresh');
 
   const [userData] = await userDao.checkToken(refresh_token);
   if (!userData) {
