@@ -4,7 +4,7 @@ const admin = require('firebase-admin');
 const pushDao = require('../dao/push');
 const { tokenDivision } = require('../utils/query');
 const { apn: options } = require('../configs/config');
-const { note, payload } = require('../utils/variables/push_payload');
+const { note, payload } = require('../models/push_payload');
 const { DeviceEnum } = require('../utils/variables/enum');
 
 const apnProvider = new apn.Provider(options);
