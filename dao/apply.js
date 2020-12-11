@@ -121,7 +121,7 @@ const applyListByUser = async (user_id) => {
   try {
     const applySql = `
       SELECT 
-        a.id, a.study_id, a.message, s.title
+        a.id, a.study_id, s.title, s.image, a.message
       FROM
         apply a
         LEFT JOIN study s
