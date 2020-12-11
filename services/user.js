@@ -55,9 +55,9 @@ const login = async ({ email, password, push_token, device }) => {
     throw customError(404, '조회된 사용자가 없습니다');
   }
 
-  const { id } = loginRows[0];
-  const access_token = await getAccessToken(loginRows[0]);
-  const refresh_token = await getRefreshToken(loginRows[0]);
+  const { id, nickname } = loginRows[0];
+  const access_token = await getAccessToken({ id, email, nickname });
+  const refresh_token = await getRefreshToken({ id });
 
   userDao.userUpdate(id, { access_token, refresh_token, push_token, device });
 

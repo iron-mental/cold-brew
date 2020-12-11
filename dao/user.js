@@ -67,7 +67,7 @@ const login = async (email, password) => {
     });
   const conn = await pool.getConnection();
   try {
-    const userSql = 'SELECT id, email, nickname FROM user WHERE ?';
+    const userSql = 'SELECT id, nickname FROM user WHERE ?';
     const [rows] = await conn.query(userSql, { uid });
     return rows;
   } catch (err) {
