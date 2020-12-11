@@ -46,7 +46,7 @@ router.delete('/:study_id/apply/:apply_id', applyValid.applyDelete, asyncWrap(ap
 
 // Apply (host)
 router.get('/:study_id/apply/:apply_id', applyValid.getApplyById, asyncWrap(applyController.getApplyById)); // 신청 조회
-router.get('/:study_id/apply', applyValid.applyList, asyncWrap(applyController.applyList)); // 스터디 신청 목록 조회
+router.get('/:study_id/apply', applyValid.applyListByHost, asyncWrap(applyController.applyListByHost)); // 스터디 신청 목록 조회
 router.post('/:study_id/apply/:apply_id', applyValid.applyProcess, asyncWrap(applyController.applyProcess)); // 스터디 신청 처리
 
 module.exports = router;

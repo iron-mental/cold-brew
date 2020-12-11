@@ -96,7 +96,7 @@ const applyDelete = async (user_id, apply_id) => {
   }
 };
 
-const getApplyList = async (study_id) => {
+const applyListByHost = async (study_id) => {
   const conn = await pool.getConnection();
   try {
     const applySql = `
@@ -108,6 +108,26 @@ const getApplyList = async (study_id) => {
         ON u.id = a.user_id
       WHERE a.apply_status = ? AND a.study_id = ?`;
     const [applyRows] = await conn.query(applySql, [applyEnum.apply, study_id]);
+    return applyRows;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
+const applyListByUser = async (user_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const applySql = `
+      SELECT 
+        a.id, a.study_id, a.message, s.title
+      FROM
+        apply a
+        LEFT JOIN study s
+        ON a.study_id = s.id
+      WHERE a.user_id = ?`;
+    const [applyRows] = await conn.query(applySql, user_id);
     return applyRows;
   } catch (err) {
     throw databaseError(err);
@@ -154,7 +174,8 @@ module.exports = {
   getApplyById,
   applyUpdate,
   applyDelete,
-  getApplyList,
+  applyListByHost,
+  applyListByUser,
   setAllow,
   setReject,
 };
