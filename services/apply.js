@@ -2,7 +2,7 @@ const applyDao = require('../dao/apply');
 
 const { rowSplit, toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
-const { applyEnum } = require('../utils/variables/enum');
+const { ApplyEnum } = require('../utils/variables/enum');
 const broadcast = require('../events/broadcast');
 
 const User = require('../models/user');
@@ -61,7 +61,7 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
     if (userRows.length === 0) {
       throw customError(404, '조회된 신청내역이 없습니다');
     }
-    if (userRows[0].apply_status === applyEnum.allow) {
+    if (userRows[0].apply_status === ApplyEnum.allow) {
       throw customError(400, '이미 승인된 회원입니다');
     }
     const { user_id, nickname } = userRows[0];

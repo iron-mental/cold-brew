@@ -9,7 +9,7 @@ class AuthError extends Error {
   }
 }
 
-const authErrorEnum = Object.freeze({
+const AuthErrorEnum = Object.freeze({
   'permission error': 'permission error',
   'jwt expired': 'jwt expired',
   'jwt not exist': 'jwt not exist',
@@ -19,7 +19,7 @@ const authErrorEnum = Object.freeze({
 });
 
 authError = (err) => {
-  switch (authErrorEnum[err.message]) {
+  switch (AuthErrorEnum[err.message]) {
     case 'permission error':
       err.status = 403;
       err.code = 101;

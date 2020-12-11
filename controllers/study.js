@@ -1,6 +1,6 @@
 const studyService = require('../services/study');
 const { isHost, checkAuth, checkAuthority } = require('../services/common');
-const { authEnum } = require('../utils/variables/enum');
+const { AuthEnum } = require('../utils/variables/enum');
 const response = require('../utils/response');
 
 const createStudy = async (req, res) => {
@@ -47,7 +47,7 @@ const studyPaging = async (req, res) => {
 };
 
 const leaveStudy = async (req, res) => {
-  const authority = await checkAuthority(req.user, req.params, authEnum.host, authEnum.member);
+  const authority = await checkAuthority(req.user, req.params, AuthEnum.host, AuthEnum.member);
   await studyService.leaveStudy(req.user, req.params, authority);
   response(res, 204, '탈퇴 완료');
 };

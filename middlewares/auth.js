@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 
 const { authError } = require('../utils/errors/auth');
-const { categoryEnum } = require('../utils/variables/enum');
+const { CategoryEnum } = require('../utils/variables/enum');
 
 const exceptionList = [
-  ['check-nickname', 'check-email', 'login', 'emailVerify-process', 'reset-password', 'reissuance'].concat(Object.keys(categoryEnum)),
+  ['check-nickname', 'check-email', 'login', 'emailVerify-process', 'reset-password', 'reissuance'].concat(Object.keys(CategoryEnum)),
   ['/v1/user', '/v1/chat', '/v1/push/test'],
 ];
 

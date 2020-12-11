@@ -5,7 +5,7 @@ const studyDao = require('../dao/study');
 const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, lengthSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
-const { authEnum, categoryEnum } = require('../utils/variables/enum');
+const { AuthEnum, CategoryEnum } = require('../utils/variables/enum');
 const broadcast = require('../events/broadcast');
 
 const User = require('../models/user');
@@ -113,7 +113,7 @@ const studyPaging = async ({ id: user_id }, studyKeys) => {
 };
 
 const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
-  if (authority === authEnum.host) {
+  if (authority === AuthEnum.host) {
     // 참여자 수만큼 리턴
     const participateRows = await studyDao.getStudy(study_id);
     if (participateRows.length > 1) {
@@ -149,7 +149,7 @@ const search = async ({ id: user_id }, { word, category, sigungu }) => {
   Search.updateOne({ user_id, word, category, sigungu }, { $inc: { count: 1 } }, { upsert: true }).exec();
 
   word = '%' + word + '%';
-  category = category ? (category = categoryEnum[category] || '%') : '%';
+  category = category ? (category = CategoryEnum[category] || '%') : '%';
   sigungu = sigungu || '%';
 
   const searchRows = await studyDao.search(word, category, sigungu);

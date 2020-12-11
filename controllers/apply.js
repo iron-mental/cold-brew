@@ -1,10 +1,10 @@
 const applyService = require('../services/apply');
 const { isHost, checkAuthority } = require('../services/common');
-const { authEnum } = require('../utils/variables/enum');
+const { AuthEnum } = require('../utils/variables/enum');
 const response = require('../utils/response');
 
 const createApply = async (req, res) => {
-  await checkAuthority(req.user, req.params, authEnum.none);
+  await checkAuthority(req.user, req.params, AuthEnum.none);
   req.body.user_id = req.user.id;
   req.body.study_id = req.params.study_id;
   await applyService.createApply(req.body);
@@ -17,13 +17,13 @@ const getApplyByUser = async (req, res) => {
 };
 
 const applyUpdate = async (req, res) => {
-  await checkAuthority(req.user, req.params, authEnum.applier);
+  await checkAuthority(req.user, req.params, AuthEnum.applier);
   await applyService.applyUpdate(req.user, req.params, req.body);
   response(res, 204, '가입신청 수정');
 };
 
 const applyDelete = async (req, res) => {
-  await checkAuthority(req.user, req.params, authEnum.applier);
+  await checkAuthority(req.user, req.params, AuthEnum.applier);
   await applyService.applyDelete(req.user, req.params);
   response(res, 204, '가입신청 취소');
 };

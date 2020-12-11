@@ -1,6 +1,6 @@
 const commonDao = require('../dao/common');
 const { authError } = require('../utils/errors/auth');
-const { authEnum, applyEnum } = require('../utils/variables/enum');
+const { AuthEnum, ApplyEnum } = require('../utils/variables/enum');
 
 const isHost = async ({ id: user_id }, { study_id }) => {
   const checkRows = await commonDao.isHost(user_id, study_id);
@@ -12,15 +12,15 @@ const isHost = async ({ id: user_id }, { study_id }) => {
 const checkAuth = async ({ id: user_id }, { study_id }) => {
   const memberCheckRows = await commonDao.checkMember(user_id, study_id);
   if (memberCheckRows.length === 1) {
-    return authEnum[memberCheckRows[0].leader == true ? authEnum.host : authEnum.member];
+    return AuthEnum[memberCheckRows[0].leader == true ? AuthEnum.host : AuthEnum.member];
   }
 
   const applyCheckRows = await commonDao.checkApply(user_id, study_id);
   if (applyCheckRows.length === 1) {
-    return authEnum[applyCheckRows[0].apply_status === applyEnum.apply ? authEnum.applier : authEnum.reject];
+    return AuthEnum[applyCheckRows[0].apply_status === ApplyEnum.apply ? AuthEnum.applier : AuthEnum.reject];
   }
 
-  return authEnum.none;
+  return AuthEnum.none;
 };
 
 const checkAuthority = async ({ id: user_id }, { study_id }, ...authority) => {
