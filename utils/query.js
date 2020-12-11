@@ -1,3 +1,5 @@
+const { DeviceEnum } = require('./variables/enum');
+
 const rowSplit = (rows, tags) => {
   // 결과, 키 목록, 임시 저장 모델, 저장된 id
   let [result, keys, tempModel, insertedId] = [{}, {}, {}, {}];
@@ -75,7 +77,7 @@ const tokenDivision = (memberRows) => {
   const [fcm_token, apns_token] = [[], []];
 
   memberRows.forEach((v) => {
-    if (v.device === 'ios') {
+    if (v.device === DeviceEnum.ios) {
       apns_token.push(v.push_token);
     } else {
       fcm_token.push(v.push_token);

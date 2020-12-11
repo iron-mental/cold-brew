@@ -1,4 +1,4 @@
-const authEnum = Object.freeze({
+const AuthEnum = Object.freeze({
   host: 'host',
   member: 'member',
   applier: 'applier',
@@ -6,13 +6,13 @@ const authEnum = Object.freeze({
   none: 'none',
 });
 
-const applyEnum = Object.freeze({
+const ApplyEnum = Object.freeze({
   apply: 'apply',
   allow: 'allow',
   reject: 'reject',
 });
 
-const categoryEnum = Object.freeze({
+const CategoryEnum = Object.freeze({
   ai: 'ai',
   etc: 'etc',
   web: 'web',
@@ -29,8 +29,14 @@ const categoryEnum = Object.freeze({
   systemNetwork: 'systemNetwork',
 });
 
+const DeviceEnum = Object.freeze({
+  ios: 'ios',
+  android: 'android',
+});
+
 module.exports = {
-  authEnum,
-  applyEnum,
-  categoryEnum,
+  AuthEnum,
+  ApplyEnum,
+  CategoryEnum,
+  DeviceEnum,
 };

@@ -5,6 +5,7 @@ const pushDao = require('../dao/push');
 const { tokenDivision } = require('../utils/query');
 const { apn: options } = require('../configs/config');
 const { note, payload } = require('../utils/variables/push_payload');
+const { DeviceEnum } = require('../utils/variables/enum');
 
 const apnProvider = new apn.Provider(options);
 
@@ -54,7 +55,7 @@ const send = async (user_id, message, data) => {
   const tokenRows = await pushDao.getPushToken(user_id);
   const { device, push_token } = tokenRows[0];
 
-  if (device === 'ios') {
+  if (device === DeviceEnum.ios) {
     apnSender([push_token], note.getSend(user_id, message, data));
   } else {
     fcmSender([push_token], payload.getSend(user_id, message, data));
