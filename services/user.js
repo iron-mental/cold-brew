@@ -9,6 +9,7 @@ const { sendVerifyEmail } = require('../utils/mailer');
 const { verify, getAccessToken, getRefreshToken } = require('../utils/jwt.js');
 const { customError } = require('../utils/errors/custom');
 const { firebaseError } = require('../utils/errors/firebase');
+const { PushEventEnum } = require('../utils/variables/enum');
 
 const User = require('../models/user');
 const Chat = require('../models/chat');
@@ -125,15 +126,15 @@ const emailVerification = async ({ id }) => {
 // 이메일 인증 처리
 const emailVerificationProcess = async ({ email }) => {
   const verifyRows = await userDao.verifiedCheck({ email });
-  if (verifyRows[0].email_verified === 1) {
-    throw customError(400, `${verifyRows[0].email} 님은 이미 인증이 완료된 사용자입니다`);
-  }
-  const [updateRows, userRows] = await userDao.emailVerificationProcess(email);
+  // if (verifyRows[0].email_verified === 1) {
+  //   throw customError(400, `${verifyRows[0].email} 님은 이미 인증이 완료된 사용자입니다`);
+  // }
+  const [updateRows, [{ id }]] = await userDao.emailVerificationProcess(email);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
 
-  push.emit('send', userRows[0].id, '이메일 인증완료', { email_verified: true });
+  push.emit('toUser', PushEventEnum.email_verified, id);
 };
 
 // 검증 후 accessToken 발급

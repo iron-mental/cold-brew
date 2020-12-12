@@ -1,18 +1,21 @@
 const applyDao = require('../dao/apply');
 
+const push = require('../events/push');
+const { PushEventEnum } = require('../utils/variables/enum');
+const broadcast = require('../events/broadcast');
 const { rowSplit, toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
 const { ApplyEnum } = require('../utils/variables/enum');
-const broadcast = require('../events/broadcast');
 
 const User = require('../models/user');
 const Room = require('../models/room');
 
-const createApply = async (createData) => {
-  const newApply = await applyDao.createApply(createData);
-  if (newApply.affectedRows === 0) {
+const createApply = async ({ user_id, study_id, message }) => {
+  const createdRows = await applyDao.createApply({ user_id, study_id, message });
+  if (createdRows.affectedRows === 0) {
     throw customError(400, '조회된 스터디가 없습니다');
   }
+  push.emit('toHost', PushEventEnum.apply_new, study_id);
 };
 
 const getApplyByUser = async ({ study_id, user_id }) => {
@@ -32,8 +35,8 @@ const applyUpdate = async ({ id: user_id }, { apply_id }, updateData) => {
 };
 
 const applyDelete = async ({ id: user_id }, { apply_id }) => {
-  const rows = await applyDao.applyDelete(user_id, apply_id);
-  if (rows.affectedRows === 0) {
+  const deleteRows = await applyDao.applyDelete(user_id, apply_id);
+  if (deleteRows.affectedRows === 0) {
     throw customError(404, '조회된 신청내역이 없습니다');
   }
 };

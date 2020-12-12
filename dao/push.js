@@ -43,7 +43,7 @@ const getOffMembers = async (study_id, nickname) => {
   }
 };
 
-const getPushToken = async (user_id) => {
+const getUserToken = async (user_id) => {
   const conn = await pool.getConnection();
   try {
     const getTokenSql = `
@@ -59,8 +59,27 @@ const getPushToken = async (user_id) => {
   }
 };
 
+const getHostToken = async (study_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const getTokenSql = `
+      SELECT u.device, u.push_token
+      FROM user u
+        LEFT JOIN participate p
+        ON u.id = p.user_id
+      WHERE p.study_id = ? AND p.leader = true`;
+    const [tokenRows] = await conn.query(getTokenSql, study_id);
+    return tokenRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   getMembers,
   getOffMembers,
-  getPushToken,
+  getUserToken,
+  getHostToken,
 };

@@ -34,9 +34,31 @@ const DeviceEnum = Object.freeze({
   android: 'android',
 });
 
+const PushEventEnum = Object.freeze({
+  email_verified: 'email_verified',
+
+  // study
+  study_update: 'study_update',
+  study_delegate: 'study_delegate',
+
+  study_participate: 'study_participate',
+  study_withdraw: 'study_withdraw',
+
+  // apply
+  apply_new: 'apply_new',
+
+  // notice
+  notice_new: 'notice_new',
+  notice_update: 'notice_update',
+
+  //chat
+  chat: 'chat',
+});
+
 module.exports = {
   AuthEnum,
   ApplyEnum,
   CategoryEnum,
   DeviceEnum,
+  PushEventEnum,
 };
