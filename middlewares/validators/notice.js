@@ -9,7 +9,7 @@ const createNotice = async (req, res, next) => {
   const bodySchema = Joi.object({
     title: Joi.string().required().max(30),
     contents: Joi.string().required().max(200),
-    pinned: Joi.boolean().required(),
+    pinned: Joi.boolean().strict().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -41,7 +41,7 @@ const noticeUpdate = async (req, res, next) => {
   const bodySchema = Joi.object({
     title: Joi.string().max(30),
     contents: Joi.string().max(200),
-    pinned: Joi.boolean(),
+    pinned: Joi.boolean().strict(),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);
