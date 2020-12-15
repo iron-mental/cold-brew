@@ -82,9 +82,6 @@ const studyDelete = async ({ id: user_id }, { study_id }) => {
 
 const myStudy = async ({ id }) => {
   const myStudyList = await studyDao.getMyStudy(id);
-  if (myStudyList.length === 0) {
-    throw customError(404, '가입한 스터디가 없습니다');
-  }
   return myStudyList;
 };
 
@@ -100,9 +97,6 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
     throw customError(400, 'sort 입력이 잘못되었습니다');
   }
 
-  if (studyListRows.length === 0) {
-    throw customError(404, '해당 카테고리에 스터디가 없습니다');
-  }
   studyListRows = toBoolean(studyListRows, ['isMember']);
   return cutId(studyListRows);
 };

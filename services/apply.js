@@ -13,7 +13,7 @@ const Room = require('../models/room');
 const createApply = async ({ user_id, study_id, message }) => {
   const createdRows = await applyDao.createApply({ user_id, study_id, message });
   if (createdRows.affectedRows === 0) {
-    throw customError(400, '조회된 스터디가 없습니다');
+    throw customError(404, '조회된 스터디가 없습니다');
   }
   push.emit('toHost', PushEventEnum.apply_new, study_id);
 };
@@ -52,9 +52,6 @@ const getApplyById = async ({ study_id, apply_id }) => {
 
 const applyList = async ({ study_id }) => {
   let applyList = await applyDao.getApplyList(study_id);
-  if (applyList.length === 0) {
-    throw customError(404, '조회된 신청내역이 없습니다');
-  }
   return applyList;
 };
 

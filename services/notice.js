@@ -37,9 +37,6 @@ const noticeDelete = async ({ study_id, notice_id }) => {
 
 const noticeList = async ({ study_id }) => {
   let noticeRows = await noticeDao.getNoticeList(study_id);
-  if (noticeRows.length === 0) {
-    throw customError(404, '조회된 공지사항이 없습니다');
-  }
   noticeRows = toBoolean(noticeRows, ['pinned']);
   return cutId(noticeRows);
 };

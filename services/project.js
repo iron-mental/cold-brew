@@ -7,6 +7,7 @@ const createProject = async (createData) => {
   if (projectRows.length > 2) {
     throw customError(400, '프로젝트는 3개까지 등록할 수 있습니다', 101);
   }
+
   const createRows = await projectDao.createProject(createData);
   if (createRows.length === 0) {
     throw customError(400, '프로젝트 작성에 실패했습니다', 102);
@@ -23,9 +24,6 @@ const updateProject = async ({ id, project_id }, updateData) => {
 // 프로젝트 목록 조회
 const getProjectList = async ({ id }) => {
   const projectRows = await projectDao.getProjectList(id);
-  if (projectRows.length === 0) {
-    throw customError(404, '조회된 프로젝트가 없습니다');
-  }
   return projectRows;
 };
 
