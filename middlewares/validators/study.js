@@ -5,7 +5,7 @@ const commonValid = require('./common');
 
 const createStudy = async (req, res, next) => {
   const bodySchema = Joi.object({
-    category: Joi.string().required(),
+    category: Joi.string().custom(commonValid.categoryValid).required(),
     title: Joi.string().required().min(2).max(10),
     introduce: Joi.string().required().max(200),
     progress: Joi.string().required().max(100),
@@ -99,7 +99,7 @@ const myStudy = async (req, res, next) => {
 
 const studyList = async (req, res, next) => {
   const querySchema = Joi.object({
-    category: Joi.string().required(),
+    category: Joi.string().custom(commonValid.categoryValid).required(),
     sort: Joi.string().required(),
   });
   try {

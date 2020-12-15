@@ -19,6 +19,7 @@ const validErrorHandler = Object.freeze({
   'number.base': 'number.base',
   'boolean.base': 'boolean.base',
   'uri.invalidUri': 'uri.invalidUri',
+  'category.invalidCategory': 'category.invalidCategory',
 });
 
 validError = (err) => {
@@ -83,8 +84,14 @@ validError = (err) => {
       err.message = `유효하지 않은 주소입니다`;
       return new ValidError(err);
 
-    default:
+    case 'category.invalidCategory':
       err.code = 111;
+      err.label = err.details[0].context.label;
+      err.message = `유효하지 않은 카테고리입니다`;
+      return new ValidError(err);
+
+    default:
+      err.code = 112;
       err.label = err.details[0].context.label;
       err.message = `유효성검사 에러`;
       return new ValidError(err);
