@@ -14,7 +14,7 @@ const checkEmail = async (req, res) => {
 
 const signup = async (req, res) => {
   await userService.signup(req.body);
-  response(res, 201, '회원가입 완료');
+  response(res, 201, '회원가입이 완료되었습니다');
 };
 
 const login = async (req, res) => {
@@ -30,17 +30,17 @@ const userDetail = async (req, res) => {
 
 const userUpdate = async (req, res) => {
   await userService.userUpdate(req.params, req.body, req.file);
-  response(res, 204, '회원정보 수정 완료');
+  response(res, 200, '회원정보가 수정되었습니다');
 };
 
 const withdraw = async (req, res) => {
   await userService.withdraw(req.params, req.body);
-  response(res, 204, '회원 탈퇴 완료');
+  response(res, 200, '회원탈퇴가 되었습니다');
 };
 
 const emailVerification = async (req, res) => {
   await userService.emailVerification(req.params);
-  response(res, 200, '인증 이메일 발송');
+  response(res, 200, '인증 이메일이 발송되었습니다');
 };
 
 const emailVerificationProcess = async (req, res) => {
