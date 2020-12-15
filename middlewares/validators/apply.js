@@ -73,9 +73,20 @@ const applyDelete = async (req, res, next) => {
   }
 };
 
-const applyList = async (req, res, next) => {
+const applyListByHost = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    next(validError(err));
+  }
+};
+const applyListByUser = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    id: Joi.number().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -108,6 +119,7 @@ module.exports = {
   getApplyById,
   applyUpdate,
   applyDelete,
-  applyList,
+  applyListByHost,
+  applyListByUser,
   applyProcess,
 };

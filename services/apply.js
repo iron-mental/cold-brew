@@ -50,8 +50,19 @@ const getApplyById = async ({ study_id, apply_id }) => {
   return rowSplit(applyData, ['project']);
 };
 
-const applyList = async ({ study_id }) => {
-  let applyList = await applyDao.getApplyList(study_id);
+const applyListByHost = async ({ study_id }) => {
+  const applyList = await applyDao.applyListByHost(study_id);
+  if (applyList.length === 0) {
+    throw customError(404, '조회된 신청내역이 없습니다');
+  }
+  return applyList;
+};
+
+const applyListByUser = async ({ id: user_id }) => {
+  const applyList = await applyDao.applyListByUser(user_id);
+  if (applyList.length === 0) {
+    throw customError(404, '조회된 신청내역이 없습니다');
+  }
   return applyList;
 };
 
@@ -88,6 +99,7 @@ module.exports = {
   applyUpdate,
   applyDelete,
   getApplyById,
-  applyList,
+  applyListByHost,
+  applyListByUser,
   applyProcess,
 };
