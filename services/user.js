@@ -3,16 +3,16 @@ const path = require('path');
 const firebase = require('firebase');
 
 const userDao = require('../dao/user');
+const push = require('../events/push');
 const { toBoolean } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
 const { verify, getAccessToken, getRefreshToken } = require('../utils/jwt.js');
 const { customError } = require('../utils/errors/custom');
-const { authError } = require('../utils/errors/auth');
 const { firebaseError } = require('../utils/errors/firebase');
+const { PushEventEnum } = require('../utils/variables/enum');
 
 const User = require('../models/user');
 const Chat = require('../models/chat');
-const { custom } = require('joi');
 
 // 닉네임 중복체크
 const checkNickname = async ({ nickname }) => {
@@ -54,9 +54,9 @@ const login = async ({ email, password, push_token, device }) => {
     throw customError(404, '조회된 사용자가 없습니다');
   }
 
-  const id = loginRows[0].id;
-  const access_token = await getAccessToken(loginRows[0]);
-  const refresh_token = await getRefreshToken(loginRows[0]);
+  const { id, nickname } = loginRows[0];
+  const access_token = await getAccessToken({ id, email, nickname });
+  const refresh_token = await getRefreshToken({ id });
 
   userDao.userUpdate(id, { access_token, refresh_token, push_token, device });
 
@@ -113,7 +113,7 @@ const withdraw = async ({ id }, { email, password }) => {
 
 // 인증 이메일 전송
 const emailVerification = async ({ id }) => {
-  const verifyRows = await userDao.verifiedCheck(id);
+  const verifyRows = await userDao.verifiedCheck({ id });
   if (verifyRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
@@ -125,10 +125,15 @@ const emailVerification = async ({ id }) => {
 
 // 이메일 인증 처리
 const emailVerificationProcess = async ({ email }) => {
-  const updateRows = await userDao.emailVerificationProcess(email);
+  const verifyRows = await userDao.verifiedCheck({ email });
+  if (verifyRows[0].email_verified === 1) {
+    throw customError(400, `${verifyRows[0].email} 님은 이미 인증이 완료된 사용자입니다`);
+  }
+  const [updateRows, [{ id }]] = await userDao.emailVerificationProcess(email);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
+  push.emit('toUser', PushEventEnum.email_verified, id);
 };
 
 // 검증 후 accessToken 발급

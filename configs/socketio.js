@@ -1,32 +1,10 @@
-const jwt = require('jsonwebtoken');
-
-const User = require('../models/user');
-const Room = require('../models/room');
-const Chat = require('../models/chat');
-const push = require('../events/push');
-
-const jwtVerify = (socket, next) => {
-  if (socket.handshake.query.token) {
-    jwt.verify(socket.handshake.query.token, process.env.JWT_secret, (err, decoded) => {
-      if (err) {
-        return next(err);
-      }
-      socket.decoded = decoded;
-      return next();
-    });
-  } else {
-    return next('not exist token');
-  }
-};
-
-const getHexTimestamp = () => {
-  return Math.floor(new Date().getTime() / 1000).toString(16) + '0000000000000000';
-};
+const { socketVerify } = require('../utils/jwt');
+const socketService = require('../services/socket');
 
 const socketConfig = (io) => {
   const terminal = io.of(process.env.CHAT_nsp);
 
-  terminal.use(jwtVerify).on('connection', (socket) => {
+  terminal.use(socketVerify).on('connection', (socket) => {
     const {
       id: socket_id,
       decoded: { id: user_id, nickname },
@@ -35,24 +13,14 @@ const socketConfig = (io) => {
       },
     } = socket;
     socket.join(study_id);
-    console.log('커넥트: ', socket.id, new Date().toString());
-
-    User.updateOne({ user_id }, { socket_id, nickname }).exec();
-    Room.updateOne({ study_id }, { $pull: { off_members: user_id } }).exec();
-
-    socket.on('disconnect', () => {
-      console.log('디스커넥트: ', socket.id, new Date().toString());
-      User.updateOne({ user_id }, { disconnected_at: getHexTimestamp() }).exec();
-      Room.updateOne({ study_id }, { $addToSet: { off_members: user_id } }).exec();
-    });
+    socketService.connection(study_id, user_id, socket_id, nickname);
 
     socket.on('chat', (message) => {
-      const userChat = Chat.getInstance({ study_id, nickname, message });
+      socketService.chat(terminal, study_id, nickname, message);
+    });
 
-      terminal.to(study_id).emit('message', JSON.stringify(userChat));
-      // push.emit('send-offMembers', study_id, userChat);
-
-      Chat.create(userChat);
+    socket.on('disconnect', () => {
+      socketService.disconnection(study_id, user_id);
     });
   });
 

@@ -33,7 +33,7 @@ router.get('/:id/study', idCompare, studyValid.myStudy, asyncWrap(studyControlle
 router.get('/:id/apply', idCompare, applyValid.applyListByUser, asyncWrap(applyController.applyListByUser)); // 스터디 신청목록 조회
 
 router.post('/:id/project', idCompare, projectValid.createProject, asyncWrap(projectController.createProject)); // 프로젝트 작성
-router.get('/:id/project', projectValid.getProjectList, idCompare, asyncWrap(projectController.getProjectList)); // 내 프로젝트 목록 조회
+router.get('/:id/project', projectValid.getProjectList, asyncWrap(projectController.getProjectList)); // 내 프로젝트 목록 조회
 router.put('/:id/project/:project_id', idCompare, projectValid.updateProject, asyncWrap(projectController.updateProject)); // 프로젝트 수정
 router.delete('/:id/project/:project_id', idCompare, projectValid.deleteProject, asyncWrap(projectController.deleteProject)); // 프로젝트 삭제
 

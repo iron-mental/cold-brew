@@ -1,3 +1,5 @@
+const { DeviceEnum } = require('./variables/enum');
+
 const rowSplit = (rows, tags) => {
   // 결과, 키 목록, 임시 저장 모델, 저장된 id
   let [result, keys, tempModel, insertedId] = [{}, {}, {}, {}];
@@ -57,7 +59,7 @@ const cutId = (rows) => {
   return rows;
 };
 
-const customSorting = (sigungu, rows) => {
+const lengthSorting = (sigungu, rows) => {
   let [targetRows, otherRows] = [[], []];
 
   rows.forEach((row, idx) => {
@@ -71,10 +73,25 @@ const customSorting = (sigungu, rows) => {
   return targetRows.concat(otherRows);
 };
 
+const tokenDivision = (memberRows) => {
+  const [fcm_token, apns_token] = [[], []];
+
+  memberRows.forEach((v) => {
+    if (v.device === DeviceEnum.ios) {
+      apns_token.push(v.push_token);
+    } else {
+      fcm_token.push(v.push_token);
+    }
+  });
+
+  return [apns_token, fcm_token];
+};
+
 module.exports = {
   rowSplit,
   toBoolean,
   locationMerge,
   cutId,
-  customSorting,
+  lengthSorting,
+  tokenDivision,
 };

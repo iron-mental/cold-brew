@@ -1,18 +1,21 @@
 const applyDao = require('../dao/apply');
 
+const push = require('../events/push');
+const { PushEventEnum } = require('../utils/variables/enum');
+const broadcast = require('../events/broadcast');
 const { rowSplit, toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
-const { applyEnum } = require('../utils/variables/enums');
-const broadcast = require('../events/broadcast');
+const { ApplyEnum } = require('../utils/variables/enum');
 
 const User = require('../models/user');
 const Room = require('../models/room');
 
-const createApply = async (createData) => {
-  const newApply = await applyDao.createApply(createData);
-  if (newApply.affectedRows === 0) {
-    throw customError(400, '조회된 스터디가 없습니다');
+const createApply = async ({ user_id, study_id, message }) => {
+  const createdRows = await applyDao.createApply({ user_id, study_id, message });
+  if (createdRows.affectedRows === 0) {
+    throw customError(404, '조회된 스터디가 없습니다');
   }
+  push.emit('toHost', PushEventEnum.apply_new, study_id);
 };
 
 const getApplyByUser = async ({ study_id, user_id }) => {
@@ -32,8 +35,8 @@ const applyUpdate = async ({ id: user_id }, { apply_id }, updateData) => {
 };
 
 const applyDelete = async ({ id: user_id }, { apply_id }) => {
-  const rows = await applyDao.applyDelete(user_id, apply_id);
-  if (rows.affectedRows === 0) {
+  const deleteRows = await applyDao.applyDelete(user_id, apply_id);
+  if (deleteRows.affectedRows === 0) {
     throw customError(404, '조회된 신청내역이 없습니다');
   }
 };
@@ -69,11 +72,10 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
     if (userRows.length === 0) {
       throw customError(404, '조회된 신청내역이 없습니다');
     }
-    if (userRows[0].apply_status === applyEnum.allow) {
+    if (userRows[0].apply_status === ApplyEnum.allow) {
       throw customError(400, '이미 승인된 회원입니다');
     }
     const { user_id, nickname } = userRows[0];
-
     const allowRows = await applyDao.setAllow(study_id, apply_id, user_id);
     if (allowRows.affectedRows === 0) {
       throw customError(400, '수락 실패');

@@ -1,6 +1,6 @@
 const pool = require('./db');
 const { databaseError } = require('../utils/errors/database');
-const { applyEnum } = require('../utils/variables/enums');
+const { ApplyEnum } = require('../utils/variables/enum');
 
 const createApply = async (createData) => {
   const conn = await pool.getConnection();
@@ -107,7 +107,7 @@ const applyListByHost = async (study_id) => {
         INNER JOIN user u
         ON u.id = a.user_id
       WHERE a.apply_status = ? AND a.study_id = ?`;
-    const [applyRows] = await conn.query(applySql, [applyEnum.apply, study_id]);
+    const [applyRows] = await conn.query(applySql, [ApplyEnum.apply, study_id]);
     return applyRows;
   } catch (err) {
     throw databaseError(err);
@@ -142,7 +142,7 @@ const setAllow = async (study_id, apply_id, user_id) => {
     await conn.beginTransaction();
 
     const allowSql = `UPDATE apply SET apply_status = ? WHERE id = ?`;
-    await conn.query(allowSql, [applyEnum.allow, apply_id]);
+    await conn.query(allowSql, [ApplyEnum.allow, apply_id]);
 
     const createdSql = `INSERT INTO participate SET ?`;
     const [allowRows] = await conn.query(createdSql, { study_id, user_id });
@@ -160,7 +160,7 @@ const setReject = async (apply_id) => {
   const conn = await pool.getConnection();
   try {
     const rejectSql = 'UPDATE apply SET apply_status = ? WHERE id = ?';
-    const [apply] = await conn.query(rejectSql, [applyEnum.reject, apply_id]);
+    const [apply] = await conn.query(rejectSql, [ApplyEnum.reject, apply_id]);
     return apply;
   } catch (err) {
     throw databaseError(err);

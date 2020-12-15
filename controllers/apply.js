@@ -1,14 +1,14 @@
 const applyService = require('../services/apply');
 const { isHost, checkAuthority } = require('../services/common');
-const { authEnum } = require('../utils/variables/enums');
+const { AuthEnum } = require('../utils/variables/enum');
 const response = require('../utils/response');
 
 const createApply = async (req, res) => {
-  await checkAuthority(req.user, req.params, authEnum.none);
+  await checkAuthority(req.user, req.params, AuthEnum.none);
   req.body.user_id = req.user.id;
   req.body.study_id = req.params.study_id;
   await applyService.createApply(req.body);
-  response(res, 201, '가입신청 완료');
+  response(res, 201, '가입신청이 완료되었습니다');
 };
 
 const getApplyByUser = async (req, res) => {
@@ -17,15 +17,15 @@ const getApplyByUser = async (req, res) => {
 };
 
 const applyUpdate = async (req, res) => {
-  await checkAuthority(req.user, req.params, authEnum.applier);
+  await checkAuthority(req.user, req.params, AuthEnum.applier);
   await applyService.applyUpdate(req.user, req.params, req.body);
-  response(res, 204, '가입신청 수정');
+  response(res, 200, '가입신청이 수정되었습니다');
 };
 
 const applyDelete = async (req, res) => {
-  await checkAuthority(req.user, req.params, authEnum.applier);
+  await checkAuthority(req.user, req.params, AuthEnum.applier);
   await applyService.applyDelete(req.user, req.params);
-  response(res, 204, '가입신청 취소');
+  response(res, 200, '가입신청이 취소되었습니다');
 };
 
 const getApplyById = async (req, res) => {
@@ -48,7 +48,7 @@ const applyListByUser = async (req, res) => {
 const applyProcess = async (req, res) => {
   await isHost(req.user, req.params);
   await applyService.applyProcess(req.params, req.body);
-  response(res, 204, '처리 완료');
+  response(res, 200, '처리가 완료되었습니다');
 };
 
 module.exports = {

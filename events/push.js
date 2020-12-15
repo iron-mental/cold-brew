@@ -1,30 +1,36 @@
 const { EventEmitter } = require('events');
 
-const Room = require('../models/room');
 const pushService = require('../services/push');
+const PushEventEnum = require('../utils/variables/enum');
 
 const push = new EventEmitter();
+push.setMaxListeners(15);
 
-push.on('send-offMembers', async (study_id, chat, withTitle) => {
-  const { off_members } = await Room.findOne({ study_id });
-  const length = off_members.length;
-  if (length > 0) {
-    pushService.send(fullArray(off_members), chat);
-  }
-});
+// push.on('chat', (study_id, chat) => {
+//   pushService.chat(study_id, chat);
+// });
 
 // 참여, 탈퇴를 제외한 알람 발생 시 트리거
-push.on('send-members', async (study_id, chat) => {
-  const { members } = await Room.findOne({ study_id });
-  // pushService.send(fullArray(members), chat);
+// push.on('alert', (study_id, message, nickname) => {
+//   pushService.alert(study_id, message, nickname);
+// });
+
+push.on('send', (user_id, message, data) => {
+  pushService.send(user_id, message, data);
 });
 
-const fullArray = (target) => {
-  const length = target.length;
-  for (i = 0; i < 10 - length; i++) {
-    target.push(null);
-  }
-  return target;
-};
+////////////////////////////////
+push.on('toUser', (pushEvent, user_id) => {
+  pushService.toUser(pushEvent, user_id);
+});
+
+push.on('toHost', async (pushEvent, study_id) => {
+  pushService.toHost(pushEvent, study_id);
+});
+
+push.on('chat', (study_id, chat) => {
+  console.log('## push event');
+  pushService.chat(study_id, chat);
+});
 
 module.exports = push;

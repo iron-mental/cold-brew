@@ -67,7 +67,7 @@ const login = async (email, password) => {
     });
   const conn = await pool.getConnection();
   try {
-    const userSql = 'SELECT id, email, nickname FROM user WHERE ?';
+    const userSql = 'SELECT id, nickname FROM user WHERE ?';
     const [rows] = await conn.query(userSql, { uid });
     return rows;
   } catch (err) {
@@ -150,11 +150,11 @@ const withdraw = async (id, email, password) => {
   }
 };
 
-const verifiedCheck = async (id) => {
+const verifiedCheck = async (userData) => {
   const conn = await pool.getConnection();
   try {
     const checkSql = 'SELECT email, email_verified FROM user WHERE ?';
-    const [checkRows] = await conn.query(checkSql, { id });
+    const [checkRows] = await conn.query(checkSql, userData);
     return checkRows;
   } catch (err) {
     throw databaseError(err);
@@ -168,7 +168,7 @@ const emailVerificationProcess = async (email) => {
   try {
     const uidSql = 'SELECT uid FROM user WHERE ?';
     const [uidRows] = await conn.query(uidSql, { email });
-    const result = await admin
+    const result = admin
       .auth()
       .updateUser(uidRows[0].uid, {
         emailVerified: true,
@@ -176,7 +176,10 @@ const emailVerificationProcess = async (email) => {
       .then(async () => {
         const updateSql = 'UPDATE user SET ? WHERE ?';
         const [updateRows] = await conn.query(updateSql, [{ email_verified: true }, { email }]);
-        return updateRows;
+
+        const userSql = 'SELECT id FROM user WHERE ?';
+        const [userRows] = await conn.query(userSql, { email });
+        return [updateRows, userRows];
       })
       .catch((err) => {
         throw firebaseError(err);

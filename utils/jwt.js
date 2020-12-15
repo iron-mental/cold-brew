@@ -5,11 +5,11 @@ const options = {
   issuer: process.env.JWT_issuer,
 };
 
-const verify = (token, tokenName) => {
+const verify = (token, tokenType) => {
   try {
     return jwt.verify(token, process.env.JWT_secret);
   } catch (err) {
-    throw customError(401, `${tokenName} Token이 만료되었습니다. 다시 로그인 하세요.`);
+    throw customError(401, `${tokenType} Token이 만료되었습니다. 다시 로그인 하세요.`);
   }
 };
 
@@ -27,8 +27,23 @@ const getRefreshToken = ({ id }) => {
   return jwt.sign(payload, secretKey, options);
 };
 
+const socketVerify = (socket, next) => {
+  if (socket.handshake.query.token) {
+    jwt.verify(socket.handshake.query.token, process.env.JWT_secret, (err, decoded) => {
+      if (err) {
+        return next(err);
+      }
+      socket.decoded = decoded;
+      return next();
+    });
+  } else {
+    return next('not exist token');
+  }
+};
+
 module.exports = {
   verify,
   getAccessToken,
   getRefreshToken,
+  socketVerify,
 };
