@@ -73,8 +73,8 @@ const getNoticeList = async (study_id) => {
       FROM notice
       WHERE ?
       ORDER BY  pinned DESC, id DESC`;
-    const [deleteRows] = await conn.query(deleteSQL, { study_id });
-    return deleteRows;
+    const [listRows] = await conn.query(deleteSQL, { study_id });
+    return listRows;
   } catch (err) {
     throw databaseError(err);
   } finally {
