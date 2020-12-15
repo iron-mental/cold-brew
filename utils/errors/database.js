@@ -14,7 +14,7 @@ const databaseError = (err) => {
   }
 
   if (err.errno === 1452) {
-    err.sqlMessage = '조회된 사용자가 없습니다.';
+    err.sqlMessage = '조회된 데이터가 없습니다.';
     return new DatabaseError(err);
   }
 
