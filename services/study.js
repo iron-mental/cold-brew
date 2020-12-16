@@ -157,6 +157,19 @@ const ranking = async () => {
   return await Search.find({}, { word: true, _id: false }).sort({ count: -1 }).limit(5);
 };
 
+const category = async ({ id }) => {
+  const categoryRows = await studyDao.getCategoryRanking(id);
+  const temp = Object.entries(categoryRows[0]);
+
+  temp.sort((a, b) => {
+    return b[1] - a[1];
+  });
+
+  return temp.map((v) => {
+    return v[0];
+  });
+};
+
 module.exports = {
   createStudy,
   studyDetail,
@@ -169,4 +182,5 @@ module.exports = {
   delegate,
   search,
   ranking,
+  category,
 };

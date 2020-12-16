@@ -123,6 +123,16 @@ const getMyStudy = async (id) => {
 const getStudyListByNew = async (user_id, category) => {
   const conn = await pool.getConnection();
   try {
+    await conn.beginTransaction();
+    const countingSql = `
+    UPDATE
+      category_count
+    SET
+      ${category} = ${category} + 1
+    WHERE
+      user_id = ?`;
+    await conn.query(countingSql, user_id);
+
     const studyListSql = `
       SELECT
         S.*, count(*) members, IF(user_id is not null, true, false) isMember
@@ -146,8 +156,11 @@ const getStudyListByNew = async (user_id, category) => {
       GROUP BY S.id
       ORDER BY S.id DESC`;
     const [listRows] = await conn.query(studyListSql, [category, user_id]);
+    await conn.commit();
+
     return listRows;
   } catch (err) {
+    await conn.rollback();
     throw databaseError(err);
   } finally {
     await conn.release();
@@ -157,6 +170,16 @@ const getStudyListByNew = async (user_id, category) => {
 const getStudyListByLength = async ({ latitude, longitude }, user_id, category) => {
   const conn = await pool.getConnection();
   try {
+    await conn.beginTransaction();
+    const countingSql = `
+    UPDATE
+      category_count
+    SET
+      ${category} = ${category} + 1
+    WHERE
+      user_id = ?`;
+    await conn.query(countingSql, user_id);
+
     const studyListSql = `
       SELECT
         S.*, count(*) members, IF(user_id is not null, true, false) isMember
@@ -181,8 +204,11 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
       ON S.id = P.study_id
       GROUP BY S.id`;
     const [listRows] = await conn.query(studyListSql, [latitude, longitude, latitude, category, user_id]);
+    await conn.commit();
+
     return listRows;
   } catch (err) {
+    await conn.rollback();
     throw databaseError(err);
   } finally {
     await conn.release();
@@ -298,6 +324,26 @@ const search = async (word, category, sigungu) => {
   }
 };
 
+const getCategoryRanking = async (user_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const categorySql = `
+    SELECT
+      ai, android, etc, web, ios, arvr, server, backend, bigdata, embeded, security, language, blockchain, systemNetwork
+    FROM
+      category_count
+    WHERE
+      user_id = ?
+    `;
+    const [categoryRows] = await conn.query(categorySql, user_id);
+    return categoryRows;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   createStudy,
   getStudy,
@@ -312,4 +358,5 @@ module.exports = {
   leaveStudy,
   delegate,
   search,
+  getCategoryRanking,
 };
