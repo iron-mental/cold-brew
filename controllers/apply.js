@@ -34,9 +34,14 @@ const getApplyById = async (req, res) => {
   response(res, 200, applyData);
 };
 
-const applyList = async (req, res) => {
+const applyListByHost = async (req, res) => {
   await isHost(req.user, req.params);
-  const applyList = await applyService.applyList(req.params);
+  const applyList = await applyService.applyListByHost(req.params);
+  response(res, 200, applyList);
+};
+
+const applyListByUser = async (req, res) => {
+  const applyList = await applyService.applyListByUser(req.params);
   response(res, 200, applyList);
 };
 
@@ -52,6 +57,7 @@ module.exports = {
   applyUpdate,
   applyDelete,
   getApplyById,
-  applyList,
+  applyListByHost,
+  applyListByUser,
   applyProcess,
 };

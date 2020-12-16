@@ -7,6 +7,8 @@ const userValid = require('../../middlewares/validators/user');
 const userController = require('../../controllers/user');
 const studyValid = require('../../middlewares/validators/study');
 const studyController = require('../../controllers/study');
+const applyValid = require('../../middlewares/validators/apply');
+const applyController = require('../../controllers/apply');
 const projectValid = require('../../middlewares/validators/project');
 const projectController = require('../../controllers/project');
 
@@ -27,6 +29,8 @@ router.get('/:id/emailVerify', idCompare, userValid.emailVerification, asyncWrap
 router.get('/emailVerify-process/:email', userValid.emailVerificationProcess, asyncWrap(userController.emailVerificationProcess)); // 이메일 인증 요청
 
 router.get('/:id/study', idCompare, studyValid.myStudy, asyncWrap(studyController.myStudy)); // 내 스터디 조회
+
+router.get('/:id/apply', idCompare, applyValid.applyListByUser, asyncWrap(applyController.applyListByUser)); // 스터디 신청목록 조회
 
 router.post('/:id/project', idCompare, projectValid.createProject, asyncWrap(projectController.createProject)); // 프로젝트 작성
 router.get('/:id/project', projectValid.getProjectList, asyncWrap(projectController.getProjectList)); // 내 프로젝트 목록 조회
