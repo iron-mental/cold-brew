@@ -35,6 +35,7 @@ const DeviceEnum = Object.freeze({
 });
 
 const PushEventEnum = Object.freeze({
+  chat: 'chat',
   apply_new: 'apply_new',
   email_verified: 'email_verified',
   notice_new: 'notice_new',

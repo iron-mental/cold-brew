@@ -1,5 +1,5 @@
 const apn = require('apn');
-const { MessageEnum } = require('../utils/variables/enum');
+const { MessageEnum, PushEventEnum } = require('../utils/variables/enum');
 
 class Note {
   constructor(alert, payload) {
@@ -12,6 +12,7 @@ class Note {
   }
 
   getChat = (chat) => {
+    chat.pushEvent = PushEventEnum.chat;
     const alert = chat.nickname === '__SYSTEM__' ? chat.message : chat.nickname.concat(' ', chat.message);
     const payload = chat;
     const note = new Note(alert, payload);
@@ -41,6 +42,7 @@ class Payload {
   }
 
   getChat = (chat) => {
+    chat.pushEvent = PushEventEnum.chat;
     const body = chat.nickname === '__SYSTEM__' ? chat.message : chat.nickname.concat(' ', chat.message);
     const payload = JSON.stringify(chat);
     return new Payload(body, payload);
