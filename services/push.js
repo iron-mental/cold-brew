@@ -33,10 +33,10 @@ const toHost = async (pushEvent, study_id) => {
   const [apns_token, fcm_token] = tokenDivision(tokenRows);
 
   if (apns_token.length > 0) {
-    apnSender(apns_token, note.get(pushEvent, { user_id }));
+    apnSender(apns_token, note.get(pushEvent, { study_id }));
   }
   if (fcm_token.length > 0) {
-    fcmSender(fcm_token, payload.get(pushEvent, { user_id }));
+    fcmSender(fcm_token, payload.get(pushEvent, { study_id }));
   }
 };
 
