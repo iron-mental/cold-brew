@@ -35,24 +35,21 @@ const DeviceEnum = Object.freeze({
 });
 
 const PushEventEnum = Object.freeze({
-  email_verified: 'email_verified',
-
-  // study
-  study_update: 'study_update',
-  study_delegate: 'study_delegate',
-
-  study_participate: 'study_participate',
-  study_withdraw: 'study_withdraw',
-
-  // apply
   apply_new: 'apply_new',
-
-  // notice
+  email_verified: 'email_verified',
   notice_new: 'notice_new',
   notice_update: 'notice_update',
+  study_update: 'study_update',
+  study_delegate: 'study_delegate',
+});
 
-  //chat
-  chat: 'chat',
+const MessageEnum = Object.freeze({
+  apply_new: '새로운 가입신청이 왔습니다 - test(방장)',
+  email_verified: '이메일 인증 - 사일런트 적용예정',
+  notice_new: '공지사항이 생겼습니다 - test(방장제외 멤버)',
+  notice_update: '공지사항이 수정되었습니다 - test(방장제외 멤버)',
+  study_update: '스터디 내용이 수정되었습니다 - test(방장제외 멤버)',
+  study_delegate: '스터디 방장이 위임되었습니다 - test(방장제외 멤버)',
 });
 
 module.exports = {
@@ -61,4 +58,5 @@ module.exports = {
   CategoryEnum,
   DeviceEnum,
   PushEventEnum,
+  MessageEnum,
 };
