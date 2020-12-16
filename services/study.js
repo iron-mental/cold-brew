@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 const studyDao = require('../dao/study');
+const push = require('../events/push');
+const { PushEventEnum } = require('../utils/variables/enum');
 const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, lengthSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
@@ -67,6 +69,8 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
       throw customError(404, '조회된 스터디가 없습니다');
     }
   }
+
+  push.emit('toStudyWithoutHost', PushEventEnum.study_update, study_id);
 };
 
 const studyDelete = async ({ id: user_id }, { study_id }) => {
@@ -114,7 +118,6 @@ const studyPaging = async ({ id: user_id }, studyKeys) => {
 
 const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
   if (authority === AuthEnum.host) {
-    // 참여자 수만큼 리턴
     const participateRows = await studyDao.getStudy(study_id);
     if (participateRows.length > 1) {
       throw customError(400, '탈퇴할 수 없습니다. 스터디 장을 위임한 뒤 탈퇴하세요', 101);
@@ -142,7 +145,7 @@ const delegate = async ({ id: old_leader }, { study_id }, { new_leader }) => {
     throw customError(400, '위임 실패');
   }
 
-  // 멤버에게 채팅 or 노티 전송부
+  push.emit('toStudy', PushEventEnum.study_delegate, study_id);
 };
 
 const search = async ({ id: user_id }, { word, category, sigungu }) => {

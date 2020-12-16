@@ -126,9 +126,9 @@ const emailVerification = async ({ id }) => {
 // 이메일 인증 처리
 const emailVerificationProcess = async ({ email }) => {
   const verifyRows = await userDao.verifiedCheck({ email });
-  // if (verifyRows[0].email_verified === 1) {
-  //   throw customError(400, `${verifyRows[0].email} 님은 이미 인증이 완료된 사용자입니다`);
-  // }
+  if (verifyRows[0].email_verified === 1) {
+    throw customError(400, `${verifyRows[0].email} 님은 이미 인증이 완료된 사용자입니다`);
+  }
   const [updateRows, [{ id }]] = await userDao.emailVerificationProcess(email);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
