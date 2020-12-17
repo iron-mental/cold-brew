@@ -139,17 +139,11 @@ const delegate = async ({ id: old_leader }, { study_id }, { new_leader }) => {
   // 멤버에게 채팅 or 노티 전송부
 };
 
-const search = async ({ id: user_id }, { word, category, sigungu }) => {
-  Search.updateOne({ user_id, word, category, sigungu }, { $inc: { count: 1 } }, { upsert: true }).exec();
-
+const search = async ({ id: user_id }, { word }) => {
+  Search.updateOne({ user_id, word }, { $inc: { count: 1 } }, { upsert: true }).exec();
   word = '%' + word + '%';
-  category = category ? (category = CategoryEnum[category] || '%') : '%';
-  sigungu = sigungu || '%';
 
-  const searchRows = await studyDao.search(word, category, sigungu);
-  if (searchRows.length === 0) {
-    throw customError(404, '검색 결과가 없습니다');
-  }
+  const searchRows = await studyDao.search(word);
   return searchRows;
 };
 

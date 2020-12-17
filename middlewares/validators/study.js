@@ -153,8 +153,6 @@ const delegate = async (req, res, next) => {
 const search = async (req, res, next) => {
   const querySchema = Joi.object({
     word: Joi.string().max(30).required(),
-    category: Joi.string(),
-    sigungu: Joi.string().max(20),
   });
   try {
     await querySchema.validateAsync(req.query);

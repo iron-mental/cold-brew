@@ -293,7 +293,7 @@ const delegate = async (study_id, old_leader, new_leader) => {
   }
 };
 
-const search = async (word, category, sigungu) => {
+const search = async (word) => {
   const conn = await pool.getConnection();
   try {
     const searchSql = `
@@ -310,12 +310,12 @@ const search = async (word, category, sigungu) => {
         LEFT JOIN user u
         ON u.id = p.user_id
       WHERE
-        s.title like ? AND s.category like ? AND s.sigungu like ?
+        s.title like ? OR s.introduce like ? OR s.sigungu like ?
       ORDER BY p.leader DESC ) T
     GROUP BY id
     ORDER BY id DESC
     `;
-    const [searchRows] = await conn.query(searchSql, [word, category, sigungu]);
+    const [searchRows] = await conn.query(searchSql, [word, word, word]);
     return searchRows;
   } catch (err) {
     throw databaseError(err);
