@@ -36,9 +36,7 @@ class Payload {
       title: '터미널 title',
       body: body,
     };
-    this.data = {
-      payload: payload,
-    };
+    this.payload = payload;
   }
 
   getChat = (chat) => {
