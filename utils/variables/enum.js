@@ -22,7 +22,7 @@ const CategoryEnum = Object.freeze({
   android: 'android',
   backend: 'backend',
   bigdata: 'bigdata',
-  embeded: 'embeded',
+  embedded: 'embedded',
   security: 'security',
   language: 'language',
   blockchain: 'blockchain',
