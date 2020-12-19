@@ -33,7 +33,16 @@ const idCompare = (req, res, next) => {
   next();
 };
 
+const emailCompare = (req, res, next) => {
+  const email = req.query.email || req.params.email;
+  if (req.user.email !== email) {
+    next(authError({ message: 'unequal email' }));
+  }
+  next();
+};
+
 module.exports = {
   verify,
   idCompare,
+  emailCompare,
 };
