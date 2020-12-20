@@ -25,6 +25,7 @@ router.get('/:id', userValid.userDetail, asyncWrap(userController.userDetail)); 
 router.put('/:id', idCompare, imageUpload, userValid.userUpdate, asyncWrap(userController.userUpdate)); // 유저 정보수정
 router.delete('/:id', idCompare, userValid.withdraw, asyncWrap(userController.withdraw)); // 회원 탈퇴
 
+router.put('/:id/email', idCompare, asyncWrap(userController.updateEmail));
 router.get('/:id/emailVerify', idCompare, userValid.emailVerification, asyncWrap(userController.emailVerification)); // 이메일 인증 요청
 router.get('/emailVerify-process/:email', userValid.emailVerificationProcess, asyncWrap(userController.emailVerificationProcess)); // 이메일 인증 요청
 
