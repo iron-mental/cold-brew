@@ -209,6 +209,43 @@ const checkToken = async (refreshToken) => {
   }
 };
 
+const updateEmail = async (id, email) => {
+  const conn = await pool.getConnection();
+  try {
+    conn.beginTransaction();
+    const uidSql = 'SELECT uid FROM user WHERE ?';
+    const [uidRows] = await conn.query(uidSql, { id });
+    const { uid } = uidRows[0];
+
+    admin
+      .auth()
+      .updateUser(uid, {
+        email,
+        emailVerified: false,
+      })
+      .catch((err) => {
+        return firebaseError(err);
+      });
+
+    const updateSql = 'UPDATE user SET ? WHERE ? ';
+    const [updateRows] = await conn.query(updateSql, [
+      {
+        email,
+        email_verified: false,
+      },
+      { id },
+    ]);
+
+    conn.commit();
+    return updateRows;
+  } catch (err) {
+    conn.rollback();
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -221,4 +258,5 @@ module.exports = {
   verifiedCheck,
   emailVerificationProcess,
   checkToken,
+  updateEmail,
 };

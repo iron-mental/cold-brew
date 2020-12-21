@@ -151,10 +151,22 @@ const reissuance = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
   const paramSchema = Joi.object({
-    email: Joi.string().required(),
+    email: Joi.string().email().required(),
   });
   try {
     await paramSchema.validateAsync(req.params);
+    next();
+  } catch (err) {
+    next(validError(err));
+  }
+};
+
+const updateEmail = async (req, res, next) => {
+  const bodySchema = Joi.object({
+    email: Joi.string().email().required(),
+  });
+  try {
+    await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
     next(validError(err));
@@ -173,4 +185,5 @@ module.exports = {
   emailVerificationProcess,
   reissuance,
   resetPassword,
+  updateEmail,
 };

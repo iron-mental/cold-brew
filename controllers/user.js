@@ -60,7 +60,7 @@ const resetPassword = async (req, res) => {
 };
 
 const updateEmail = async (req, res) => {
-  await userService.updateEmail(req.user);
+  await userService.updateEmail(req.user, req.body);
   response(res, 200, '이메일 변경이 완료되었습니다');
 };
 

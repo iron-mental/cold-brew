@@ -167,6 +167,32 @@ const resetPassword = async ({ email }) => {
     });
 };
 
+const updateEmail = async ({ id }, { email }) => {
+  // uid dao
+  const userDataRows = await userDao.updateEmail(id, email);
+  if (userDataRows.length === 0) {
+    throw customError(404, '조회된 사용자가 없습니다');
+  }
+  // firebase BL
+  // try {
+  //   await admin.auth().updateUser(uid, {
+  //     email,
+  //     emailVerified: false,
+  //   });
+  // } catch (err) {
+  //   throw firebaseError(err);
+  // }
+
+  // // userUpdate dao
+  // const updateRows = await userDao.userUpdate(id, {
+  //   email,
+  //   email_verified: false,
+  // });
+  // if (updateRows[0].affectedRows === 0) {
+  //   throw customError(400, '이메일 변경에 실패했습니다');
+  // }
+};
+
 module.exports = {
   signup,
   login,
@@ -179,4 +205,5 @@ module.exports = {
   emailVerificationProcess,
   reissuance,
   resetPassword,
+  updateEmail,
 };
