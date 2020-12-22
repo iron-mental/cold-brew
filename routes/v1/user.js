@@ -25,7 +25,7 @@ router.get('/:id', userValid.userDetail, asyncWrap(userController.userDetail)); 
 router.delete('/:id', idCompare, userValid.withdraw, asyncWrap(userController.withdraw)); // 회원 탈퇴
 
 router.put('/:id/info', idCompare, userValid.userInfoUpdate, asyncWrap(userController.userUpdate)); // 닉네임, 소개 수정
-router.put('/:id/image', idCompare, imageUpload, userValid.userImageUpdate, asyncWrap(userController.userUpdate)); // 이미지 수정
+router.put('/:id/image', idCompare, imageUpload, userValid.userImageUpdate, asyncWrap(userController.userImageUpdate)); // 이미지 수정
 router.put('/:id/career', idCompare, userValid.userCareerUpdate, asyncWrap(userController.userUpdate)); // 경력 수정
 router.put('/:id/sns', idCompare, userValid.userSnsUpdate, asyncWrap(userController.userUpdate)); // sns 수정
 router.put('/:id/location', idCompare, userValid.userLocationUpdate, asyncWrap(userController.userUpdate)); // 지역정보 수정

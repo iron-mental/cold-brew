@@ -65,39 +65,44 @@ const login = async ({ email, password, push_token, device }) => {
 
 // 상세 조회
 const userDetail = async ({ id }) => {
-  let userDataRows = await userDao.userDetail(id);
+  const userDataRows = await userDao.userDetail(id);
   if (userDataRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
   return toBoolean(userDataRows, ['email_verified'])[0];
 };
 
-// 수정 - (이메일, 비밀번호 제외)
-const userUpdate = async ({ id }, updateData, filedata) => {
+// 이미지 수정
+const userImageUpdate = async ({ id }, updateData, { destination, uploadedFile, path: _tmpPath }) => {
+  const updateRows = await userDao.userUpdate(id, updateData);
+  if (updateRows.affectedRows === 0) {
+    throw customError(404, '조회된 사용자가 없습니다');
+  }
+
+  const newPath = path.join(destination, uploadedFile.basename);
+  fs.rename(_tmpPath, newPath, (err) => {});
+
+  const previousPath = await userDao.getImage(id);
+  const oldImagePath = path.join(destination, path.basename(previousPath[0].image || 'nullFileName'));
+  fs.unlink(oldImagePath, (err) => {});
+};
+
+// 유저정보 수정
+const userUpdate = async ({ id }, updateData) => {
   if (updateData.nickname) {
     const checkRows = await userDao.checkNickname(updateData.nickname);
     if (checkRows.length) {
       throw customError(400, '중복된 닉네임이 존재합니다');
     }
-  }
 
-  if (filedata) {
-    const { destination, uploadedFile, path: _tmpPath } = filedata;
-    const previousPath = await userDao.getImage(id);
-
-    const oldImagePath = path.join(destination, path.basename(previousPath[0].image || 'nullFileName'));
-    const newPath = path.join(destination, uploadedFile.basename);
-    fs.rename(_tmpPath, newPath, (err) => {});
-    fs.unlink(oldImagePath, (err) => {});
+    User.updateOne({ user_id: id }, { nickname: updateData.nickname }).exec();
+    Chat.updateMany({ user_id: id }, { nickname: updateData.nickname }).exec();
   }
 
   const updateRows = await userDao.userUpdate(id, updateData);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-
-  User.updateOne({ user_id: id }, { nickname: updateData.nickname }).exec();
-  Chat.updateMany({ user_id: id }, { nickname: updateData.nickname }).exec();
 };
 
 // 회원탈퇴
@@ -171,6 +176,7 @@ module.exports = {
   signup,
   login,
   userDetail,
+  userImageUpdate,
   userUpdate,
   checkNickname,
   checkEmail,

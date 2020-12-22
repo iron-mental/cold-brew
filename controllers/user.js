@@ -28,8 +28,13 @@ const userDetail = async (req, res) => {
   response(res, 200, userData);
 };
 
+const userImageUpdate = async (req, res) => {
+  await userService.userImageUpdate(req.params, req.body, req.file);
+  response(res, 200, '회원정보가 수정되었습니다');
+};
+
 const userUpdate = async (req, res) => {
-  await userService.userUpdate(req.params, req.body, req.file);
+  await userService.userUpdate(req.params, req.body);
   response(res, 200, '회원정보가 수정되었습니다');
 };
 
@@ -63,6 +68,7 @@ module.exports = {
   signup,
   login,
   userDetail,
+  userImageUpdate,
   userUpdate,
   checkNickname,
   checkEmail,
