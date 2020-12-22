@@ -45,10 +45,17 @@ const signup = async (email, password, nickname) => {
 
   const conn = await pool.getConnection();
   try {
-    const sql = 'INSERT INTO user SET ?';
-    const [rows] = await conn.query(sql, { uid, email, email_verified: emailVerified, nickname });
-    return rows;
+    conn.beginTransaction();
+    const signupSql = 'INSERT INTO user SET ?';
+    const [signupRows] = await conn.query(signupSql, { uid, email, email_verified: emailVerified, nickname });
+
+    const categorySql = 'INSERT INTO category_count SET ?';
+    await conn.query(categorySql, { user_id: signupRows.insertId });
+
+    conn.commit();
+    return signupRows;
   } catch (err) {
+    conn.rollback();
     throw databaseError(err);
   } finally {
     await conn.release();

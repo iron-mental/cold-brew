@@ -68,6 +68,11 @@ const ranking = async (req, res) => {
   response(res, 200, rankingList);
 };
 
+const category = async (req, res) => {
+  const categoryList = await studyService.category(req.user);
+  response(res, 200, categoryList);
+};
+
 module.exports = {
   createStudy,
   studyDetail,
@@ -80,4 +85,5 @@ module.exports = {
   delegate,
   search,
   ranking,
+  category,
 };
