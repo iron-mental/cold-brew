@@ -14,8 +14,9 @@ const createProject = async (createData) => {
   }
 };
 
-const updateProject = async ({ id, project_id }, updateData) => {
-  const updateRows = await projectDao.updateProject(id, project_id, updateData);
+// 프로젝트 수정
+const updateProject = async ({ project_id }, updateData) => {
+  const updateRows = await projectDao.updateProject(project_id, updateData);
   if (updateRows.affectedRows === 0) {
     throw customError(400, '프로젝트 수정에 실패했습니다');
   }

@@ -14,6 +14,19 @@ const createProject = async (data) => {
   }
 };
 
+const updateProject = async (project_id, updateData) => {
+  const conn = await pool.getConnection();
+  try {
+    const updateSQL = `UPDATE project SET ? WHERE id = ?`;
+    const [updateRows] = await conn.query(updateSQL, [updateData, project_id]);
+    return updateRows;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 const getProjectList = async (id) => {
   const conn = await pool.getConnection();
   try {
@@ -25,19 +38,6 @@ const getProjectList = async (id) => {
       WHERE user_id = ?`;
     const [projectData] = await conn.query(projectSql, id);
     return projectData;
-  } catch (err) {
-    throw databaseError(err);
-  } finally {
-    await conn.release();
-  }
-};
-
-const updateProject = async (user_id, project_id, updateData) => {
-  const conn = await pool.getConnection();
-  try {
-    const updateSQL = 'UPDATE project SET ? WHERE user_id = ? AND id = ?';
-    const [updateRows] = await conn.query(updateSQL, [updateData, user_id, project_id]);
-    return updateRows;
   } catch (err) {
     throw databaseError(err);
   } finally {
@@ -60,7 +60,7 @@ const deleteProject = async (user_id, project_id) => {
 
 module.exports = {
   createProject,
-  getProjectList,
   updateProject,
+  getProjectList,
   deleteProject,
 };

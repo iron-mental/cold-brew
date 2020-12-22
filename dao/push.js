@@ -1,7 +1,7 @@
 const pool = require('./db');
 const { customError } = require('../utils/errors/custom');
 
-const getMembers = async (study_id) => {
+const getMemberToken = async (study_id) => {
   const conn = await pool.getConnection();
   try {
     const getMemberSql = `
@@ -11,9 +11,9 @@ const getMembers = async (study_id) => {
         participate p
           LEFT JOIN user u
           ON p.user_id = u.id
-      WHERE p.study_id = ? AND nickname != ?
+      WHERE p.study_id = ?
       ORDER BY u.device`;
-    const [memberRows] = await conn.query(getMemberSql, [study_id, nickname]);
+    const [memberRows] = await conn.query(getMemberSql, study_id);
     return memberRows;
   } catch (err) {
     throw customError(500, err.sqlMessage);
@@ -22,7 +22,28 @@ const getMembers = async (study_id) => {
   }
 };
 
-const getOffMembers = async (study_id, nickname) => {
+const getMemberWithoutHostToken = async (study_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const getMemberSql = `
+      SELECT
+        u.id, u.device, u.push_token
+      FROM
+        participate p
+          LEFT JOIN user u
+          ON p.user_id = u.id
+      WHERE p.study_id = ? AND p.leader = ?
+      ORDER BY u.device`;
+    const [memberRows] = await conn.query(getMemberSql, [study_id, false]);
+    return memberRows;
+  } catch (err) {
+    throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
+const getOffMemberToken = async (study_id, nickname) => {
   const conn = await pool.getConnection();
   try {
     const getMemberSql = `
@@ -78,8 +99,9 @@ const getHostToken = async (study_id) => {
 };
 
 module.exports = {
-  getMembers,
-  getOffMembers,
+  getMemberToken,
+  getMemberWithoutHostToken,
+  getOffMemberToken,
   getUserToken,
   getHostToken,
 };
