@@ -1,3 +1,14 @@
+const { CategoryEnum } = require('../../utils/variables/enum');
+
+const categoryValid = (value, helpers) => {
+  const category = CategoryEnum[value];
+
+  if (!category) {
+    return helpers.error('category.invalidCategory');
+  }
+  return category;
+};
+
 const uriMethod = (value, helpers) => {
   const target = uriList[helpers.state.path[0]];
 
@@ -16,4 +27,7 @@ const uriList = {
   sns_web: 'https://',
 };
 
-module.exports = { uriMethod };
+module.exports = {
+  categoryValid,
+  uriMethod,
+};
