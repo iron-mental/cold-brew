@@ -22,8 +22,13 @@ router.post('/login', userValid.login, asyncWrap(userController.login)); // 로�
 router.post('/reissuance', userValid.reissuance, asyncWrap(userController.reissuance)); // accessToken 재발급
 
 router.get('/:id', userValid.userDetail, asyncWrap(userController.userDetail)); // 유저 상세조회
-router.put('/:id', idCompare, imageUpload, userValid.userUpdate, asyncWrap(userController.userUpdate)); // 유저 정보수정
 router.delete('/:id', idCompare, userValid.withdraw, asyncWrap(userController.withdraw)); // 회원 탈퇴
+
+router.put('/:id/info', idCompare, userValid.userInfoUpdate, asyncWrap(userController.userUpdate)); // 닉네임, 소개 수정
+router.put('/:id/image', idCompare, imageUpload, userValid.userImageUpdate, asyncWrap(userController.userUpdate)); // 이미지 수정
+router.put('/:id/career', idCompare, userValid.userCareerUpdate, asyncWrap(userController.userUpdate)); // 경력 수정
+router.put('/:id/sns', idCompare, userValid.userSnsUpdate, asyncWrap(userController.userUpdate)); // sns 수정
+router.put('/:id/location', idCompare, userValid.userLocationUpdate, asyncWrap(userController.userUpdate)); // 지역정보 수정
 
 router.get('/:id/emailVerify', idCompare, userValid.emailVerification, asyncWrap(userController.emailVerification)); // 이메일 인증 요청
 router.get('/emailVerify-process/:email', userValid.emailVerificationProcess, asyncWrap(userController.emailVerificationProcess)); // 이메일 인증 요청
