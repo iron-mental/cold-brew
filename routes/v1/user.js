@@ -39,7 +39,7 @@ router.get('/:id/apply', idCompare, applyValid.applyListByUser, asyncWrap(applyC
 
 router.post('/:id/project', idCompare, projectValid.createProject, asyncWrap(projectController.createProject)); // 프로젝트 작성
 router.get('/:id/project', projectValid.getProjectList, asyncWrap(projectController.getProjectList)); // 내 프로젝트 목록 조회
-router.put('/:id/project/:project_id', idCompare, projectValid.updateProject, asyncWrap(projectController.updateProject)); // 프로젝트 수정
+router.put('/:id/project', idCompare, projectValid.updateProject, asyncWrap(projectController.updateProject)); // 프로젝트 수정
 router.delete('/:id/project/:project_id', idCompare, projectValid.deleteProject, asyncWrap(projectController.deleteProject)); // 프로젝트 삭제
 
 router.post('/reset-password/:email', userValid.resetPassword, asyncWrap(userController.resetPassword)); // 비밀번호 리셋 요청
