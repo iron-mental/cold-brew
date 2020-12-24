@@ -20,6 +20,8 @@ const validErrorHandler = Object.freeze({
   'boolean.base': 'boolean.base',
   'uri.invalidUri': 'uri.invalidUri',
   'category.invalidCategory': 'category.invalidCategory',
+  'array.min': 'array.min',
+  'array.max': 'array.max',
 });
 
 validError = (err) => {
@@ -90,8 +92,20 @@ validError = (err) => {
       err.message = `유효하지 않은 카테고리입니다`;
       return new ValidError(err);
 
-    default:
+    case 'array.min':
       err.code = 112;
+      err.label = err.details[0].context.label;
+      err.message = `최소 1개 이상의 값을 입력해야 합니다`;
+      return new ValidError(err);
+
+    case 'array.max':
+      err.code = 113;
+      err.label = err.details[0].context.label;
+      err.message = `최대 3개까지 입력할 수 있습니다`;
+      return new ValidError(err);
+
+    default:
+      err.code = 114;
       err.label = err.details[0].context.label;
       err.message = `유효성검사 에러`;
       return new ValidError(err);
