@@ -62,10 +62,10 @@ const updateProject = async (req, res, next) => {
     sns_playstore: Joi.string().allow('').custom(commonValid.uriMethod).max(150),
   });
 
-  const projects = Joi.array().items(projectSchema).min(1);
+  const bodySchema = Joi.array().items(projectSchema).max(3);
   try {
     await paramSchema.validateAsync(req.params);
-    await projects.validateAsync(req.body);
+    await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
     next(validError(err));
