@@ -14,11 +14,11 @@ const createProject = async (data) => {
   }
 };
 
-const updateProject = async (project_id, updateData) => {
+const updateProject = async (project) => {
   const conn = await pool.getConnection();
   try {
     const updateSQL = `UPDATE project SET ? WHERE id = ?`;
-    const [updateRows] = await conn.query(updateSQL, [updateData, project_id]);
+    const [updateRows] = await conn.query(updateSQL, [project, project.id]);
     return updateRows;
   } catch (err) {
     throw databaseError(err);
