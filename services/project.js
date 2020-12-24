@@ -1,24 +1,32 @@
 const projectDao = require('../dao/project');
 const { customError } = require('../utils/errors/custom');
 
-// 프로젝트 작성
-const createProject = async (createData) => {
-  const projectRows = await projectDao.getProjectList(createData.user_id);
-  if (projectRows.length > 2) {
-    throw customError(400, '프로젝트는 3개까지 등록할 수 있습니다', 101);
-  }
-
-  const createRows = await projectDao.createProject(createData);
-  if (createRows.length === 0) {
-    throw customError(400, '프로젝트 작성에 실패했습니다', 102);
-  }
-};
-
 // 프로젝트 수정
-const updateProject = async ({ project_id }, updateData) => {
-  const updateRows = await projectDao.updateProject(project_id, updateData);
-  if (updateRows.affectedRows === 0) {
-    throw customError(400, '프로젝트 수정에 실패했습니다');
+const updateProject = async ({ id }, updateProjects) => {
+  const updateKeys = await updateProjects.map((project) => {
+    return project.id;
+  });
+
+  const oldProjectRows = await projectDao.getProjectList(id);
+  for (oldProject of oldProjectRows) {
+    if (!updateKeys.includes(oldProject.id)) {
+      await projectDao.deleteProject(id, oldProject.id);
+    }
+  }
+
+  for (project of updateProjects) {
+    if (project.id) {
+      const updateRows = await projectDao.updateProject(project);
+      if (updateRows.affectedRows === 0) {
+        throw customError(400, '프로젝트 수정에 실패했습니다');
+      }
+    } else if (Object.keys(project).length > 0) {
+      project.user_id = id;
+      const createRows = await projectDao.createProject(project);
+      if (createRows.length === 0) {
+        throw customError(400, '프로젝트 추가에 실패했습니다', 102);
+      }
+    }
   }
 };
 
@@ -28,17 +36,7 @@ const getProjectList = async ({ id }) => {
   return projectRows;
 };
 
-// 프로젝트 삭제
-const deleteProject = async ({ id, project_id }) => {
-  const deleteRows = await projectDao.deleteProject(id, project_id);
-  if (deleteRows.affectedRows === 0) {
-    throw customError(404, '조회된 프로젝트가 없습니다');
-  }
-};
-
 module.exports = {
-  createProject,
   getProjectList,
   updateProject,
-  deleteProject,
 };
