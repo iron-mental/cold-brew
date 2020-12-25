@@ -50,4 +50,7 @@ router.get('/:study_id/apply/:apply_id', applyValid.getApplyById, asyncWrap(appl
 router.get('/:study_id/apply', applyValid.applyListByHost, asyncWrap(applyController.applyListByHost)); // 스터디 신청 목록 조회
 router.post('/:study_id/apply/:apply_id', applyValid.applyProcess, asyncWrap(applyController.applyProcess)); // 스터디 신청 처리
 
+// Chat
+router.get('/study_id/chat', studyValid.getChatting, studyController.getChatting);
+
 module.exports = router;
