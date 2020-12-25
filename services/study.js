@@ -167,6 +167,10 @@ const category = async ({ id }) => {
   });
 };
 
+const getChatting = async ({ study_id }, { date }) => {
+  return await studyDao.getChatting(study_id, date);
+};
+
 module.exports = {
   createStudy,
   studyDetail,
@@ -180,4 +184,5 @@ module.exports = {
   search,
   ranking,
   category,
+  getChatting,
 };

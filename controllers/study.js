@@ -73,6 +73,11 @@ const category = async (req, res) => {
   response(res, 200, categoryList);
 };
 
+const getChatting = async (req, res) => {
+  const chatting = await studyService.getChatting(req.params, req.query);
+  response(res, 200, chatting);
+};
+
 module.exports = {
   createStudy,
   studyDetail,
@@ -86,4 +91,5 @@ module.exports = {
   search,
   ranking,
   category,
+  getChatting,
 };
