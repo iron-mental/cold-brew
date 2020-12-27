@@ -12,6 +12,9 @@ const noticeController = require('../../controllers/notice');
 const applyValid = require('../../middlewares/validators/apply');
 const applyController = require('../../controllers/apply');
 
+// Chat
+router.get('/:study_id/chat', studyValid.getChatting, studyController.getChatting);
+
 // Study
 router.get('/search', studyValid.search, asyncWrap(studyController.search)); // 검색
 router.get('/ranking', asyncWrap(studyController.ranking)); // 핫 등록 키워드
@@ -49,8 +52,5 @@ router.delete('/:study_id/apply/:apply_id', applyValid.applyDelete, asyncWrap(ap
 router.get('/:study_id/apply/:apply_id', applyValid.getApplyById, asyncWrap(applyController.getApplyById)); // 신청 조회
 router.get('/:study_id/apply', applyValid.applyListByHost, asyncWrap(applyController.applyListByHost)); // 스터디 신청 목록 조회
 router.post('/:study_id/apply/:apply_id', applyValid.applyProcess, asyncWrap(applyController.applyProcess)); // 스터디 신청 처리
-
-// Chat
-router.get('/study_id/chat', studyValid.getChatting, studyController.getChatting);
 
 module.exports = router;
