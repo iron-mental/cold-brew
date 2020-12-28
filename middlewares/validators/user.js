@@ -67,23 +67,83 @@ const userDetail = async (req, res, next) => {
   }
 };
 
-const userUpdate = async (req, res, next) => {
+const userInfoUpdate = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    id: Joi.number().required(),
+  });
+  const bodySchema = Joi.object({
+    nickname: Joi.string().min(2).max(8),
+    introduce: Joi.string().max(200),
+  }).min(1);
+  try {
+    await paramSchema.validateAsync(req.params);
+    await bodySchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    next(validError(err));
+  }
+};
+
+const userImageUpdate = async (req, res, next) => {
   const paramSchema = Joi.object({
     id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
     image: Joi.string(),
-    nickname: Joi.string().min(2).max(8),
-    introduce: Joi.string().max(200),
+  }).min(1);
+  try {
+    await paramSchema.validateAsync(req.params);
+    await bodySchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    next(validError(err));
+  }
+};
+
+const userCareerUpdate = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    id: Joi.number().required(),
+  });
+  const bodySchema = Joi.object({
+    career_title: Joi.string().min(2).max(20),
+    career_contents: Joi.string().max(200),
+  }).min(1);
+  try {
+    await paramSchema.validateAsync(req.params);
+    await bodySchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    next(validError(err));
+  }
+};
+
+const userSnsUpdate = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    id: Joi.number().required(),
+  });
+  const bodySchema = Joi.object({
+    sns_github: Joi.string().allow('').max(40),
+    sns_linkedin: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
+    sns_web: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
+  }).min(1);
+  try {
+    await paramSchema.validateAsync(req.params);
+    await bodySchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    next(validError(err));
+  }
+};
+
+const userLocationUpdate = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    id: Joi.number().required(),
+  });
+  const bodySchema = Joi.object({
     latitude: Joi.number(),
     longitude: Joi.number(),
     sido: Joi.string().max(20),
     sigungu: Joi.string().max(20),
-    career_title: Joi.string().min(2).max(20),
-    career_contents: Joi.string().max(200),
-    sns_github: Joi.string().allow('').max(40),
-    sns_linkedin: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
-    sns_web: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);
@@ -174,12 +234,16 @@ const updateEmail = async (req, res, next) => {
 };
 
 module.exports = {
+  checkNickname,
+  checkEmail,
   signup,
   login,
   userDetail,
-  userUpdate,
-  checkNickname,
-  checkEmail,
+  userInfoUpdate,
+  userImageUpdate,
+  userCareerUpdate,
+  userSnsUpdate,
+  userLocationUpdate,
   withdraw,
   emailVerification,
   emailVerificationProcess,

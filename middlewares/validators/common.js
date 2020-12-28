@@ -10,8 +10,7 @@ const categoryValid = (value, helpers) => {
 };
 
 const uriMethod = (value, helpers) => {
-  const target = uriList[helpers.state.path[0]];
-
+  const target = uriList[helpers.state.path.slice(-1)[0]];
   if (target !== value.slice(0, target.length)) {
     return helpers.error('uri.invalidUri');
   }
