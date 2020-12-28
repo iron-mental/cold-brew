@@ -172,6 +172,13 @@ const resetPassword = async ({ email }) => {
     });
 };
 
+const updateEmail = async ({ id }, { email }) => {
+  const userDataRows = await userDao.updateEmail(id, email);
+  if (userDataRows.length === 0) {
+    throw customError(404, '조회된 사용자가 없습니다');
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -185,4 +192,5 @@ module.exports = {
   emailVerificationProcess,
   reissuance,
   resetPassword,
+  updateEmail,
 };
