@@ -13,7 +13,7 @@ const applyValid = require('../../middlewares/validators/apply');
 const applyController = require('../../controllers/apply');
 
 // Chat
-router.get('/:study_id/chat', studyValid.getChatting, studyController.getChatting);
+router.get('/:study_id/chat', studyValid.getChatting, asyncWrap(studyController.getChatting));
 
 // Study
 router.get('/search', studyValid.search, asyncWrap(studyController.search)); // 검색
