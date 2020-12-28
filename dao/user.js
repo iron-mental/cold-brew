@@ -224,7 +224,7 @@ const updateEmail = async (id, email) => {
         emailVerified: false,
       })
       .catch((err) => {
-        return firebaseError(err);
+        throw firebaseError(err);
       });
 
     const updateSql = 'UPDATE user SET ? WHERE ? ';
@@ -240,6 +240,9 @@ const updateEmail = async (id, email) => {
     return updateRows;
   } catch (err) {
     conn.rollback();
+    if (err.status) {
+      throw err;
+    }
     throw databaseError(err);
   } finally {
     await conn.release();
