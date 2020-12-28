@@ -40,7 +40,7 @@ const userUpdate = async (req, res) => {
 
 const withdraw = async (req, res) => {
   await userService.withdraw(req.params, req.body);
-  response(res, 200, '회원탈퇴가 되었습니다');
+  response(res, 200, '회원탈퇴 되었습니다');
 };
 
 const emailVerification = async (req, res) => {
@@ -61,7 +61,7 @@ const reissuance = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   await userService.resetPassword(req.params);
-  response(res, 200, '비밀번호 변경 메일 발송');
+  response(res, 200, '비밀번호 변경 이메일이 발송되었습니다');
 };
 
 module.exports = {
