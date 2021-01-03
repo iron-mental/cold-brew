@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { customError } = require('./errors/custom');
 
 const secretKey = process.env.JWT_secret;
 const options = {
