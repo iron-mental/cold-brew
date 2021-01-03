@@ -1,3 +1,4 @@
+const { valid } = require('joi');
 const Joi = require('joi');
 
 const { validError } = require('../../utils/errors/validation');
@@ -233,6 +234,18 @@ const updateEmail = async (req, res, next) => {
   }
 };
 
+const updatePushToken = async (req, res, next) => {
+  const bodySchema = Joi.object({
+    push_token: Joi.string().required(),
+  });
+  try {
+    await bodySchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    next(validError(err));
+  }
+};
+
 module.exports = {
   checkNickname,
   checkEmail,
@@ -250,4 +263,5 @@ module.exports = {
   reissuance,
   resetPassword,
   updateEmail,
+  updatePushToken,
 };

@@ -69,6 +69,11 @@ const updateEmail = async (req, res) => {
   response(res, 200, '이메일 변경이 완료되었습니다');
 };
 
+const updatePushToken = async (req, res) => {
+  await userService.updatePushToken(req.user, req.body);
+  response(res, 200, '토큰 갱신이 완료되었습니다');
+};
+
 module.exports = {
   signup,
   login,
@@ -83,4 +88,5 @@ module.exports = {
   reissuance,
   resetPassword,
   updateEmail,
+  updatePushToken,
 };

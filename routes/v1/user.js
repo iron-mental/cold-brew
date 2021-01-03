@@ -30,6 +30,7 @@ router.put('/:id/career', idCompare, userValid.userCareerUpdate, asyncWrap(userC
 router.put('/:id/sns', idCompare, userValid.userSnsUpdate, asyncWrap(userController.userUpdate)); // sns 수정
 router.put('/:id/location', idCompare, userValid.userLocationUpdate, asyncWrap(userController.userUpdate)); // 지역정보 수정
 router.put('/:id/email', idCompare, userValid.updateEmail, asyncWrap(userController.updateEmail)); // email 변경
+router.put('/:id/push_token', idCompare, userValid.updatePushToken, asyncWrap(userController.updatePushToken)); // 푸시토큰 갱신
 
 router.get('/:id/emailVerify', idCompare, userValid.emailVerification, asyncWrap(userController.emailVerification)); // 이메일 인증 요청
 router.get('/emailVerify-process/:email', userValid.emailVerificationProcess, asyncWrap(userController.emailVerificationProcess)); // 이메일 인증 요청
