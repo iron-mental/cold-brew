@@ -21,7 +21,7 @@ const updateProject = async (req, res, next) => {
   });
 
   const projectSchema = Joi.object({
-    id: Joi.number(),
+    id: Joi.allow(),
     title: Joi.string().max(20).required(),
     contents: Joi.string().max(200).required(),
     sns_github: Joi.string().allow('').max(40),
@@ -35,6 +35,7 @@ const updateProject = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
+    console.log('err: ', err);
     next(validError(err));
   }
 };
