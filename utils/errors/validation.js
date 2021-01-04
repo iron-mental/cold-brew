@@ -22,6 +22,7 @@ const validErrorHandler = Object.freeze({
   'category.invalidCategory': 'category.invalidCategory',
   'array.min': 'array.min',
   'array.max': 'array.max',
+  'string.base': 'string.base',
 });
 
 validError = (err) => {
@@ -104,8 +105,14 @@ validError = (err) => {
       err.message = `최대 3개까지 입력할 수 있습니다`;
       return new ValidError(err);
 
-    default:
+    case 'string.base':
       err.code = 114;
+      err.label = err.details[0].context.label;
+      err.message = `문자열만 입력 가능합니다`;
+      return new ValidError(err);
+
+    default:
+      err.code = 115;
       err.label = err.details[0].context.label;
       err.message = `유효성검사 에러`;
       return new ValidError(err);
