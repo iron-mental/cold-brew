@@ -13,14 +13,14 @@ const socketConfig = (io) => {
       },
     } = socket;
     socket.join(study_id);
-    socketService.connection(study_id, user_id, socket_id, nickname);
-
-    socket.on('chat', (message) => {
-      socketService.chat(terminal, study_id, nickname, message);
-    });
+    socketService.connection(study_id, user_id);
 
     socket.on('disconnect', () => {
       socketService.disconnection(study_id, user_id);
+    });
+
+    socket.on('chat', (message) => {
+      socketService.chat(terminal, study_id, nickname, message);
     });
   });
 

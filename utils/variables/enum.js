@@ -46,7 +46,7 @@ const PushEventEnum = Object.freeze({
 
 const MessageEnum = Object.freeze({
   apply_new: '새로운 가입신청이 왔습니다 - test(방장)',
-  email_verified: '이메일 인증 - 사일런트 적용예정',
+  email_verified: '이메일 인증 - test(해당 유저)',
   notice_new: '공지사항이 생겼습니다 - test(방장제외 멤버)',
   notice_update: '공지사항이 수정되었습니다 - test(방장제외 멤버)',
   study_update: '스터디 내용이 수정되었습니다 - test(방장제외 멤버)',
