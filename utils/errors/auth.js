@@ -16,6 +16,7 @@ const AuthErrorEnum = Object.freeze({
   'jwt malformed': 'jwt malformed',
   'invalid signature': 'invalid signature',
   'jwt signature is required': 'jwt signature is required',
+  'unequal email': 'unequal email',
 });
 
 authError = (err) => {
@@ -51,8 +52,12 @@ authError = (err) => {
       err.message = `서명이 필요합니다`;
       return new AuthError(err);
 
-    default:
+    case 'unequal email':
       err.code = 106;
+      err.message = `이메일을 잘못 입력했습니다`;
+
+    default:
+      err.code = 107;
       err.message = `인증 에러`;
       return new AuthError(err);
   }

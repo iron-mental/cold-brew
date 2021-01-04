@@ -21,6 +21,11 @@ firebaseError = (err) => {
       err.message = '조회된 사용자가 없습니다';
       return new FirebaseError(err);
 
+    case 'auth/email-already-exists':
+      err.status = 400;
+      err.message = '중복된 이메일이 존재합니다 ';
+      return new FirebaseError(err);
+
     case 'auth/wrong-password':
       err.status = 400;
       err.message = '비밀번호를 잘못 입력하였습니다';
