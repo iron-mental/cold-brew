@@ -53,11 +53,11 @@ authError = (err) => {
       return new AuthError(err);
 
     case 'unequal email':
-      err.code = 107;
+      err.code = 106;
       err.message = `이메일을 잘못 입력했습니다`;
 
     default:
-      err.code = 106;
+      err.code = 107;
       err.message = `인증 에러`;
       return new AuthError(err);
   }
