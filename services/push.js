@@ -41,28 +41,24 @@ const fcmSender = (fcm_token, payload) => {
 const toHost = async (pushEvent, study_id) => {
   const tokenRows = await pushDao.getHostToken(study_id);
   const [apns_token, fcm_token] = tokenDivision(tokenRows);
-
   send(apns_token, fcm_token, pushEvent, { study_id });
 };
 
 const toUser = async (pushEvent, user_id) => {
   const tokenRows = await pushDao.getUserToken(user_id);
   const [apns_token, fcm_token] = tokenDivision(tokenRows);
-
   send(apns_token, fcm_token, pushEvent, { user_id });
 };
 
 const toStudy = async (pushEvent, study_id) => {
   const tokenRows = await pushDao.getMemberToken(study_id);
   const [apns_token, fcm_token] = tokenDivision(tokenRows);
-
   send(apns_token, fcm_token, pushEvent, { study_id });
 };
 
 const toStudyWithoutHost = async (pushEvent, study_id) => {
   const tokenRows = await pushDao.getMemberWithoutHostToken(study_id);
   const [apns_token, fcm_token] = tokenDivision(tokenRows);
-
   send(apns_token, fcm_token, pushEvent, { study_id });
 };
 
