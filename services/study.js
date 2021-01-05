@@ -7,11 +7,12 @@ const { PushEventEnum } = require('../utils/variables/enum');
 const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, lengthSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
-const { AuthEnum, CategoryEnum } = require('../utils/variables/enum');
+const { AuthEnum } = require('../utils/variables/enum');
 const broadcast = require('../events/broadcast');
 
 const User = require('../models/user');
 const Room = require('../models/room');
+const Chat = require('../models/chat');
 const Search = require('../models/search');
 
 const createStudy = async ({ id: user_id }, createData) => {
@@ -167,6 +168,10 @@ const category = async ({ id }) => {
   });
 };
 
+const getChatting = async ({ study_id }, { date }) => {
+  return await Chat.find({ study_id, date: { $gt: date } }, { _id: 0 });
+};
+
 module.exports = {
   createStudy,
   studyDetail,
@@ -180,4 +185,5 @@ module.exports = {
   search,
   ranking,
   category,
+  getChatting,
 };

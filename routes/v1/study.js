@@ -12,6 +12,9 @@ const noticeController = require('../../controllers/notice');
 const applyValid = require('../../middlewares/validators/apply');
 const applyController = require('../../controllers/apply');
 
+// Chat
+router.get('/:study_id/chat', studyValid.getChatting, asyncWrap(studyController.getChatting));
+
 // Study
 router.get('/search', studyValid.search, asyncWrap(studyController.search)); // 검색
 router.get('/ranking', asyncWrap(studyController.ranking)); // 핫 등록 키워드

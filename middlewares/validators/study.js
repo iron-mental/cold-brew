@@ -162,6 +162,22 @@ const search = async (req, res, next) => {
   }
 };
 
+const getChatting = async (req, res, next) => {
+  const paramSchema = Joi.object({
+    study_id: Joi.number().required(),
+  });
+  const querySchema = Joi.object({
+    date: Joi.string().required(),
+  });
+  try {
+    await paramSchema.validateAsync(req.params);
+    await querySchema.validateAsync(req.query);
+    next();
+  } catch (err) {
+    validError(next, err);
+  }
+};
+
 module.exports = {
   createStudy,
   studyDetail,
@@ -173,4 +189,5 @@ module.exports = {
   leaveStudy,
   delegate,
   search,
+  getChatting,
 };

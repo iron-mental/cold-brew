@@ -47,7 +47,7 @@ const studyPaging = async (req, res) => {
 };
 
 const leaveStudy = async (req, res) => {
-  const authority = await checkAuthority(req.user, req.params, AuthEnum.host, AuthEnum.member);
+  await checkAuthority(req.user, req.params, AuthEnum.host, AuthEnum.member);
   await studyService.leaveStudy(req.user, req.params, authority);
   response(res, 200, '탈퇴가 완료되었습니다');
 };
@@ -73,6 +73,12 @@ const category = async (req, res) => {
   response(res, 200, categoryList);
 };
 
+const getChatting = async (req, res) => {
+  await checkAuthority(req.user, req.params, AuthEnum.host, AuthEnum.member);
+  const chatting = await studyService.getChatting(req.params, req.query);
+  response(res, 200, chatting);
+};
+
 module.exports = {
   createStudy,
   studyDetail,
@@ -86,4 +92,5 @@ module.exports = {
   search,
   ranking,
   category,
+  getChatting,
 };
