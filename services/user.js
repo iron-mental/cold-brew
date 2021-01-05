@@ -138,7 +138,6 @@ const emailVerificationProcess = async ({ email }) => {
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-  push.emit('toUser', PushEventEnum.email_verified, id);
 };
 
 // 검증 후 accessToken 발급
