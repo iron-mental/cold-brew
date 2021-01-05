@@ -2,7 +2,7 @@ const projectDao = require('../dao/project');
 const { customError } = require('../utils/errors/custom');
 
 // 프로젝트 수정
-const updateProject = async ({ id }, updateProjects) => {
+const updateProject = async ({ id }, { project_list: updateProjects }) => {
   if (updateProjects.length > 3) {
     throw customError(400, '프로젝트는 3개까지 등록 가능합니다', 101);
   }
