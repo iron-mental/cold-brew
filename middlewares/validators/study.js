@@ -158,7 +158,7 @@ const search = async (req, res, next) => {
     await querySchema.validateAsync(req.query);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
@@ -174,7 +174,7 @@ const getChatting = async (req, res, next) => {
     await querySchema.validateAsync(req.query);
     next();
   } catch (err) {
-    validError(next, err);
+    next(validError(err));
   }
 };
 
