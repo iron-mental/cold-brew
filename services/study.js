@@ -146,9 +146,9 @@ const delegate = async ({ id: old_leader }, { study_id }, { new_leader }) => {
 const search = async ({ id: user_id }, { word }) => {
   Search.updateOne({ user_id, word }, { $inc: { count: 1 } }, { upsert: true }).exec();
   word = '%' + word + '%';
+  let searchRows = await studyDao.search(user_id, word);
 
-  const searchRows = await studyDao.search(word);
-  return searchRows;
+  return toBoolean(searchRows, ['isMember']);
 };
 
 const ranking = async () => {
