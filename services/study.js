@@ -148,7 +148,8 @@ const search = async ({ id: user_id }, { word }) => {
   word = '%' + word + '%';
   let searchRows = await studyDao.search(user_id, word);
 
-  return toBoolean(searchRows, ['isMember']);
+  searchRows = toBoolean(searchRows, ['isMember']);
+  return cutId(searchRows);
 };
 
 const ranking = async () => {
