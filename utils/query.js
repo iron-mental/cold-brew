@@ -33,11 +33,9 @@ const rowSplit = (rows, tags) => {
 };
 
 const toBoolean = (rows, tags) => {
-  for (const row of rows) {
-    for (const tag of tags) {
-      row[tag] = Boolean(row[tag]);
-    }
-  }
+  rows.forEach((row) => {
+    tags.forEach((tag) => (row[tag] = Boolean(row[tag])));
+  });
   return rows;
 };
 
