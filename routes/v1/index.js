@@ -9,12 +9,14 @@ router.use('/user', userRouter);
 router.use('/study', studyRouter);
 
 // 채팅 뷰 제공
-router.get('/chat/ios', (req, res, next) => {
-  res.sendFile(__dirname + '/index.html');
+router.get('/chat/https', (req, res, next) => {
+  console.log('https');
+  res.sendFile(__dirname + '/https.html');
 });
 
-router.get('/chat/android', (req, res, next) => {
-  res.sendFile(__dirname + '/index1.html');
+router.get('/chat/http', (req, res, next) => {
+  console.log('http');
+  res.sendFile(__dirname + '/http.html');
 });
 
 router.get('/push/test', (req, res, next) => {
