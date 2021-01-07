@@ -5,7 +5,7 @@ const { CategoryEnum } = require('../utils/variables/enum');
 
 const exceptionList = [
   ['check-nickname', 'check-email', 'login', 'emailVerify-process', 'reset-password', 'reissuance'].concat(Object.keys(CategoryEnum)),
-  ['/v1/user', '/v1/chat', '/v1/push/test'],
+  ['/v1/user', '/v1/chat/http', '/v1/chat/https', '/v1/push/test'],
 ];
 
 const verify = async (req, res, next) => {
