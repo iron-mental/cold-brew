@@ -36,21 +36,34 @@ const DeviceEnum = Object.freeze({
 
 const PushEventEnum = Object.freeze({
   chat: 'chat',
-  apply_new: 'apply_new',
+
   email_verified: 'email_verified',
-  notice_new: 'notice_new',
-  notice_update: 'notice_update',
+
   study_update: 'study_update',
   study_delegate: 'study_delegate',
+  study_delete: 'study_delete',
+
+  apply_new: 'apply_new',
+  apply_allow: 'apply_allow',
+  apply_reject: 'apply_reject',
+
+  notice_new: 'notice_new',
+  notice_update: 'notice_update',
 });
 
 const MessageEnum = Object.freeze({
-  apply_new: '새로운 가입신청이 왔습니다 - test(방장)',
-  email_verified: '이메일 인증 - test(해당 유저)',
-  notice_new: '공지사항이 생겼습니다 - test(방장제외 멤버)',
-  notice_update: '공지사항이 수정되었습니다 - test(방장제외 멤버)',
+  email_verified: '이메일 인증',
+
   study_update: '스터디 내용이 수정되었습니다 - test(방장제외 멤버)',
   study_delegate: '스터디 방장이 위임되었습니다 - test(방장제외 멤버)',
+  study_delete: '스터디가 삭제되었습니다 - test(방장제외 멤버)',
+
+  apply_new: '새로운 가입신청이 왔습니다 - test(방장)',
+  apply_allow: '가입신청이 수락되었습니다 - test(당사자)',
+  apply_reject: '가입신청이 거절되었습니다 - test(당사자)',
+
+  notice_new: '공지사항이 생겼습니다 - test(방장제외 멤버)',
+  notice_update: '공지사항이 수정되었습니다 - test(방장제외 멤버)',
 });
 
 module.exports = {
