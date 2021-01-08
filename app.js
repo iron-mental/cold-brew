@@ -7,7 +7,8 @@ const { verify } = require('./middlewares/auth');
 
 const app = express();
 
-app.use(morgan('dev'));
+app.set('trust proxy', true);
+app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
