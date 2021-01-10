@@ -4,11 +4,12 @@ const morgan = require('morgan');
 
 const v1Router = require('./routes/v1');
 const { verify } = require('./middlewares/auth');
+const { stream } = require('./configs/winston');
 
 const app = express();
 
 app.set('trust proxy', true);
-app.use(morgan('combined'));
+app.use(morgan('combined', { stream }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
