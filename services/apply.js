@@ -19,12 +19,11 @@ const createApply = async ({ user_id, study_id, message }) => {
 };
 
 const getApplyByUser = async ({ study_id, user_id }) => {
-  let applyData = await applyDao.getApplyByUser(study_id, user_id);
+  const applyData = await applyDao.getApplyByUser(study_id, user_id);
   if (applyData.length === 0) {
     throw customError(404, '조회된 신청내역이 없습니다');
   }
-  applyData = toBoolean(applyData, ['rejected_status']);
-  return rowSplit(applyData, ['project']);
+  return applyData[0];
 };
 
 const applyUpdate = async ({ id: user_id }, { apply_id }, updateData) => {

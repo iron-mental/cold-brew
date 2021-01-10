@@ -20,19 +20,11 @@ const getApplyByUser = async (study_id, user_id) => {
   try {
     const detailSql = `
       SELECT
-        a.id, a.user_id, a.study_id, a.message, a.apply_status,
-        DATE_FORMAT(a.created_at, "%Y-%c-%d %H:%i:%s") created_at,
-        DATE_FORMAT(a.rejected_at, "%Y-%c-%d %H:%i:%s") rejected_at,
-        u.image, u.nickname, u.sns_github, u.sns_linkedin, u.sns_web,
-        p.id Pid, p.title Ptitle, p.contents Pcontents, p.sns_github Psns_github, p.sns_appstore Psns_appstore, p.sns_playstore Psns_playstore
+        id, message
       FROM
-        apply a
-        LEFT JOIN user u
-        ON u.id = a.user_id
-        LEFT JOIN project p
-        ON u.id = p.user_id
+        apply
       WHERE
-      a.study_id = ? AND a.user_id = ?`;
+        study_id = ? AND user_id = ?`;
     const [detailRows] = await conn.query(detailSql, [study_id, user_id]);
 
     return detailRows;

@@ -293,12 +293,12 @@ const delegate = async (study_id, old_leader, new_leader) => {
   }
 };
 
-const search = async (word) => {
+const search = async (user_id, word) => {
   const conn = await pool.getConnection();
   try {
     const searchSql = `
     SELECT
-      *, count(*) members
+      S.*, count(*) members, IF(user_id is not null, true, false) isMember
     FROM (
       SELECT
         s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
@@ -311,11 +311,16 @@ const search = async (word) => {
         ON u.id = p.user_id
       WHERE
         s.title like ? OR s.introduce like ? OR s.sigungu like ?
-      ORDER BY p.leader DESC ) T
-    GROUP BY id
-    ORDER BY id DESC
+      ORDER BY p.leader DESC ) AS S
+    LEFT JOIN (
+      SELECT user_id, study_id
+      FROM participate
+      WHERE user_id = ?) AS P
+    ON S.id = P.study_id
+    GROUP BY S.id
+    ORDER BY S.id DESC
     `;
-    const [searchRows] = await conn.query(searchSql, [word, word, word]);
+    const [searchRows] = await conn.query(searchSql, [word, word, word, user_id]);
     return searchRows;
   } catch (err) {
     throw databaseError(err);

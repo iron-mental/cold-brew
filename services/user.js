@@ -74,17 +74,16 @@ const userDetail = async ({ id }) => {
 
 // 이미지 수정
 const userImageUpdate = async ({ id }, updateData, { destination, uploadedFile, path: _tmpPath }) => {
+  const previousPath = await userDao.getImage(id);
+  const oldImagePath = path.join(destination, path.basename(previousPath[0].image || 'nullFileName'));
+  fs.unlink(oldImagePath, (err) => {});
+
   const updateRows = await userDao.userUpdate(id, updateData);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-
   const newPath = path.join(destination, uploadedFile.basename);
   fs.rename(_tmpPath, newPath, (err) => {});
-
-  const previousPath = await userDao.getImage(id);
-  const oldImagePath = path.join(destination, path.basename(previousPath[0].image || 'nullFileName'));
-  fs.unlink(oldImagePath, (err) => {});
 };
 
 // 유저정보 수정

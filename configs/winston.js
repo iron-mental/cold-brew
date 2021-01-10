@@ -1,6 +1,5 @@
-const { info } = require('console');
-let fs = require('fs');
-let winston = require('winston');
+const fs = require('fs');
+const winston = require('winston');
 
 const logDir = __dirname + '/../logs';
 
@@ -25,7 +24,7 @@ const logger = winston.createLogger({
 });
 
 const stream = {
-  write: message => {
+  write: (message) => {
     logger.info(message);
   },
 };
