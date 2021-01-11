@@ -74,6 +74,11 @@ const updatePushToken = async (req, res) => {
   response(res, 200, '토큰 갱신이 완료되었습니다');
 };
 
+const getAddress = async (req, res) => {
+  const addressList = await userService.getAddress();
+  response(res, 200, addressList);
+};
+
 module.exports = {
   signup,
   login,
@@ -89,4 +94,5 @@ module.exports = {
   resetPassword,
   updateEmail,
   updatePushToken,
+  getAddress,
 };

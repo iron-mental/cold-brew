@@ -85,6 +85,18 @@ const tokenDivision = (memberRows) => {
   return [apns_token, fcm_token];
 };
 
+const parsingAddress = (addressRows) => {
+  const location = {};
+
+  addressRows.forEach((item) => {
+    if (!location.hasOwnProperty(item.si)) {
+      location[item.si] = [];
+    }
+    location[item.si].push(item.gunGu);
+  });
+  return location;
+};
+
 module.exports = {
   rowSplit,
   toBoolean,
@@ -92,4 +104,5 @@ module.exports = {
   cutId,
   lengthSorting,
   tokenDivision,
+  parsingAddress,
 };
