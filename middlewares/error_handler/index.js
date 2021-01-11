@@ -1,46 +1,15 @@
-const fs = require('fs');
-
+const sentry = require('@sentry/node');
 const { authErrorHandler } = require('./auth');
 const { validErrorHandler } = require('./validation');
 const { firebaseErrorHandler } = require('./firebase');
 const { databaseErrorHandler } = require('./database');
 const { customErrorHandler } = require('./custom');
-const { logger } = require('../../configs/winston');
+const { commonErrorHandler } = require('./common');
 
-const commonErrorHandler = (err, req, res, next) => {
-  try {
-    if (req.file) {
-      fs.unlink(req.file.path, (err) => {});
-    }
-
-    const errObj = {
-      req: {
-        headers: req.headers,
-        query: req.query,
-        body: req.body,
-        route: req.route,
-      },
-      error: {
-        message: err.message,
-        stack: err.stack,
-        status: err.status,
-      },
-      user: req.user,
-    };
-
-    // logger.error(`${moment().format('YYYY-MM-DD HH:mm:ss')}`, errObj);
-    logger.error(errObj);
-
-    if (req.file) {
-      fs.unlink(req.file.path, (error) => {});
-    }
-    next(err);
-  } catch (err) {
-    console.error(err);
-  }
-};
+sentry.init({ dsn: process.env.SENTRY_DSN });
 
 module.exports = (app) => {
+  app.use(sentry.Handlers.errorHandler());
   app.use(commonErrorHandler);
   app.use(authErrorHandler);
   app.use(validErrorHandler);
