@@ -3,13 +3,11 @@ const path = require('path');
 const firebase = require('firebase');
 
 const userDao = require('../dao/user');
-const push = require('../events/push');
-const { toBoolean } = require('../utils/query');
+const { toBoolean, parsingAddress } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
 const { verify, getAccessToken, getRefreshToken } = require('../utils/jwt.js');
 const { customError } = require('../utils/errors/custom');
 const { firebaseError } = require('../utils/errors/firebase');
-const { PushEventEnum } = require('../utils/variables/enum');
 
 const User = require('../models/user');
 const Chat = require('../models/chat');
@@ -184,6 +182,11 @@ const updatePushToken = async ({ id }, { push_token }) => {
   }
 };
 
+const getAddress = async () => {
+  let addressRows = await userDao.getAddress();
+  return parsingAddress(addressRows);
+};
+
 module.exports = {
   signup,
   login,
@@ -199,4 +202,5 @@ module.exports = {
   resetPassword,
   updateEmail,
   updatePushToken,
+  getAddress,
 };

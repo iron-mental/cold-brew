@@ -256,6 +256,19 @@ const updateEmail = async (id, email) => {
   }
 };
 
+const getAddress = async () => {
+  const conn = await pool.getConnection();
+  try {
+    const addressSql = 'SELECT * FROM address';
+    const [addressRows] = await conn.query(addressSql);
+    return addressRows;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -269,4 +282,5 @@ module.exports = {
   emailVerificationProcess,
   checkToken,
   updateEmail,
+  getAddress,
 };
