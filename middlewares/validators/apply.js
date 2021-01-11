@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { validError } = require('../../utils/errors/custom');
+const { validError } = require('../../utils/errors/validation');
 
 const createApply = async (req, res, next) => {
   const paramSchema = Joi.object({
