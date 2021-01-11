@@ -86,14 +86,22 @@ const tokenDivision = (memberRows) => {
 };
 
 const parsingAddress = (addressRows) => {
-  const location = {};
+  const location = [];
+  const tmp = {
+    si: addressRows[0].si,
+    gunGu: [],
+  };
 
   addressRows.forEach((item) => {
-    if (!location.hasOwnProperty(item.si)) {
-      location[item.si] = [];
+    if (tmp.si !== item.si) {
+      location.push(Object.assign({}, tmp));
+      tmp.si = item.si;
+      tmp.gunGu = [];
     }
-    location[item.si].push(item.gunGu);
+    tmp.gunGu.push(item.gunGu);
   });
+
+  location.push(tmp);
   return location;
 };
 
