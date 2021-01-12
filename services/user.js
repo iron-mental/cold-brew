@@ -183,8 +183,13 @@ const updatePushToken = async ({ id }, { push_token }) => {
 };
 
 const getAddress = async () => {
-  let addressRows = await userDao.getAddress();
+  const addressRows = await userDao.getAddress();
   return parsingAddress(addressRows);
+};
+
+const getAlert = async ({ id: user_id }) => {
+  const alertRows = await userDao.getAlert(user_id);
+  return alertRows;
 };
 
 module.exports = {
@@ -203,4 +208,5 @@ module.exports = {
   updateEmail,
   updatePushToken,
   getAddress,
+  getAlert,
 };
