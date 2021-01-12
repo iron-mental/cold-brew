@@ -1,6 +1,7 @@
 const pool = require('./db');
-const { customError } = require('../utils/errors/custom');
+const { databaseError } = require('../utils/errors/database');
 const { multiInsertQuery } = require('../utils/query');
+const { DBTableEnum } = require('../utils/variables/enum');
 
 const getMemberToken = async (study_id) => {
   const conn = await pool.getConnection();
@@ -17,7 +18,7 @@ const getMemberToken = async (study_id) => {
     const [memberRows] = await conn.query(getMemberSql, study_id);
     return memberRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(500, err);
   } finally {
     await conn.release();
   }
@@ -38,7 +39,7 @@ const getMemberWithoutHostToken = async (study_id) => {
     const [memberRows] = await conn.query(getMemberSql, [study_id, false]);
     return memberRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(500, err);
   } finally {
     await conn.release();
   }
@@ -59,7 +60,7 @@ const getOffMemberToken = async (study_id, nickname) => {
     const [offMemberRows] = await conn.query(getMemberSql, [study_id, nickname]);
     return offMemberRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(500, err);
   } finally {
     await conn.release();
   }
@@ -75,7 +76,7 @@ const getUserToken = async (user_id) => {
     const [tokenRows] = await conn.query(getTokenSql, user_id);
     return tokenRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(500, err);
   } finally {
     await conn.release();
   }
@@ -94,22 +95,20 @@ const getHostToken = async (study_id) => {
     const [tokenRows] = await conn.query(getTokenSql, study_id);
     return tokenRows;
   } catch (err) {
-    throw customError(500, err.sqlMessage);
+    throw databaseError(500, err);
   } finally {
     await conn.release();
   }
 };
 
 const insertAlert = async (insertData) => {
-  const insertSql = multiInsertQuery('alert', insertData);
-
+  const insertSql = multiInsertQuery(DBTableEnum.alert, insertData);
   const conn = await pool.getConnection();
   try {
     const [insertRows] = await conn.query(insertSql);
     return insertRows;
   } catch (err) {
-    console.log('err: ', err);
-    // throw customError(500, err.sqlMessage);
+    throw databaseError(500, err);
   } finally {
     await conn.release();
   }
