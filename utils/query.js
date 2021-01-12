@@ -101,13 +101,13 @@ const parsingAddress = (addressRows) => {
 
 const multiInsertQuery = (table, insertData) => {
   const keys = Object.keys(insertData[0]);
-  const keyString = Array.from(keys, (x) => '?');
+  const escapeKeys = Array.from(keys, (x) => '?');
 
-  let sql = `INSERT INTO ? (${keyString}) VALUES `;
-  let data = [table].concat(keys);
+  let sql = `INSERT INTO ${table} (${keys}) VALUES `;
+  let data = [];
 
   insertData.forEach((item) => {
-    sql += `(${keyString}), `;
+    sql += `(${escapeKeys}), `;
     data = data.concat(Object.values(item));
   });
 
