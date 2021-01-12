@@ -5,6 +5,7 @@ const { apn: options } = require('../configs/config');
 const { getChatPayload, getPushPayload } = require('../models/push');
 const pushDao = require('../dao/push');
 const { tokenDivision } = require('../utils/query');
+const { customError } = require('../utils/errors/custom');
 
 const apnProvider = new apn.Provider(options);
 
@@ -12,7 +13,7 @@ const send = async (tokenRows, pushEvent, destination) => {
   const [user_id, apns_token, fcm_token] = tokenDivision(tokenRows);
   const payload = getPushPayload(pushEvent, destination);
   const [destination_key, destination_value] = Object.entries(destination)[0];
-  user_id.push(1, 2, 5);
+
   const insertData = user_id.map((id) => {
     return {
       user_id: id,
@@ -25,15 +26,15 @@ const send = async (tokenRows, pushEvent, destination) => {
 
   const insertRows = await pushDao.insertAlert(insertData);
   if (!insertRows.affectedRows) {
-    console.log('푸시 insert 에러');
+    throw customError(500, 'Alert Insert Error(알람 적재 에러)');
   }
 
-  // if (apns_token.length > 0) {
-  //   apnSender(apns_token, payload.apns);
-  // }
-  // if (fcm_token.length > 0) {
-  //   fcmSender(fcm_token, payload.fcm);
-  // }
+  if (apns_token.length > 0) {
+    apnSender(apns_token, payload.apns);
+  }
+  if (fcm_token.length > 0) {
+    fcmSender(fcm_token, payload.fcm);
+  }
 };
 
 const apnSender = (apns_token, note) => {
