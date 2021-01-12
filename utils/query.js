@@ -1,3 +1,4 @@
+const { format } = require('mysql2');
 const { DeviceEnum } = require('./variables/enum');
 
 const rowSplit = (rows, tags) => {
@@ -72,9 +73,10 @@ const lengthSorting = (sigungu, rows) => {
 };
 
 const tokenDivision = (memberRows) => {
-  const [fcm_token, apns_token] = [[], []];
+  const [user_id, fcm_token, apns_token] = [[], [], []];
 
   memberRows.forEach((v) => {
+    user_id.push(v.id);
     if (v.device === DeviceEnum.ios) {
       apns_token.push(v.push_token);
     } else {
@@ -82,7 +84,7 @@ const tokenDivision = (memberRows) => {
     }
   });
 
-  return [apns_token, fcm_token];
+  return [user_id, apns_token, fcm_token];
 };
 
 const parsingAddress = (addressRows) => {
@@ -97,6 +99,21 @@ const parsingAddress = (addressRows) => {
   return location;
 };
 
+const multiInsertQuery = (table, insertData) => {
+  const keys = Object.keys(insertData[0]);
+  const keyString = Array.from(keys, (x) => '?');
+
+  let sql = `INSERT INTO ? (${keyString}) VALUES `;
+  let data = [table].concat(keys);
+
+  insertData.forEach((item) => {
+    sql += `(${keyString}), `;
+    data = data.concat(Object.values(item));
+  });
+
+  return format(sql.slice(0, sql.length - 2), data);
+};
+
 module.exports = {
   rowSplit,
   toBoolean,
@@ -105,4 +122,5 @@ module.exports = {
   lengthSorting,
   tokenDivision,
   parsingAddress,
+  multiInsertQuery,
 };

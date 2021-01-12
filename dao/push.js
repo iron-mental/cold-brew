@@ -1,12 +1,13 @@
 const pool = require('./db');
 const { customError } = require('../utils/errors/custom');
+const { multiInsertQuery } = require('../utils/query');
 
 const getMemberToken = async (study_id) => {
   const conn = await pool.getConnection();
   try {
     const getMemberSql = `
       SELECT
-        u.device, u.push_token
+        u.id, u.device, u.push_token
       FROM
         participate p
           LEFT JOIN user u
@@ -48,7 +49,7 @@ const getOffMemberToken = async (study_id, nickname) => {
   try {
     const getMemberSql = `
       SELECT
-        u.device, u.push_token
+        u.id, u.device, u.push_token
       FROM
         participate p
           LEFT JOIN user u
@@ -68,7 +69,7 @@ const getUserToken = async (user_id) => {
   const conn = await pool.getConnection();
   try {
     const getTokenSql = `
-      SELECT device, push_token
+      SELECT id, device, push_token
       FROM user
       WHERE id = ?`;
     const [tokenRows] = await conn.query(getTokenSql, user_id);
@@ -84,7 +85,8 @@ const getHostToken = async (study_id) => {
   const conn = await pool.getConnection();
   try {
     const getTokenSql = `
-      SELECT u.device, u.push_token
+      SELECT
+        u.id, u.device, u.push_token
       FROM user u
         LEFT JOIN participate p
         ON u.id = p.user_id
@@ -98,10 +100,26 @@ const getHostToken = async (study_id) => {
   }
 };
 
+const insertAlert = async (insertData) => {
+  const insertSql = multiInsertQuery('alert', insertData);
+
+  const conn = await pool.getConnection();
+  try {
+    const [insertRows] = await conn.query(insertSql);
+    return insertRows;
+  } catch (err) {
+    console.log('err: ', err);
+    // throw customError(500, err.sqlMessage);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   getMemberToken,
   getMemberWithoutHostToken,
   getOffMemberToken,
   getUserToken,
   getHostToken,
+  insertAlert,
 };
