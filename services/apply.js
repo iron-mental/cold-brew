@@ -1,7 +1,7 @@
 const applyDao = require('../dao/apply');
 
 const push = require('../events/push');
-const { PushEventEnum } = require('../utils/variables/enum');
+const { PushEventEnum, RedisEventEnum } = require('../utils/variables/enum');
 const broadcast = require('../events/broadcast');
 const { rowSplit, toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
@@ -9,6 +9,7 @@ const { ApplyEnum } = require('../utils/variables/enum');
 
 const User = require('../models/user');
 const Room = require('../models/room');
+const redisEvent = require('../events/redis');
 
 const createApply = async ({ user_id, study_id, message }) => {
   const createdRows = await applyDao.createApply({ user_id, study_id, message });
@@ -82,6 +83,8 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
 
     Room.updateOne({ study_id }, { $addToSet: { members: user_id } }).exec();
     User.updateOne({ user_id }, { $addToSet: { rooms: study_id } }).exec();
+
+    redisEvent.emit('trigger', RedisEventEnum.participate, user_id, { study_id });
 
     broadcast.participate(study_id, nickname);
   } else {

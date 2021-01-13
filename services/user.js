@@ -11,6 +11,8 @@ const { firebaseError } = require('../utils/errors/firebase');
 
 const User = require('../models/user');
 const Chat = require('../models/chat');
+const redisEvent = require('../events/redis');
+const { RedisEventEnum } = require('../utils/variables/enum');
 
 // 닉네임 중복체크
 const checkNickname = async ({ nickname }) => {
@@ -42,7 +44,10 @@ const signup = async ({ email, password, nickname }) => {
   if (createRows.affectedRows === 0) {
     throw customError(400, '회원가입에 실패했습니다', 103);
   }
-  User.create({ user_id: createRows.insertId, nickname });
+  user_id = createRows.insertId;
+
+  User.create({ user_id, nickname });
+  redisEvent.emit('trigger', RedisEventEnum.signup, user_id);
 };
 
 // 로그인
@@ -56,7 +61,17 @@ const login = async ({ email, password, push_token, device }) => {
   const access_token = await getAccessToken({ id, email, nickname });
   const refresh_token = await getRefreshToken({ id });
 
-  userDao.userUpdate(id, { access_token, refresh_token, push_token, device });
+  userDao.userUpdate(id, {
+    access_token,
+    refresh_token,
+    push_token,
+    device,
+  });
+
+  redisEvent.emit('trigger', RedisEventEnum.push_token, id, {
+    device,
+    push_token,
+  });
 
   return { id, access_token, refresh_token };
 };
@@ -180,6 +195,8 @@ const updatePushToken = async ({ id }, { push_token }) => {
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
+
+  redisEvent.emit('trigger', RedisEventEnum.push_token, id, { push_token });
 };
 
 const getAddress = async () => {
@@ -188,6 +205,7 @@ const getAddress = async () => {
 };
 
 const getAlert = async ({ id: user_id }) => {
+  redisEvent.emit('trigger', RedisEventEnum.alert_read, user_id);
   const alertRows = await userDao.getAlert(user_id);
   return alertRows;
 };
