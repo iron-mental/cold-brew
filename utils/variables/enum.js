@@ -72,6 +72,16 @@ const DBTableEnum = Object.freeze({
   user: 'user',
 });
 
+const RedisEventEnum = Object.freeze({
+  signup: 'signup',
+  push_token: 'push_token',
+  participate: 'participate',
+  alert: 'alert',
+  chat: 'chat',
+  alert_read: 'alert_read',
+  chat_read: 'chat_read',
+});
+
 module.exports = {
   AuthEnum,
   ApplyEnum,
@@ -80,4 +90,5 @@ module.exports = {
   PushEventEnum,
   MessageEnum,
   DBTableEnum,
+  RedisEventEnum,
 };
