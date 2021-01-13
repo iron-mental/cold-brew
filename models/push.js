@@ -32,11 +32,11 @@ getChatPayload = (chat) => {
   };
 };
 
-getPushPayload = (pushEvent, destination) => {
+getPushPayload = (pushEvent, study_id) => {
   const alert = MessageEnum[pushEvent];
   const payload = {
     pushEvent,
-    destination,
+    study_id,
   };
   const note = new Note(alert, payload);
 

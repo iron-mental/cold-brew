@@ -273,7 +273,7 @@ const getAlert = async (user_id) => {
   const conn = await pool.getConnection();
   try {
     const alertSql = `
-      SELECT id, user_id, pushEvent, destination, destination_id, message,
+      SELECT id, study_id, pushEvent, message,
       DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at
       FROM alert
       WHERE user_id = ? AND 'read' = ?`;

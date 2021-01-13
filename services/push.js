@@ -9,17 +9,15 @@ const { customError } = require('../utils/errors/custom');
 
 const apnProvider = new apn.Provider(options);
 
-const send = async (tokenRows, pushEvent, destination) => {
+const send = async (tokenRows, pushEvent, study_id) => {
   const [user_id, apns_token, fcm_token] = tokenDivision(tokenRows);
-  const payload = getPushPayload(pushEvent, destination);
-  const [destination_key, destination_value] = Object.entries(destination)[0];
+  const payload = getPushPayload(pushEvent, study_id);
 
   const insertData = user_id.map((id) => {
     return {
       user_id: id,
+      study_id,
       pushEvent,
-      destination: destination_key,
-      destination_id: destination_value,
       message: payload.apns.aps.alert,
     };
   });
@@ -59,22 +57,22 @@ const fcmSender = (fcm_token, payload) => {
 
 const toHost = async (pushEvent, study_id) => {
   const tokenRows = await pushDao.getHostToken(study_id);
-  send(tokenRows, pushEvent, { study_id });
+  send(tokenRows, pushEvent, study_id);
 };
 
 const toUser = async (pushEvent, user_id) => {
   const tokenRows = await pushDao.getUserToken(user_id);
-  send(tokenRows, pushEvent, { user_id });
+  send(tokenRows, pushEvent, user_id);
 };
 
 const toStudy = async (pushEvent, study_id) => {
   const tokenRows = await pushDao.getMemberToken(study_id);
-  send(tokenRows, pushEvent, { study_id });
+  send(tokenRows, pushEvent, study_id);
 };
 
 const toStudyWithoutHost = async (pushEvent, study_id) => {
   const tokenRows = await pushDao.getMemberWithoutHostToken(study_id);
-  send(tokenRows, pushEvent, { study_id });
+  send(tokenRows, pushEvent, study_id);
 };
 
 const chat = async (study_id, chat) => {
