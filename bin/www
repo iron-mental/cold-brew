@@ -38,6 +38,12 @@ admin.initializeApp({
 });
 
 /**
+ * Connect redis server
+ */
+
+require('../configs/redis')();
+
+/**
  * Open chatting server
  */
 const io = require('socket.io')(server);
