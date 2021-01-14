@@ -32,7 +32,7 @@ const createStudy = async ({ id: user_id }, createData) => {
   return createRows.insertId;
 };
 
-const studyDetail = async ({ study_id }) => {
+const studyDetail = async ({ id: user_id }, { study_id }) => {
   let studyRows = await studyDao.getStudy(study_id);
   if (studyRows.length === 0) {
     throw customError(404, '조회된 스터디가 없습니다');
@@ -40,6 +40,8 @@ const studyDetail = async ({ study_id }) => {
 
   studyRows = toBoolean(studyRows, ['Pleader']);
   studyRows = rowSplit(studyRows, ['participate']);
+
+  redisTrigger(user_id, RedisEventEnum.alert_read, { study_id });
   return locationMerge(studyRows);
 };
 

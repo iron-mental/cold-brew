@@ -9,7 +9,8 @@ const createStudy = async (req, res) => {
 };
 
 const studyDetail = async (req, res) => {
-  const studyData = await studyService.studyDetail(req.params);
+  const studyData = await studyService.studyDetail(req.user, req.params);
+
   studyData.Authority = await checkAuth(req.user, req.params);
   response(res, 200, studyData);
 };
