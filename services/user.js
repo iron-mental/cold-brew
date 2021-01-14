@@ -12,7 +12,7 @@ const { firebaseError } = require('../utils/errors/firebase');
 const User = require('../models/user');
 const Chat = require('../models/chat');
 const { RedisEventEnum } = require('../utils/variables/enum');
-const { redisTrigger } = require('./redis');
+const { redisTrigger, redisSignup } = require('./redis');
 
 // 닉네임 중복체크
 const checkNickname = async ({ nickname }) => {
@@ -47,7 +47,7 @@ const signup = async ({ email, password, nickname }) => {
   user_id = createRows.insertId;
 
   User.create({ user_id, nickname });
-  redisTrigger(user_id, RedisEventEnum.signup);
+  redisSignup(user_id);
 };
 
 // 로그인
