@@ -204,7 +204,6 @@ const getAddress = async () => {
 };
 
 const getAlert = async ({ id: user_id }) => {
-  redisTrigger(user_id, RedisEventEnum.alert_read, user_id);
   const alertRows = await userDao.getAlert(user_id);
   return alertRows;
 };
