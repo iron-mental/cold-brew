@@ -42,40 +42,49 @@ const redisProcess = (userData, redisEvent, data) => {
 
     case RedisEventEnum.participate:
       console.log('스터디 가입');
-      userData.count[data.study_id] = 0;
+      userData.chat[data.study_id] = 0;
+      userData.alert[data.study_id] = 0;
       return userData;
 
     case RedisEventEnum.alert:
       console.log('알림');
-      userData.count.alert += 1;
+      userData.alert[data.study_id] += 1;
       userData = countTotal(userData);
       return userData;
 
     case RedisEventEnum.chat:
       console.log('채팅');
-      userData.count[data.study_id] += 1;
+      userData.chat[data.study_id] += 1;
       userData = countTotal(userData);
       return userData;
 
     case RedisEventEnum.alert_read:
       console.log('알림 읽음');
-      userData.count.alert = 0;
+      userData.alert[data.study_id] = 0;
       userData = countTotal(userData);
       return userData;
 
     case RedisEventEnum.chat_read:
       console.log('채팅 읽음');
-      userData.count[data.study_id] = 0;
+      userData.chat[data.study_id] = 0;
       userData = countTotal(userData);
       return userData;
   }
 };
 
 const countTotal = (userData) => {
-  userData.badge = 0;
-  for (let study_id in userData.count) {
-    userData.badge += userData.count[study_id];
+  userData.alert.total = 0;
+  userData.chat.total = 0;
+
+  for (let study_id in userData.alert) {
+    if (study_id !== 'total') userData.alert.total += userData.alert[study_id];
   }
+
+  for (let study_id in userData.chat) {
+    if (study_id !== 'total') userData.chat.total += userData.chat[study_id];
+  }
+
+  userData.badge = userData.alert.total + userData.chat.total;
   return userData;
 };
 

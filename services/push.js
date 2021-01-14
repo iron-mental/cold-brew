@@ -11,9 +11,52 @@ const { redisTrigger } = require('./redis');
 
 const apnProvider = new apn.Provider(options);
 
+const toHost = async (pushEvent, study_id) => {
+  const tokenRows = await pushDao.getHostToken(study_id);
+  send(tokenRows, pushEvent, study_id);
+};
+
+const toUser = async (pushEvent, user_id) => {
+  const tokenRows = await pushDao.getUserToken(user_id);
+  send(tokenRows, pushEvent, user_id);
+};
+
+const toStudy = async (pushEvent, study_id) => {
+  const tokenRows = await pushDao.getMemberToken(study_id);
+  send(tokenRows, pushEvent, study_id);
+};
+
+const toStudyWithoutHost = async (pushEvent, study_id) => {
+  const tokenRows = await pushDao.getMemberWithoutHostToken(study_id);
+  send(tokenRows, pushEvent, study_id);
+};
+
+const chat = async (study_id, chat) => {
+  const tokenRows = await pushDao.getOffMemberToken(study_id, chat.nickname);
+
+  for (let row of tokenRows) {
+    let redisData = await redisTrigger(row.id, RedisEventEnum.chat, { study_id });
+    row.badge = redisData.badge;
+  }
+
+  const [userList, apns_token, fcm_token] = tokenDivision(tokenRows);
+  const chatPayload = getChatPayload(chat);
+
+  // sender를 하나씩으로 변경
+  for (let token of apns_token) {
+    chatPayload.apns.badge = token[1];
+    apnSender(token[0], chatPayload.apns);
+  }
+
+  for (let token in fcm_token) {
+    chatPayload.fcm.notification.badge = token[1];
+    fcmSender(token[0], chatPayload.fcm);
+  }
+};
+
 const send = async (tokenRows, pushEvent, study_id) => {
   for (let row of tokenRows) {
-    let redisData = await redisTrigger(row.id, RedisEventEnum.alert);
+    let redisData = await redisTrigger(row.id, RedisEventEnum.alert, { study_id });
     row.badge = redisData.badge;
   }
 
@@ -64,49 +107,6 @@ const fcmSender = (fcm_token, payload) => {
     .catch((err) => {
       console.log('Error sending message:', err);
     });
-};
-
-const toHost = async (pushEvent, study_id) => {
-  const tokenRows = await pushDao.getHostToken(study_id);
-  send(tokenRows, pushEvent, study_id);
-};
-
-const toUser = async (pushEvent, user_id) => {
-  const tokenRows = await pushDao.getUserToken(user_id);
-  send(tokenRows, pushEvent, user_id);
-};
-
-const toStudy = async (pushEvent, study_id) => {
-  const tokenRows = await pushDao.getMemberToken(study_id);
-  send(tokenRows, pushEvent, study_id);
-};
-
-const toStudyWithoutHost = async (pushEvent, study_id) => {
-  const tokenRows = await pushDao.getMemberWithoutHostToken(study_id);
-  send(tokenRows, pushEvent, study_id);
-};
-
-const chat = async (study_id, chat) => {
-  const tokenRows = await pushDao.getOffMemberToken(study_id, chat.nickname);
-
-  for (let row of tokenRows) {
-    let redisData = await redisTrigger(row.id, RedisEventEnum.chat, { study_id });
-    row.badge = redisData.badge;
-  }
-
-  const [userList, apns_token, fcm_token] = tokenDivision(tokenRows);
-  const chatPayload = getChatPayload(chat);
-
-  // sender를 하나씩으로 변경
-  for (let token of apns_token) {
-    chatPayload.apns.badge = token[1];
-    apnSender(token[0], chatPayload.apns);
-  }
-
-  for (let token in fcm_token) {
-    chatPayload.fcm.notification.badge = token[1];
-    fcmSender(token[0], chatPayload.fcm);
-  }
 };
 
 module.exports = {
