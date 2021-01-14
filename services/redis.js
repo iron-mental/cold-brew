@@ -12,12 +12,15 @@ const redisTrigger = async (user_id, redisEvent, data) => {
   } else {
     client.get(user_id, (err, userData) => {
       if (err) console.log('## 레디스 get 에러: ', err);
+
       userData = redisProcess(userData, redisEvent, data);
+
       client.set(user_id, JSON.stringify(userData), (err, v) => {
         if (err) console.log('## 레디스 set 에러: ', err);
-        console.log('## 레디스 연산 완료');
       });
     });
+
+    return userData.badge;
   }
 };
 
