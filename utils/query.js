@@ -78,9 +78,9 @@ const tokenDivision = (memberRows) => {
   memberRows.forEach((v) => {
     user_id.push(v.id);
     if (v.device === DeviceEnum.ios) {
-      apns_token.push(v.push_token);
+      apns_token.push([v.push_token, v.badge]);
     } else {
-      fcm_token.push(v.push_token);
+      fcm_token.push([v.push_token, v.badge]);
     }
   });
 
