@@ -6,16 +6,17 @@ const { getChatPayload, getPushPayload } = require('../models/push');
 const pushDao = require('../dao/push');
 const { tokenDivision } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
-const redisEvent = require('../events/redis');
 const { RedisEventEnum } = require('../utils/variables/enum');
+const { redisTrigger } = require('./redis');
 
 const apnProvider = new apn.Provider(options);
 
 const send = async (tokenRows, pushEvent, study_id) => {
   const [user_id, apns_token, fcm_token] = tokenDivision(tokenRows);
   const payload = getPushPayload(pushEvent, study_id);
+
   const insertData = user_id.map((id) => {
-    redisEvent.emit('trigger', RedisEventEnum.alert, id);
+    redisTrigger(id, RedisEventEnum.alert);
     return {
       user_id: id,
       study_id,
@@ -82,7 +83,7 @@ const chat = async (study_id, chat) => {
   const [user_id, apns_token, fcm_token] = tokenDivision(tokenRows);
   const chatPayload = getChatPayload(chat);
   user_id.forEach((id) => {
-    redisEvent.emit('trigger', RedisEventEnum.chat, id);
+    redisTrigger(user_id, RedisEventEnum.chat);
   });
 
   if (apns_token.length > 0) {

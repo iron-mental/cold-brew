@@ -11,8 +11,8 @@ const { firebaseError } = require('../utils/errors/firebase');
 
 const User = require('../models/user');
 const Chat = require('../models/chat');
-const redisEvent = require('../events/redis');
 const { RedisEventEnum } = require('../utils/variables/enum');
+const { redisTrigger } = require('./redis');
 
 // 닉네임 중복체크
 const checkNickname = async ({ nickname }) => {
@@ -47,7 +47,7 @@ const signup = async ({ email, password, nickname }) => {
   user_id = createRows.insertId;
 
   User.create({ user_id, nickname });
-  redisEvent.emit('trigger', RedisEventEnum.signup, user_id);
+  redisTrigger(user_id, RedisEventEnum.signup);
 };
 
 // 로그인
@@ -68,7 +68,7 @@ const login = async ({ email, password, push_token, device }) => {
     device,
   });
 
-  redisEvent.emit('trigger', RedisEventEnum.push_token, id, {
+  redisTrigger(id, RedisEventEnum.push_token, {
     device,
     push_token,
   });
@@ -195,8 +195,7 @@ const updatePushToken = async ({ id }, { push_token }) => {
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-
-  redisEvent.emit('trigger', RedisEventEnum.push_token, id, { push_token });
+  redisTrigger(id, RedisEventEnum.push_token, { push_to });
 };
 
 const getAddress = async () => {
@@ -205,7 +204,7 @@ const getAddress = async () => {
 };
 
 const getAlert = async ({ id: user_id }) => {
-  redisEvent.emit('trigger', RedisEventEnum.alert_read, user_id);
+  redisTrigger(user_id, RedisEventEnum.alert_read, user_id);
   const alertRows = await userDao.getAlert(user_id);
   return alertRows;
 };

@@ -8,12 +8,12 @@ const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, lengthSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
 const broadcast = require('../events/broadcast');
-const redisEvent = require('../events/redis');
 
 const User = require('../models/user');
 const Room = require('../models/room');
 const Chat = require('../models/chat');
 const Search = require('../models/search');
+const { redisTrigger } = require('./redis');
 
 const createStudy = async ({ id: user_id }, createData) => {
   const checkRows = await studyDao.checkTitle(createData.title);
@@ -28,8 +28,7 @@ const createStudy = async ({ id: user_id }, createData) => {
     members: [user_id],
   });
   User.updateOne({ user_id }, { $push: { rooms: createRows.insertId } }, { upsert: true }).exec();
-  redisEvent.emit('trigger', RedisEventEnum.participate, user_id, { study_id: insertId });
-
+  redisTrigger(user_id, RedisEventEnum.participate, { study_id: insertId });
   return createRows.insertId;
 };
 
@@ -171,7 +170,7 @@ const category = async ({ id }) => {
 };
 
 const getChatting = async ({ id: user_id }, { study_id }, { date }) => {
-  redisEvent.emit('trigger', RedisEventEnum.chat_read, user_id, { study_id });
+  redisTrigger(user_id, RedisEventEnum.chat_read, { study_id });
   return await Chat.find({ study_id, date: { $gt: date } }, { _id: 0 });
 };
 
