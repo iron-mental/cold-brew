@@ -4,8 +4,11 @@ const user = {
     device: '',
   },
   badge: 0,
-  count: {
-    alert: 0,
+  chat: {
+    total: 0,
+  },
+  alert: {
+    total: 0,
   },
 };
 
