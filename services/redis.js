@@ -1,46 +1,50 @@
 const redis = require('redis');
 const redisUserModel = require('../models/redis');
+const { RedisEventEnum } = require('../utils/variables/enum');
 
 const client = redis.createClient();
 
-const redisTrigger = async (user_id, redisEvent, data) => {
-  if (redisEvent === RedisEventEnum.signup) {
-    // 비동기 작업 가능
-    client.set(user_id, JSON.stringify(redisUserModel), (err) => {
-      if (err) console.log('## 레디스 set 에러: ', err);
-    });
-  } else {
+const getData = (user_id) => {
+  return new Promise((resolve, reject) => {
     client.get(user_id, (err, userData) => {
-      if (err) console.log('## 레디스 get 에러: ', err);
-
-      userData = redisProcess(userData, redisEvent, data);
-
-      client.set(user_id, JSON.stringify(userData), (err, v) => {
-        if (err) console.log('## 레디스 set 에러: ', err);
-      });
+      if (err) reject(err);
+      else resolve(JSON.parse(userData));
     });
+  });
+};
 
-    return userData.badge;
-  }
+const setData = (user_id, userData) => {
+  return new Promise((resolve, reject) => {
+    client.set(user_id, JSON.stringify(userData), (err) => {
+      if (err) reject(err);
+      else resolve('ok');
+    });
+  });
+};
+
+const redisSignup = async (user_id) => {
+  await setData(user_id, redisUserModel);
+};
+
+const redisTrigger = async (user_id, redisEvent, data) => {
+  let userData = await getData(user_id);
+  userData = await redisProcess(userData, redisEvent, data);
+  await setData(user_id, userData);
+  return userData;
 };
 
 const redisProcess = (userData, redisEvent, data) => {
-  userData = JSON.parse(userData);
-
   switch (redisEvent) {
     case RedisEventEnum.push_token:
-      // 비동기 작업 가능
       console.log('푸시토큰 갱신');
       userData.push = data;
       return userData;
 
     case RedisEventEnum.participate:
-      // 비동기 작업 가능
       console.log('스터디 가입');
       userData.count[data.study_id] = 0;
       return userData;
 
-    ////// 실제 데이터 저장부 S
     case RedisEventEnum.alert:
       console.log('알림');
       userData.count.alert += 1;
@@ -52,17 +56,14 @@ const redisProcess = (userData, redisEvent, data) => {
       userData.count[data.study_id] += 1;
       userData = countTotal(userData);
       return userData;
-    ////// 실제 데이터 저장부 E
 
     case RedisEventEnum.alert_read:
-      // 비동기 작업 가능
       console.log('알림 읽음');
       userData.count.alert = 0;
       userData = countTotal(userData);
       return userData;
 
     case RedisEventEnum.chat_read:
-      // 비동기 작업 가능
       console.log('채팅 읽음');
       userData.count[data.study_id] = 0;
       userData = countTotal(userData);
@@ -79,5 +80,6 @@ const countTotal = (userData) => {
 };
 
 module.exports = {
+  redisSignup,
   redisTrigger,
 };
