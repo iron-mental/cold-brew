@@ -170,42 +170,7 @@ const category = async ({ id }) => {
 };
 
 const getChatting = async ({ study_id }, { date }) => {
-  const chat = await Chat.find({ study_id, date: { $gt: date } }, { _id: 0 }, { sort: { date: -1 } });
-  return chatPaging(chat);
-};
-
-const chatPaging = (chat) => {
-  const first = [];
-  const paging = [];
-
-  const pagingCount = 50;
-  const length = chat.length;
-  let idx = 0;
-
-  for (idx; idx < length; idx++) {
-    chat[idx] = JSON.parse(JSON.stringify(chat[idx]));
-    chat[idx].id = idx;
-
-    // 최초 반환 부
-    if (idx < pagingCount) {
-      first.push(chat[idx]);
-    } else if (idx % pagingCount === 0) {
-      paging.push({
-        date: chat[idx].date,
-        count: pagingCount,
-      });
-    }
-  }
-
-  if (length % pagingCount !== 0) {
-    paging[paging.length - 1].count = length % pagingCount;
-  }
-
-  return {
-    length: chat.length,
-    first,
-    paging,
-  };
+  return await Chat.find({ study_id, date: { $gt: date } }, { _id: 0 });
 };
 
 module.exports = {
