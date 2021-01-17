@@ -90,17 +90,17 @@ const tokenDivision = (memberRows) => {
 const parsingAddress = (addressRows) => {
   const location = [];
   const tmp = {
-    si: addressRows[0].si,
-    gunGu: [],
+    sido: addressRows[0].sido,
+    sigungu: [],
   };
 
   addressRows.forEach((item) => {
-    if (tmp.si !== item.si) {
+    if (tmp.sido !== item.sido) {
       location.push(Object.assign({}, tmp));
-      tmp.si = item.si;
-      tmp.gunGu = [];
+      tmp.sido = item.sido;
+      tmp.sigungu = [];
     }
-    tmp.gunGu.push(item.gunGu);
+    tmp.sigungu.push(item.sigungu);
   });
 
   location.push(tmp);
