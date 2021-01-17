@@ -9,7 +9,8 @@ const createStudy = async (req, res) => {
 };
 
 const studyDetail = async (req, res) => {
-  const studyData = await studyService.studyDetail(req.params);
+  const studyData = await studyService.studyDetail(req.user, req.params);
+
   studyData.Authority = await checkAuth(req.user, req.params);
   response(res, 200, studyData);
 };
@@ -75,7 +76,7 @@ const category = async (req, res) => {
 
 const getChatting = async (req, res) => {
   await checkAuthority(req.user, req.params, AuthEnum.host, AuthEnum.member);
-  const chatting = await studyService.getChatting(req.params, req.query);
+  const chatting = await studyService.getChatting(req.user, req.params, req.query);
   response(res, 200, chatting);
 };
 

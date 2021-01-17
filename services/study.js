@@ -3,17 +3,17 @@ const path = require('path');
 
 const studyDao = require('../dao/study');
 const push = require('../events/push');
-const { PushEventEnum } = require('../utils/variables/enum');
+const { PushEventEnum, AuthEnum, RedisEventEnum } = require('../utils/variables/enum');
 const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, lengthSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
-const { AuthEnum } = require('../utils/variables/enum');
 const broadcast = require('../events/broadcast');
 
 const User = require('../models/user');
 const Room = require('../models/room');
 const Chat = require('../models/chat');
 const Search = require('../models/search');
+const { redisTrigger } = require('./redis');
 
 const createStudy = async ({ id: user_id }, createData) => {
   const checkRows = await studyDao.checkTitle(createData.title);
@@ -28,11 +28,11 @@ const createStudy = async ({ id: user_id }, createData) => {
     members: [user_id],
   });
   User.updateOne({ user_id }, { $push: { rooms: createRows.insertId } }, { upsert: true }).exec();
-
+  redisTrigger(user_id, RedisEventEnum.participate, { study_id: insertId });
   return createRows.insertId;
 };
 
-const studyDetail = async ({ study_id }) => {
+const studyDetail = async ({ id: user_id }, { study_id }) => {
   let studyRows = await studyDao.getStudy(study_id);
   if (studyRows.length === 0) {
     throw customError(404, '조회된 스터디가 없습니다');
@@ -40,6 +40,8 @@ const studyDetail = async ({ study_id }) => {
 
   studyRows = toBoolean(studyRows, ['Pleader']);
   studyRows = rowSplit(studyRows, ['participate']);
+
+  redisTrigger(user_id, RedisEventEnum.alert_read, { study_id });
   return locationMerge(studyRows);
 };
 
@@ -169,7 +171,8 @@ const category = async ({ id }) => {
   });
 };
 
-const getChatting = async ({ study_id }, { date }) => {
+const getChatting = async ({ id: user_id }, { study_id }, { date }) => {
+  redisTrigger(user_id, RedisEventEnum.chat_read, { study_id });
   return await Chat.find({ study_id, date: { $gt: date } }, { _id: 0 });
 };
 

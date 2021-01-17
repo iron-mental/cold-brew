@@ -36,9 +36,6 @@ const DeviceEnum = Object.freeze({
 
 const PushEventEnum = Object.freeze({
   chat: 'chat',
-
-  email_verified: 'email_verified',
-
   study_update: 'study_update',
   study_delegate: 'study_delegate',
   study_delete: 'study_delete',
@@ -52,8 +49,6 @@ const PushEventEnum = Object.freeze({
 });
 
 const MessageEnum = Object.freeze({
-  email_verified: '이메일 인증',
-
   study_update: '스터디 내용이 수정되었습니다 - test(방장제외 멤버)',
   study_delegate: '스터디 방장이 위임되었습니다 - test(방장제외 멤버)',
   study_delete: '스터디가 삭제되었습니다 - test(방장제외 멤버)',
@@ -66,6 +61,27 @@ const MessageEnum = Object.freeze({
   notice_update: '공지사항이 수정되었습니다 - test(방장제외 멤버)',
 });
 
+const DBTableEnum = Object.freeze({
+  address: 'address',
+  alert: 'alert',
+  apply: 'apply',
+  category_count: 'category_count',
+  participate: 'participate',
+  project: 'project',
+  study: 'study',
+  user: 'user',
+});
+
+const RedisEventEnum = Object.freeze({
+  signup: 'signup',
+  push_token: 'push_token',
+  participate: 'participate',
+  alert: 'alert',
+  chat: 'chat',
+  alert_read: 'alert_read',
+  chat_read: 'chat_read',
+});
+
 module.exports = {
   AuthEnum,
   ApplyEnum,
@@ -73,4 +89,6 @@ module.exports = {
   DeviceEnum,
   PushEventEnum,
   MessageEnum,
+  DBTableEnum,
+  RedisEventEnum,
 };

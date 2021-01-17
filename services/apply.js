@@ -1,7 +1,7 @@
 const applyDao = require('../dao/apply');
 
 const push = require('../events/push');
-const { PushEventEnum } = require('../utils/variables/enum');
+const { PushEventEnum, RedisEventEnum } = require('../utils/variables/enum');
 const broadcast = require('../events/broadcast');
 const { rowSplit, toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
@@ -51,17 +51,11 @@ const getApplyById = async ({ study_id, apply_id }) => {
 
 const applyListByHost = async ({ study_id }) => {
   const applyList = await applyDao.applyListByHost(study_id);
-  if (applyList.length === 0) {
-    throw customError(404, '조회된 신청내역이 없습니다');
-  }
   return applyList;
 };
 
 const applyListByUser = async ({ id: user_id }) => {
   const applyList = await applyDao.applyListByUser(user_id);
-  if (applyList.length === 0) {
-    throw customError(404, '조회된 신청내역이 없습니다');
-  }
   return applyList;
 };
 
@@ -83,6 +77,7 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
     Room.updateOne({ study_id }, { $addToSet: { members: user_id } }).exec();
     User.updateOne({ user_id }, { $addToSet: { rooms: study_id } }).exec();
 
+    redisTrigger(user_id, RedisEventEnum.participate, { study_id });
     broadcast.participate(study_id, nickname);
   } else {
     const rejectRows = await applyDao.setReject(apply_id);

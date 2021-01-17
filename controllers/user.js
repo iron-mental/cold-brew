@@ -79,6 +79,11 @@ const getAddress = async (req, res) => {
   response(res, 200, addressList);
 };
 
+const getAlert = async (req, res) => {
+  const alertList = await userService.getAlert(req.params);
+  response(res, 200, alertList);
+};
+
 module.exports = {
   signup,
   login,
@@ -95,4 +100,5 @@ module.exports = {
   updateEmail,
   updatePushToken,
   getAddress,
+  getAlert,
 };

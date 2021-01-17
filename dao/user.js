@@ -131,7 +131,7 @@ const userUpdate = async (id, updateData) => {
 const withdraw = async (id, email, password) => {
   const conn = await pool.getConnection();
   try {
-    await conn.beginTransaction();
+    conn.beginTransaction();
     const withdrawSql = `DELETE FROM user WHERE ? AND ?`;
     const [withdrawRows] = await conn.query(withdrawSql, [{ id }, { email }]);
     if (!withdrawRows.affectedRows) {
@@ -147,10 +147,10 @@ const withdraw = async (id, email, password) => {
       .catch((err) => {
         throw firebaseError(err);
       });
-    await conn.commit();
+    conn.commit();
     return withdrawRows;
   } catch (err) {
-    await conn.rollback();
+    conn.rollback();
     throw err;
   } finally {
     await conn.release();
@@ -269,6 +269,30 @@ const getAddress = async () => {
   }
 };
 
+const getAlert = async (user_id) => {
+  const conn = await pool.getConnection();
+
+  try {
+    conn.beginTransaction();
+    const alertSql = `
+      SELECT id, study_id, pushEvent, message,
+      DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at
+      FROM alert
+      WHERE user_id = ? AND confirm = ?`;
+    const [alertRows] = await conn.query(alertSql, [user_id, false]);
+
+    const updateSql = `UPDATE alert SET confirm = ? WHERE user_id = ? `;
+    const [updateRows] = await conn.query(updateSql, [true, user_id]);
+    conn.commit();
+    return alertRows;
+  } catch (err) {
+    conn.rollback();
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -283,4 +307,5 @@ module.exports = {
   checkToken,
   updateEmail,
   getAddress,
+  getAlert,
 };
