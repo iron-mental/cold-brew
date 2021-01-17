@@ -103,15 +103,13 @@ const userImageUpdate = async ({ id }, updateData, { destination, uploadedFile, 
 
 // 유저정보 수정
 const userUpdate = async ({ id }, updateData) => {
-  if (updateData.nickname) {
-    const checkRows = await userDao.checkNickname(updateData.nickname);
-    if (checkRows.length) {
-      throw customError(400, '중복된 닉네임이 존재합니다');
-    }
-
-    User.updateOne({ user_id: id }, { nickname: updateData.nickname }).exec();
-    Chat.updateMany({ user_id: id }, { nickname: updateData.nickname }).exec();
+  const checkRows = await userDao.checkNickname(updateData.nickname, id);
+  if (checkRows.length) {
+    throw customError(400, '중복된 닉네임이 존재합니다');
   }
+
+  User.updateOne({ user_id: id }, { nickname: updateData.nickname }).exec();
+  Chat.updateMany({ user_id: id }, { nickname: updateData.nickname }).exec();
 
   const updateRows = await userDao.userUpdate(id, updateData);
   if (updateRows.affectedRows === 0) {
@@ -176,6 +174,7 @@ const reissuance = async (expiredAccessToken, { refresh_token }) => {
   return newTokenSet;
 };
 
+// 비밀번호 수정
 const resetPassword = async ({ email }) => {
   await firebase
     .auth()
@@ -185,6 +184,7 @@ const resetPassword = async ({ email }) => {
     });
 };
 
+// 이메일 수정
 const updateEmail = async ({ id }, { email }) => {
   const userDataRows = await userDao.updateEmail(id, email);
   if (userDataRows.length === 0) {
@@ -192,6 +192,7 @@ const updateEmail = async ({ id }, { email }) => {
   }
 };
 
+// 푸시토큰 갱신
 const updatePushToken = async ({ id }, { push_token }) => {
   const updateRows = await userDao.userUpdate(id, { push_token });
   if (updateRows.affectedRows === 0) {
@@ -200,16 +201,19 @@ const updatePushToken = async ({ id }, { push_token }) => {
   redisTrigger(id, RedisEventEnum.push_token, { push_to });
 };
 
+// 주소 데이터
 const getAddress = async () => {
   const addressRows = await userDao.getAddress();
   return parsingAddress(addressRows);
 };
 
+// 알림 조회
 const getAlert = async ({ id: user_id }) => {
   const alertRows = await userDao.getAlert(user_id);
   return alertRows;
 };
 
+// 푸시 테스트
 const pushTest = async ({ id: user_id }) => {
   push.emit('toUser', PushEventEnum.push_test, user_id);
 };

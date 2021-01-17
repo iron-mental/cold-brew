@@ -6,11 +6,14 @@ const { customError } = require('../utils/errors/custom');
 const { firebaseError } = require('../utils/errors/firebase');
 const { databaseError } = require('../utils/errors/database');
 
-const checkNickname = async (nickname) => {
+const checkNickname = async (nickname, user_id) => {
+  if (!user_id) {
+    user_id = 0;
+  }
   const conn = await pool.getConnection();
   try {
-    const checkSql = 'SELECT nickname FROM user WHERE ?';
-    const [checkRows] = await conn.query(checkSql, { nickname });
+    const checkSql = 'SELECT nickname FROM user WHERE nickname = ? AND NOT id = ?';
+    const [checkRows] = await conn.query(checkSql, [nickname, user_id]);
     return checkRows;
   } catch (err) {
     throw databaseError(err);
