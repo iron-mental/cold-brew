@@ -73,7 +73,7 @@ const userInfoUpdate = async (req, res, next) => {
   });
   const bodySchema = Joi.object({
     nickname: Joi.string().min(2).max(8),
-    introduce: Joi.string().max(200),
+    introduce: Joi.string().allow('').max(200),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);
@@ -105,8 +105,8 @@ const userCareerUpdate = async (req, res, next) => {
     id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
-    career_title: Joi.string().min(2).max(20),
-    career_contents: Joi.string().max(200),
+    career_title: Joi.string().allow('').min(2).max(20),
+    career_contents: Joi.string().allow('').max(200),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);
