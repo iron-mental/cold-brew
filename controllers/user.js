@@ -84,6 +84,11 @@ const getAlert = async (req, res) => {
   response(res, 200, alertList);
 };
 
+const pushTest = async (req, res) => {
+  await userService.pushTest(req.user);
+  response(res, 200, '푸시 전송');
+};
+
 module.exports = {
   signup,
   login,
@@ -101,4 +106,5 @@ module.exports = {
   updatePushToken,
   getAddress,
   getAlert,
+  pushTest,
 };
