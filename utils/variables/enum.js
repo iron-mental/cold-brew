@@ -46,6 +46,8 @@ const PushEventEnum = Object.freeze({
 
   notice_new: 'notice_new',
   notice_update: 'notice_update',
+
+  push_test: 'push_test',
 });
 
 const MessageEnum = Object.freeze({
@@ -59,6 +61,8 @@ const MessageEnum = Object.freeze({
 
   notice_new: '공지사항이 생겼습니다 - test(방장제외 멤버)',
   notice_update: '공지사항이 수정되었습니다 - test(방장제외 멤버)',
+
+  push_test: '푸시알림 테스트 - test(유저)',
 });
 
 const DBTableEnum = Object.freeze({

@@ -17,6 +17,7 @@ const router = express.Router();
 router.get('/check-nickname/:nickname', userValid.checkNickname, asyncWrap(userController.checkNickname)); // 닉네임 중복체크
 router.get('/check-email/:email', userValid.checkEmail, asyncWrap(userController.checkEmail)); // 이메일 중복체크
 router.get('/address', asyncWrap(userController.getAddress)); // 주소 목록
+router.get('/pushTest', asyncWrap(userController.pushTest)); // 푸시알림 테스트
 
 router.post('/', userValid.signup, asyncWrap(userController.signup)); // 회원 가입
 router.post('/login', userValid.login, asyncWrap(userController.login)); // 로그인

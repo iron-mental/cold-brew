@@ -9,9 +9,11 @@ const { verify, getAccessToken, getRefreshToken } = require('../utils/jwt.js');
 const { customError } = require('../utils/errors/custom');
 const { firebaseError } = require('../utils/errors/firebase');
 
+const push = require('../events/push');
+
 const User = require('../models/user');
 const Chat = require('../models/chat');
-const { RedisEventEnum } = require('../utils/variables/enum');
+const { RedisEventEnum, PushEventEnum } = require('../utils/variables/enum');
 const { redisTrigger, redisSignup } = require('./redis');
 
 // 닉네임 중복체크
@@ -208,6 +210,10 @@ const getAlert = async ({ id: user_id }) => {
   return alertRows;
 };
 
+const pushTest = async ({ id: user_id }) => {
+  push.emit('toUser', PushEventEnum.push_test, user_id);
+};
+
 module.exports = {
   signup,
   login,
@@ -225,4 +231,5 @@ module.exports = {
   updatePushToken,
   getAddress,
   getAlert,
+  pushTest,
 };
