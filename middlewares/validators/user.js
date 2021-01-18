@@ -5,7 +5,7 @@ const commonValid = require('./common');
 
 const checkNickname = async (req, res, next) => {
   const paramSchema = Joi.object({
-    nickname: Joi.string().required().min(2).max(8).alphanum(),
+    nickname: Joi.string().required().min(2).max(8),
   });
   try {
     await paramSchema.validateAsync(req.params);
@@ -30,8 +30,8 @@ const checkEmail = async (req, res, next) => {
 const signup = async (req, res, next) => {
   const bodySchema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().required().max(20).alphanum(),
-    nickname: Joi.string().required().min(2).max(8).alphanum(),
+    password: Joi.string().required().max(20),
+    nickname: Joi.string().required().min(2).max(8),
   });
   try {
     await bodySchema.validateAsync(req.body);
@@ -44,8 +44,8 @@ const signup = async (req, res, next) => {
 const login = async (req, res, next) => {
   const bodySchema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().required().max(20).alphanum(),
-    push_token: Joi.string().required().alphanum(),
+    password: Joi.string().required().max(20),
+    push_token: Joi.string().required(),
   });
   try {
     await bodySchema.validateAsync(req.body);
@@ -72,7 +72,7 @@ const userInfoUpdate = async (req, res, next) => {
     id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
-    nickname: Joi.string().min(2).max(8).alphanum(),
+    nickname: Joi.string().min(2).max(8),
     introduce: Joi.string().allow('').max(200),
   }).min(1);
   try {
