@@ -84,6 +84,7 @@ const RedisEventEnum = Object.freeze({
   chat: 'chat',
   alert_read: 'alert_read',
   chat_read: 'chat_read',
+  reset: 'reset',
 });
 
 module.exports = {
