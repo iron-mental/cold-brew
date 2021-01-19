@@ -33,46 +33,47 @@ const redisTrigger = async (user_id, redisEvent, data) => {
   return userData;
 };
 
-const redisProcess = (userData, redisEvent, data) => {
+const redisProcess = async (userData, redisEvent, data) => {
   switch (redisEvent) {
     case RedisEventEnum.push_token:
-      console.log('푸시토큰 갱신');
       userData.push = data;
-      return userData;
+      break;
 
     case RedisEventEnum.participate:
-      console.log('스터디 가입');
       userData.chat[data.study_id] = 0;
       userData.alert[data.study_id] = 0;
-      return userData;
+      break;
 
     case RedisEventEnum.alert:
-      console.log('알림');
       userData.alert[data.study_id] += 1;
-      userData = countTotal(userData);
-      return userData;
+      break;
 
     case RedisEventEnum.chat:
-      console.log('채팅');
       userData.chat[data.study_id] += 1;
-      userData = countTotal(userData);
-      return userData;
+      break;
 
     case RedisEventEnum.alert_read:
-      console.log('알림 읽음');
       userData.alert[data.study_id] = 0;
-      userData = countTotal(userData);
-      return userData;
+      break;
 
     case RedisEventEnum.chat_read:
-      console.log('채팅 읽음');
       userData.chat[data.study_id] = 0;
-      userData = countTotal(userData);
-      return userData;
+      break;
+
+    case RedisEventEnum.reset:
+      userData = redisUserModel;
+      for (let study of data) {
+        userData.chat[study.id] = 0;
+        userData.alert[study.id] = 0;
+      }
+      break;
   }
+
+  userData = await totalCount(userData);
+  return userData;
 };
 
-const countTotal = (userData) => {
+const totalCount = async (userData) => {
   userData.alert.total = 0;
   userData.chat.total = 0;
 
