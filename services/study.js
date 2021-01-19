@@ -28,7 +28,7 @@ const createStudy = async ({ id: user_id }, createData) => {
     members: [user_id],
   });
   User.updateOne({ user_id }, { $push: { rooms: createRows.insertId } }, { upsert: true }).exec();
-  redisTrigger(user_id, RedisEventEnum.participate, { study_id: insertId });
+  redisTrigger(user_id, RedisEventEnum.participate, { study_id: createRows.insertId });
   return createRows.insertId;
 };
 
