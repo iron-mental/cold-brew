@@ -227,7 +227,7 @@ const updateEmail = async (id, email) => {
     const [uidRows] = await conn.query(uidSql, { id });
     const { uid } = uidRows[0];
 
-    admin
+    await admin
       .auth()
       .updateUser(uid, {
         email,

@@ -6,6 +6,7 @@ const broadcast = require('../events/broadcast');
 const { rowSplit, toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
 const { ApplyEnum } = require('../utils/variables/enum');
+const { redisTrigger } = require('./redis');
 
 const User = require('../models/user');
 const Room = require('../models/room');

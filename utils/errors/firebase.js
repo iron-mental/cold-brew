@@ -10,6 +10,7 @@ class FirebaseError extends Error {
 
 const FirebaseErrorEnum = Object.freeze({
   'auth/user-not-found': 'auth/user-not-found',
+  'auth/email-already-exists': 'auth/email-already-exists',
   'auth/wrong-password': 'auth/wrong-password',
   'auth/too-many-requests': 'auth/too-many-requests',
 });
