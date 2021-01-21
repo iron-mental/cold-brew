@@ -48,7 +48,7 @@ const studyPaging = async (req, res) => {
 };
 
 const leaveStudy = async (req, res) => {
-  await checkAuthority(req.user, req.params, AuthEnum.host, AuthEnum.member);
+  const authority = await checkAuthority(req.user, req.params, AuthEnum.host, AuthEnum.member);
   await studyService.leaveStudy(req.user, req.params, authority);
   response(res, 200, '탈퇴가 완료되었습니다');
 };
