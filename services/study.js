@@ -137,6 +137,10 @@ const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
 };
 
 const delegate = async ({ id: old_leader }, { study_id }, { new_leader }) => {
+  if (old_leader === new_leader) {
+    throw customError(400, '자기 자신에게 위임할 수 없습니다');
+  }
+
   const { toLeaderRows, toParticipateRows } = await studyDao.delegate(study_id, old_leader, new_leader);
   if (toLeaderRows.affectedRows === 0 || toParticipateRows.affectedRows === 0) {
     throw customError(400, '위임 실패');
