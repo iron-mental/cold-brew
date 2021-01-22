@@ -1,6 +1,5 @@
 const userService = require('../services/user');
 const response = require('../utils/response');
-const { DeviceEnum } = require('../utils/variables/enum');
 
 const checkNickname = async (req, res) => {
   await userService.checkNickname(req.params);
@@ -18,7 +17,6 @@ const signup = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  req.body.device = req.headers['user-agent'].indexOf('iOS') === -1 ? DeviceEnum.android : DeviceEnum.ios;
   const tokenSet = await userService.login(req.body);
   response(res, 200, tokenSet);
 };

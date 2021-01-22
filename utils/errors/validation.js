@@ -23,6 +23,7 @@ const validErrorHandler = Object.freeze({
   'array.min': 'array.min',
   'array.max': 'array.max',
   'string.base': 'string.base',
+  'any.only': 'any.only',
 });
 
 validError = (err) => {
@@ -111,8 +112,14 @@ validError = (err) => {
       err.message = `문자열만 입력 가능합니다`;
       return new ValidError(err);
 
-    default:
+    case 'any.only':
       err.code = 115;
+      err.label = err.details[0].context.label;
+      err.message = `ios, android만 입력 가능합니다`;
+      return new ValidError(err);
+
+    default:
+      err.code = 116;
       err.label = err.details[0].context.label;
       err.message = `유효성검사 에러`;
       return new ValidError(err);

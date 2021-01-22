@@ -53,7 +53,7 @@ const signup = async ({ email, password, nickname }) => {
 };
 
 // 로그인
-const login = async ({ email, password, push_token, device }) => {
+const login = async ({ email, password, device, push_token }) => {
   const loginRows = await userDao.login(email, password);
   if (loginRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
@@ -64,10 +64,10 @@ const login = async ({ email, password, push_token, device }) => {
   const refresh_token = await getRefreshToken({ id });
 
   userDao.userUpdate(id, {
+    device,
     access_token,
     refresh_token,
     push_token,
-    device,
   });
 
   redisTrigger(id, RedisEventEnum.push_token, {
@@ -193,8 +193,8 @@ const updateEmail = async ({ id }, { email }) => {
 };
 
 // 푸시토큰 갱신
-const updatePushToken = async ({ id }, { push_token }) => {
-  const updateRows = await userDao.userUpdate(id, { push_token });
+const updatePushToken = async ({ id }, updateData) => {
+  const updateRows = await userDao.userUpdate(id, updateData);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
