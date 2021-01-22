@@ -1,6 +1,7 @@
 const Joi = require('joi');
 
 const { validError } = require('../../utils/errors/validation');
+const { DeviceEnum } = require('../../utils/variables/enum');
 const commonValid = require('./common');
 
 const checkNickname = async (req, res, next) => {
@@ -46,6 +47,7 @@ const login = async (req, res, next) => {
     email: Joi.string().email().required(),
     password: Joi.string().required().max(20),
     push_token: Joi.string().required(),
+    device: Joi.equal(...Object.values(DeviceEnum)).required(),
   });
   try {
     await bodySchema.validateAsync(req.body);
@@ -236,6 +238,7 @@ const updateEmail = async (req, res, next) => {
 const updatePushToken = async (req, res, next) => {
   const bodySchema = Joi.object({
     push_token: Joi.string().required(),
+    device: Joi.equal(...Object.values(DeviceEnum)).required(),
   });
   try {
     await bodySchema.validateAsync(req.body);
