@@ -118,8 +118,8 @@ const applyListByUser = async (user_id) => {
         apply a
         LEFT JOIN study s
         ON a.study_id = s.id
-      WHERE a.user_id = ?`;
-    const [applyRows] = await conn.query(applySql, user_id);
+      WHERE a.apply_status = ? AND a.user_id = ?`;
+    const [applyRows] = await conn.query(applySql, [ApplyEnum.apply, user_id]);
     return applyRows;
   } catch (err) {
     throw databaseError(err);
