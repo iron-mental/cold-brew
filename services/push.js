@@ -7,7 +7,7 @@ const pushDao = require('../dao/push');
 const { tokenDivision } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
 const { RedisEventEnum, PushEventEnum } = require('../utils/variables/enum');
-const { redisTrigger } = require('./redis');
+const { redisTrigger, getUser } = require('./redis');
 
 const apnProvider = new apn.Provider(options);
 
@@ -57,7 +57,8 @@ const chat = async (study_id, chat) => {
 const send = async (tokenRows, pushEvent, study_id) => {
   if (pushEvent === PushEventEnum.push_test) {
     for (let row of tokenRows) {
-      row.badge = 100;
+      let redisData = await getUser(row.id);
+      row.badge = redisData.badge;
     }
   } else {
     for (let row of tokenRows) {
@@ -111,7 +112,7 @@ const fcmSender = (fcm_token, payload) => {
     .messaging()
     .sendMulticast(payload)
     .catch((err) => {
-      console.log('Error sending message:', err);
+      console.log('## FCM 에러: ', err);
     });
 };
 
