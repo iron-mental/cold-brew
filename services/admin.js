@@ -1,7 +1,7 @@
 const adminDao = require('../dao/admin');
 const { authError } = require('../utils/errors/auth');
 const { RedisEventEnum } = require('../utils/variables/enum');
-const { redisTrigger } = require('./redis');
+const { redisTrigger, getUser } = require('./redis');
 
 // 레디스 초기화
 const resetRedis = async ({ id: user_id }) => {
@@ -17,6 +17,14 @@ const resetRedis = async ({ id: user_id }) => {
   });
 };
 
+const getRedis = async ({ id }, { user_id }) => {
+  if (id !== 1) {
+    throw authError({ message: 'permission error' });
+  }
+  return await getUser(user_id);
+};
+
 module.exports = {
   resetRedis,
+  getRedis,
 };
