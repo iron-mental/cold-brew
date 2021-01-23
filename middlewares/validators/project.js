@@ -38,7 +38,6 @@ const updateProject = async (req, res, next) => {
     await bodySchema.validateAsync(req.body);
     next();
   } catch (err) {
-    console.log('err: ', err);
     next(validError(err));
   }
 };

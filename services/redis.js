@@ -26,6 +26,10 @@ const redisSignup = async (user_id) => {
   await setData(user_id, redisUserModel);
 };
 
+const getUser = async (user_id) => {
+  return await getData(user_id);
+};
+
 const redisTrigger = async (user_id, redisEvent, data) => {
   let userData = await getData(user_id);
   userData = await redisProcess(userData, redisEvent, data);
@@ -92,4 +96,5 @@ const totalCount = async (userData) => {
 module.exports = {
   redisSignup,
   redisTrigger,
+  getUser,
 };
