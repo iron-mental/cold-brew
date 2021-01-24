@@ -28,15 +28,15 @@ const uriList = {
 
 const setTrim = (req, res, next) => {
   for (let prop in req.params) {
-    req.params[prop] = req.params[prop].trim();
+    req.params[prop] = typeof req.params[prop] === 'String' ? req.params[prop].trim() : req.params[prop];
   }
 
   for (let prop in req.body) {
-    req.body[prop] = req.body[prop].trim();
+    req.body[prop] = typeof req.body[prop] === 'String' ? req.body[prop].trim() : req.body[prop];
   }
 
   for (let prop in req.query) {
-    req.query[prop] = req.query[prop].trim();
+    req.query[prop] = typeof req.query[prop] === 'String' ? req.query[prop].trim() : req.query[prop];
   }
 
   return next();

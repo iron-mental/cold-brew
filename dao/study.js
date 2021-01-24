@@ -152,7 +152,7 @@ const getStudyListByNew = async (user_id, category) => {
 
     const studyListSql = `
       SELECT
-        S.*, count(*) members, IF(user_id is not null, true, false) isMember
+        S.*, count(*) member_count, IF(user_id is not null, true, false) is_member
       FROM (
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
@@ -187,25 +187,15 @@ const getStudyListByNew = async (user_id, category) => {
 const getStudyListByLength = async ({ latitude, longitude }, user_id, category) => {
   const conn = await pool.getConnection();
   try {
-    await conn.beginTransaction();
-    const countingSql = `
-    UPDATE
-      category_count
-    SET
-      ${category} = ${category} + 1
-    WHERE
-      user_id = ?`;
-    await conn.query(countingSql, user_id);
-
     const studyListSql = `
       SELECT
-        S.*, count(*) members, IF(user_id is not null, true, false) isMember
+        S.*, count(*) member_count, IF(user_id is not null, true, false) is_member
       FROM (
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
           DATE_FORMAT(s.created_at, '%y / %c / %d') created_at,
-          (6371*acos(cos(radians(?))*cos(radians(s.latitude))*cos(radians(s.longitude)
-          -radians(?))+sin(radians(?))*sin(radians(s.latitude)))) AS distance
+          (6371*acos(cos(radians( ? ))*cos(radians( s.latitude ))*cos(radians( s.longitude )
+          -radians( ? ))+sin(radians( ? ))*sin(radians( s.latitude )))) AS distance
         FROM
           study s
           LEFT JOIN participate p
@@ -213,19 +203,18 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
           LEFT JOIN user u
           ON u.id = p.user_id
         WHERE category = ?
-        ORDER BY p.leader DESC) AS S
+        ORDER BY p.leader DESC ) AS S
       LEFT JOIN (
         SELECT user_id, study_id
         FROM participate
         WHERE user_id = ?) AS P
       ON S.id = P.study_id
-      GROUP BY S.id`;
-    const [listRows] = await conn.query(studyListSql, [latitude, longitude, latitude, category, user_id]);
-    await conn.commit();
-
+      GROUP BY S.id
+      ORDER BY S.distance
+      `;
+    const [listRows] = await conn.query(studyListSql, [longitude, latitude, longitude, category, user_id]);
     return listRows;
   } catch (err) {
-    await conn.rollback();
     throw databaseError(err);
   } finally {
     await conn.release();
@@ -238,10 +227,10 @@ const studyPaging = async (user_id, studyKeys) => {
   try {
     const studyListSql = `
       SELECT
-        S.*, IF(P.user_id is not null, true, false) isMember
+        S.*, IF(P.user_id is not null, true, false) is_member
       FROM (
         SELECT
-          *, count(*) members
+          *, count(*) member_count
         FROM (
           SELECT
             s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
@@ -318,7 +307,7 @@ const search = async (user_id, word) => {
   try {
     const searchSql = `
     SELECT
-      S.*, count(*) members, IF(user_id is not null, true, false) isMember
+      S.*, count(*) member_count, IF(user_id is not null, true, false) is_member
     FROM (
       SELECT
         s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
