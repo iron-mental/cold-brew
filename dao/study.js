@@ -194,8 +194,8 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
           DATE_FORMAT(s.created_at, '%y / %c / %d') created_at,
-          (6371*acos(cos(radians(?))*cos(radians(s.latitude))*cos(radians(s.longitude)
-          -radians(?))+sin(radians(?))*sin(radians(s.latitude)))) AS distance
+          (6371*acos(cos(radians( ? ))*cos(radians( s.latitude ))*cos(radians( s.longitude )
+          -radians( ? ))+sin(radians( ? ))*sin(radians( s.latitude )))) AS distance
         FROM
           study s
           LEFT JOIN participate p
@@ -203,15 +203,16 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
           LEFT JOIN user u
           ON u.id = p.user_id
         WHERE category = ?
-        ORDER BY p.leader DESC) AS S
+        ORDER BY p.leader DESC ) AS S
       LEFT JOIN (
         SELECT user_id, study_id
         FROM participate
         WHERE user_id = ?) AS P
       ON S.id = P.study_id
       GROUP BY S.id
-      ORDER BY distance`;
-    const [listRows] = await conn.query(studyListSql, [latitude, longitude, latitude, category, user_id]);
+      ORDER BY S.distance
+      `;
+    const [listRows] = await conn.query(studyListSql, [longitude, latitude, longitude, category, user_id]);
     return listRows;
   } catch (err) {
     throw databaseError(err);
