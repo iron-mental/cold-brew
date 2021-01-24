@@ -70,6 +70,7 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
       throw customError(400, '이미 승인된 회원입니다');
     }
     const { user_id, nickname } = userRows[0];
+
     const allowRows = await applyDao.setAllow(study_id, apply_id, user_id);
     if (allowRows.affectedRows === 0) {
       throw customError(400, '수락 실패');
@@ -81,10 +82,12 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
     redisTrigger(user_id, RedisEventEnum.participate, { study_id });
     broadcast.participate(study_id, nickname);
   } else {
-    const rejectRows = await applyDao.setReject(apply_id);
-    if (rejectRows.affectedRows === 0) {
+    const [rejectRows, userRows] = await applyDao.setReject(apply_id);
+    if (rejectRows.changedRows === 0) {
       throw customError(404, '조회된 신청내역이 없습니다');
     }
+
+    push.emit('toUser', PushEventEnum.apply_reject, userRows[0].user_id);
   }
 };
 
