@@ -52,10 +52,17 @@ const locationMerge = (row) => {
 };
 
 const cutId = (rows) => {
-  for (let idx = 10; idx < rows.length; idx++) {
-    rows[idx] = { id: rows[idx].id };
-  }
-  return rows;
+  return rows.map((row, idx) => {
+    if (idx < 10) {
+      row.is_paging = false;
+      return row;
+    } else {
+      return {
+        id: row.id,
+        is_paging: true,
+      };
+    }
+  });
 };
 
 const lengthSorting = (sigungu, rows) => {
