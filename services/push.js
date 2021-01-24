@@ -70,20 +70,21 @@ const send = async (tokenRows, pushEvent, study_id) => {
   const [userList, apns_token, fcm_token] = tokenDivision(tokenRows);
   let payload = getPushPayload(pushEvent, study_id);
 
-  const alertInsertData = userList.map((user_id) => {
-    return {
-      user_id,
-      study_id,
-      pushEvent,
-      message: payload.apns.aps.alert,
-    };
-  });
+  if (userList.length > 0) {
+    const alertInsertData = userList.map((user_id) => {
+      return {
+        user_id,
+        study_id,
+        pushEvent,
+        message: payload.apns.aps.alert,
+      };
+    });
 
-  const insertRows = await pushDao.insertAlert(alertInsertData);
-  if (!insertRows.affectedRows) {
-    throw customError(500, 'Alert Insert Error(알람 적재 에러)');
+    const insertRows = await pushDao.insertAlert(alertInsertData);
+    if (!insertRows.affectedRows) {
+      throw customError(500, 'Alert Insert Error(알람 적재 에러)');
+    }
   }
-
   // sender를 하나씩으로 변경
   for (let token of apns_token) {
     payload.apns.badge = token[1];
