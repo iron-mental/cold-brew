@@ -332,7 +332,6 @@ const search = async (user_id, word) => {
     const [searchRows] = await conn.query(searchSql, [word, word, word, user_id]);
     return searchRows;
   } catch (err) {
-    console.log('err: ', err);
     throw databaseError(err);
   } finally {
     await conn.release();
