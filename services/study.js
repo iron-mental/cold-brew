@@ -106,13 +106,13 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
     throw customError(400, 'sort 입력이 잘못되었습니다');
   }
 
-  studyListRows = toBoolean(studyListRows, ['isMember']);
+  studyListRows = toBoolean(studyListRows, ['is_member']);
   return cutId(studyListRows);
 };
 
 const studyPaging = async ({ id: user_id }, studyKeys) => {
   const studyListRows = await studyDao.studyPaging(user_id, studyKeys);
-  return toBoolean(studyListRows, ['isMember']);
+  return toBoolean(studyListRows, ['is_member']);
 };
 
 const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
@@ -156,7 +156,7 @@ const search = async ({ id: user_id }, { word }) => {
   word = '%' + word + '%';
   let searchRows = await studyDao.search(user_id, word);
 
-  searchRows = toBoolean(searchRows, ['isMember']);
+  searchRows = toBoolean(searchRows, ['is_member']);
   return cutId(searchRows);
 };
 

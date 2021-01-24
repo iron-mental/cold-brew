@@ -152,7 +152,7 @@ const getStudyListByNew = async (user_id, category) => {
 
     const studyListSql = `
       SELECT
-        S.*, count(*) members, IF(user_id is not null, true, false) isMember
+        S.*, count(*) member_count, IF(user_id is not null, true, false) is_member
       FROM (
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
@@ -199,7 +199,7 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
 
     const studyListSql = `
       SELECT
-        S.*, count(*) members, IF(user_id is not null, true, false) isMember
+        S.*, count(*) member_count, IF(user_id is not null, true, false) is_member
       FROM (
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
@@ -238,10 +238,10 @@ const studyPaging = async (user_id, studyKeys) => {
   try {
     const studyListSql = `
       SELECT
-        S.*, IF(P.user_id is not null, true, false) isMember
+        S.*, IF(P.user_id is not null, true, false) is_member
       FROM (
         SELECT
-          *, count(*) members
+          *, count(*) member_count
         FROM (
           SELECT
             s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
@@ -318,7 +318,7 @@ const search = async (user_id, word) => {
   try {
     const searchSql = `
     SELECT
-      S.*, count(*) members, IF(user_id is not null, true, false) isMember
+      S.*, count(*) member_count, IF(user_id is not null, true, false) is_member
     FROM (
       SELECT
         s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
@@ -343,6 +343,7 @@ const search = async (user_id, word) => {
     const [searchRows] = await conn.query(searchSql, [word, word, word, user_id]);
     return searchRows;
   } catch (err) {
+    console.log('err: ', err);
     throw databaseError(err);
   } finally {
     await conn.release();
