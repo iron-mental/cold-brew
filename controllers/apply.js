@@ -4,7 +4,7 @@ const { AuthEnum } = require('../utils/variables/enum');
 const response = require('../utils/response');
 
 const createApply = async (req, res) => {
-  await checkAuthority(req.user, req.params, AuthEnum.none);
+  await checkAuthority(req.user, req.params, AuthEnum.none, AuthEnum.reject);
   req.body.user_id = req.user.id;
   req.body.study_id = req.params.study_id;
   await applyService.createApply(req.body);
