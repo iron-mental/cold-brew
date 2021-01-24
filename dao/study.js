@@ -187,16 +187,6 @@ const getStudyListByNew = async (user_id, category) => {
 const getStudyListByLength = async ({ latitude, longitude }, user_id, category) => {
   const conn = await pool.getConnection();
   try {
-    await conn.beginTransaction();
-    const countingSql = `
-    UPDATE
-      category_count
-    SET
-      ${category} = ${category} + 1
-    WHERE
-      user_id = ?`;
-    await conn.query(countingSql, user_id);
-
     const studyListSql = `
       SELECT
         S.*, count(*) member_count, IF(user_id is not null, true, false) is_member
@@ -221,11 +211,8 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
       ON S.id = P.study_id
       GROUP BY S.id`;
     const [listRows] = await conn.query(studyListSql, [latitude, longitude, latitude, category, user_id]);
-    await conn.commit();
-
     return listRows;
   } catch (err) {
-    await conn.rollback();
     throw databaseError(err);
   } finally {
     await conn.release();
