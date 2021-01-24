@@ -64,6 +64,11 @@ const redisProcess = async (userData, redisEvent, data) => {
       userData.chat[data.study_id] = 0;
       break;
 
+    case RedisEventEnum.leave:
+      delete userData.chat[data.study_id];
+      delete userData.alert[data.study_id];
+      break;
+
     case RedisEventEnum.reset:
       userData = redisUserModel;
       for (let study of data) {

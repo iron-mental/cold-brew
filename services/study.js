@@ -84,7 +84,9 @@ const studyDelete = async ({ id: user_id }, { study_id }) => {
 
   Room.deleteOne({ study_id }).exec();
   User.updateOne({ user_id }, { $pull: { rooms: study_id } }).exec();
-  // 멤버에게 노티 전송부
+  Chat.deleteMany({ study_id }).exec();
+
+  redisTrigger(user_id, RedisEventEnum.leave, { study_id });
 };
 
 const myStudy = async ({ id }) => {
@@ -132,7 +134,7 @@ const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
 
   Room.updateOne({ study_id }, { $pull: { off_members: id, members: id } });
   User.updateOne({ user_id: id }, { $pull: { rooms: study_id } }).exec();
-
+  redisTrigger(id, RedisEventEnum.leave, { study_id });
   broadcast.leave(study_id, nickname);
 };
 
