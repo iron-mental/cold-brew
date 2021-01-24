@@ -31,7 +31,7 @@ const noticeList = async (req, res) => {
 };
 
 const noticePaging = async (req, res) => {
-  const noticeKeys = Array.from({ length: 10 });
+  const noticeKeys = Array.from({ length: process.env.paging_size });
   for (const [key, value] of Object.entries(req.query.values.split(','))) {
     noticeKeys[key] = value;
   }

@@ -53,7 +53,7 @@ const locationMerge = (row) => {
 
 const cutId = (rows) => {
   return rows.map((row, idx) => {
-    if (idx < 10) {
+    if (idx < process.env.paging_size) {
       row.is_paging = false;
       return row;
     } else {

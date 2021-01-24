@@ -38,7 +38,7 @@ const studyList = async (req, res) => {
 };
 
 const studyPaging = async (req, res) => {
-  const studyKeys = Array.from({ length: 10 });
+  const studyKeys = Array.from({ length: process.env.paging_size });
   for (const [key, value] of Object.entries(req.query.values.split(','))) {
     studyKeys[key] = value;
   }
