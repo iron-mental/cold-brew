@@ -31,7 +31,7 @@ const checkEmail = async (req, res, next) => {
 const signup = async (req, res, next) => {
   const bodySchema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().required().max(20),
+    password: Joi.string().required().min(6).max(20),
     nickname: Joi.string().required().min(2).max(8),
   });
   try {
@@ -45,7 +45,7 @@ const signup = async (req, res, next) => {
 const login = async (req, res, next) => {
   const bodySchema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().required().max(20),
+    password: Joi.string().required().min(6).max(20),
     push_token: Joi.string().required(),
     device: Joi.equal(...Object.values(DeviceEnum)).required(),
   });

@@ -26,7 +26,24 @@ const uriList = {
   sns_web: 'https://',
 };
 
+const setTrim = (req, res, next) => {
+  for (let prop in req.params) {
+    req.params[prop] = req.params[prop].trim();
+  }
+
+  for (let prop in req.body) {
+    req.body[prop] = req.body[prop].trim();
+  }
+
+  for (let prop in req.query) {
+    req.query[prop] = req.query[prop].trim();
+  }
+
+  return next();
+};
+
 module.exports = {
   categoryValid,
   uriMethod,
+  setTrim,
 };
