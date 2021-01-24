@@ -152,8 +152,12 @@ const setReject = async (apply_id) => {
   const conn = await pool.getConnection();
   try {
     const rejectSql = 'UPDATE apply SET apply_status = ? WHERE id = ?';
-    const [apply] = await conn.query(rejectSql, [ApplyEnum.reject, apply_id]);
-    return apply;
+    const [rejectRows] = await conn.query(rejectSql, [ApplyEnum.reject, apply_id]);
+
+    const userSql = 'SELECT user_id FROM apply WHERE id = ?';
+    const [userRows] = await conn.query(userSql, apply_id);
+
+    return [rejectRows, userRows];
   } catch (err) {
     throw databaseError(err);
   } finally {
