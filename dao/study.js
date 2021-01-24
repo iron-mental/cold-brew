@@ -209,7 +209,8 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
         FROM participate
         WHERE user_id = ?) AS P
       ON S.id = P.study_id
-      GROUP BY S.id`;
+      GROUP BY S.id
+      ORDER BY distance`;
     const [listRows] = await conn.query(studyListSql, [latitude, longitude, latitude, category, user_id]);
     return listRows;
   } catch (err) {
