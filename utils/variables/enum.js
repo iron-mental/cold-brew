@@ -14,19 +14,21 @@ const ApplyEnum = Object.freeze({
 
 const CategoryEnum = Object.freeze({
   ai: 'ai',
-  etc: 'etc',
-  web: 'web',
-  ios: 'ios',
-  arvr: 'arvr',
-  server: 'server',
   android: 'android',
   backend: 'backend',
   bigdata: 'bigdata',
-  embedded: 'embedded',
-  security: 'security',
-  language: 'language',
   blockchain: 'blockchain',
-  systemNetwork: 'systemNetwork',
+  desktop: 'desktop',
+  devops: 'devops',
+  embedded: 'embedded',
+  etc: 'etc',
+  frontend: 'frontend',
+  game: 'game',
+  ios: 'ios',
+  iot: 'iot',
+  language: 'language',
+  network: 'network',
+  security: 'security',
 });
 
 const DeviceEnum = Object.freeze({
@@ -85,7 +87,7 @@ const RedisEventEnum = Object.freeze({
   alert_read: 'alert_read',
   chat_read: 'chat_read',
   reset: 'reset',
-  leave: 'leave'
+  leave: 'leave',
 });
 
 module.exports = {
