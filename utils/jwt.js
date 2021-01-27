@@ -10,7 +10,7 @@ const verify = (token, tokenType) => {
   try {
     return jwt.verify(token, process.env.JWT_secret);
   } catch (err) {
-    throw customError(401, `${tokenType} Token이 만료되었습니다. 다시 로그인 하세요.`);
+    throw customError(401, `${tokenType} Token이 만료되었습니다. 다시 로그인 하세요`, 106);
   }
 };
 
