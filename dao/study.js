@@ -343,7 +343,7 @@ const getCategoryRanking = async (user_id) => {
   try {
     const categorySql = `
     SELECT
-      ai, android, etc, web, ios, arvr, server, backend, bigdata, embedded, security, language, blockchain, systemNetwork
+      ai, android, backend, bigdata, blockchain, desktop, devops, embedded, etc, frontend, game, ios, iot, language, network, security
     FROM
       category_count
     WHERE
