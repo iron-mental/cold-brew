@@ -112,6 +112,7 @@ const studyList = async (req, res, next) => {
 
 const studyPaging = async (req, res, next) => {
   const querySchema = Joi.object({
+    sort: Joi.string().required(),
     values: Joi.string().min(1).required(),
   });
   try {

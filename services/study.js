@@ -111,8 +111,17 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
   return cutId(studyListRows);
 };
 
-const studyPaging = async ({ id: user_id }, studyKeys) => {
-  const studyListRows = await studyDao.studyPaging(user_id, studyKeys);
+const studyPaging = async ({ id: user_id }, query) => {
+  let studyListRows = [];
+  const studyKeys = query.values.split(',');
+
+  if (query.sort === 'length') {
+    const userData = await getUserLocation(user_id);
+    studyListRows = await studyDao.studyPagingByLength(userData[0], user_id, studyKeys);
+  } else {
+    studyListRows = await studyDao.studyPagingByNew(user_id, studyKeys);
+  }
+
   return toBoolean(studyListRows, ['is_member']);
 };
 

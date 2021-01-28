@@ -221,7 +221,7 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
   }
 };
 
-const studyPaging = async (user_id, studyKeys) => {
+const studyPagingByNew = async (user_id, studyKeys) => {
   const params = studyKeys.concat(studyKeys, user_id);
   const conn = await pool.getConnection();
   try {
@@ -253,7 +253,47 @@ const studyPaging = async (user_id, studyKeys) => {
     return listRows;
   } catch (err) {
     throw databaseError(err);
-    throw temp;
+  } finally {
+    await conn.release();
+  }
+};
+
+const studyPagingByLength = async ({ latitude, longitude }, user_id, studyKeys) => {
+  const distanceParams = [longitude, latitude, longitude];
+  const params = [...distanceParams, ...studyKeys, ...studyKeys, user_id];
+  const conn = await pool.getConnection();
+  try {
+    const studyListSql = `
+      SELECT
+        S.*, IF(P.user_id is not null, true, false) is_member
+      FROM (
+        SELECT
+          *, count(*) member_count
+        FROM (
+          SELECT
+            s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
+            DATE_FORMAT(s.created_at, '%y / %c / %d') created_at,
+            (6371*acos(cos(radians( ? ))*cos(radians( s.latitude ))*cos(radians( s.longitude )
+            -radians( ? ))+sin(radians( ? ))*sin(radians( s.latitude )))) AS distance
+          FROM
+            study s
+            LEFT JOIN participate p
+            ON s.id = p.study_id
+            LEFT JOIN user u
+            ON u.id = p.user_id
+          WHERE s.id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)) A
+        GROUP BY id
+        ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)) S
+      LEFT JOIN (
+        SELECT user_id, study_id
+        FROM participate
+        WHERE user_id = ? ) P
+      ON S.id = P.study_id
+      ORDER BY S.distance`;
+    const [listRows] = await conn.query(studyListSql, params);
+    return listRows;
+  } catch (err) {
+    throw databaseError(err);
   } finally {
     await conn.release();
   }
@@ -367,7 +407,8 @@ module.exports = {
   getMyStudy,
   getStudyListByNew,
   getStudyListByLength,
-  studyPaging,
+  studyPagingByNew,
+  studyPagingByLength,
   checkTitle,
   leaveStudy,
   delegate,

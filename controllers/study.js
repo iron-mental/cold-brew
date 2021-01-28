@@ -38,12 +38,7 @@ const studyList = async (req, res) => {
 };
 
 const studyPaging = async (req, res) => {
-  const studyKeys = Array.from({ length: process.env.paging_size });
-  for (const [key, value] of Object.entries(req.query.values.split(','))) {
-    studyKeys[key] = value;
-  }
-
-  const studyList = await studyService.studyPaging(req.user, studyKeys);
+  const studyList = await studyService.studyPaging(req.user, req.query);
   response(res, 200, studyList);
 };
 
