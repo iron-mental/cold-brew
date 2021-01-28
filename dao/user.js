@@ -278,9 +278,10 @@ const getAlert = async (user_id) => {
   try {
     conn.beginTransaction();
     const alertSql = `
-      SELECT id, study_id, pushEvent, message,
-      DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at
-      FROM alert
+      SELECT A.id, A.study_id, S.title study_title, A.pushEvent, A.message, DATE_FORMAT(A.created_at, "%Y-%c-%d %H:%i:%s") created_at
+      FROM alert A
+        LEFT JOIN study S
+        ON A.study_id = S.id
       WHERE user_id = ? AND confirm = ?`;
     const [alertRows] = await conn.query(alertSql, [user_id, false]);
 
