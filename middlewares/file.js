@@ -26,10 +26,6 @@ const upload = multer({
 
       req.body.image = path.join(process.env.DOMAIN, imagePath, file.uploadedFile.basename);
 
-      console.log('process.env.DOMAIN: ', process.env.DOMAIN);
-      console.log('imagePath: ', imagePath);
-      console.log('file.uploadedFile.basename: ', file.uploadedFile.basename);
-
       if (req.method === 'POST') {
         cb(null, file.uploadedFile.basename);
       } else if (req.method === 'PUT') {
