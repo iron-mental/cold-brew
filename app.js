@@ -10,7 +10,7 @@ const { setTrim } = require('./middlewares/validators/common');
 const app = express();
 
 app.set('trust proxy', true);
-app.use(morgan('combined', { stream }));
+app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

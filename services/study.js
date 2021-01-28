@@ -65,6 +65,7 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
     const oldImagePath = path.join(destination, path.basename(previousPath[0].image));
     const newPath = path.join(destination, uploadedFile.basename);
     fs.rename(_tmpPath, newPath, (err) => {});
+
     fs.unlink(oldImagePath, (err) => {});
   } else {
     const updateRows = await studyDao.studyUpdate(study_id, updateData);
