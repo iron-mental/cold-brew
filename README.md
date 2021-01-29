@@ -38,4 +38,4 @@ Programing Language, iOS, Android, Bigdata, ML 등 다양한 카테고리가 있
 - MVC, n-tier 이미지 뷰잉 + 구현 설명
 
 ## 사용 기술
-- 채팅(웹 소켓), 푸시(FCM, APNs, 등)
+- 채팅(웹 소켓), 푸시(FCM, APNs, 등) 기술
