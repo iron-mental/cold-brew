@@ -18,7 +18,7 @@ Programing Language, iOS, Android, Bigdata, ML 등 다양한 카테고리가 있
 - 스크린샷 + 캡션
 
 ## 개발 환경
-Stackshare: [Terminal :study](https://stackshare.io/terminal-study/terminal-study)
+[Stackshare](https://stackshare.io/terminal-study/terminal-study)
 - 서버 구축
   * AWS EC2, RDS, Route53, Nginx
 - 개발
