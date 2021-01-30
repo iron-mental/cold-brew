@@ -113,10 +113,8 @@ const studyList = async ({ id: user_id }, { category, sort }) => {
 
 const studyPaging = async ({ id: user_id }, query) => {
   let studyListRows = [];
-  const studyKeys = Array.from({ length: process.env.paging_size });
-  for (const [key, value] of Object.entries(query.values.split(','))) {
-    studyKeys[key] = value;
-  }
+  const studyKeys = query.values.split(',');
+  studyKeys.length = process.env.paging_size;
 
   if (query.sort === 'length') {
     const userData = await getUserLocation(user_id);
