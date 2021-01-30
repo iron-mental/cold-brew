@@ -222,7 +222,7 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
 };
 
 const studyPagingByNew = async (user_id, studyKeys) => {
-  const params = studyKeys.concat(studyKeys, user_id);
+  const params = [...studyKeys, ...studyKeys, user_id];
   const conn = await pool.getConnection();
   try {
     const studyListSql = `
@@ -259,8 +259,7 @@ const studyPagingByNew = async (user_id, studyKeys) => {
 };
 
 const studyPagingByLength = async ({ latitude, longitude }, user_id, studyKeys) => {
-  const distanceParams = [longitude, latitude, longitude];
-  const params = [...distanceParams, ...studyKeys, ...studyKeys, user_id];
+  const params = [longitude, latitude, longitude, ...studyKeys, ...studyKeys, user_id];
   const conn = await pool.getConnection();
   try {
     const studyListSql = `
