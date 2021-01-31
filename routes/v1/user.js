@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { idCompare, emailCompare } = require('../../middlewares/auth');
+const { idCompare } = require('../../middlewares/auth');
 const { imageUpload } = require('../../middlewares/file');
 const asyncWrap = require('../../utils/errors/wrap');
 const userValid = require('../../middlewares/validators/user');
@@ -46,6 +46,6 @@ router.post('/:id/project', idCompare, projectValid.updateProject, asyncWrap(pro
 
 router.get('/:id/alert', idCompare, userValid.getAlert, asyncWrap(userController.getAlert)); // 알람 조회
 
-router.post('/reset-password/:email', emailCompare, userValid.resetPassword, asyncWrap(userController.resetPassword)); // 비밀번호 리셋 요청
+router.post('/reset-password/:email', userValid.resetPassword, asyncWrap(userController.resetPassword)); // 비밀번호 리셋 요청
 
 module.exports = router;
