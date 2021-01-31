@@ -124,9 +124,9 @@ const userSnsUpdate = async (req, res, next) => {
     id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
-    sns_github: Joi.string().allow('').max(40),
-    sns_linkedin: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
-    sns_web: Joi.string().allow('').custom(commonValid.uriMethod).max(170),
+    sns_github: Joi.string().allow('').max(500),
+    sns_linkedin: Joi.string().allow('').custom(commonValid.uriMethod).max(500),
+    sns_web: Joi.string().allow('').custom(commonValid.uriMethod).max(500),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);
