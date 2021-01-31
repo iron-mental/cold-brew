@@ -21,8 +21,8 @@ const uriList = {
   sns_appstore: 'https://apps.apple.com/',
   sns_playstore: 'https://play.google.com/',
   sns_notion: 'https://www.notion.so/',
-  sns_evernote: 'https://www.evernote.com/',
-  sns_linkedin: 'https://www.linkedin.com/',
+  sns_evernote: 'https://evernote.com/',
+  sns_linkedin: 'https://linkedin.com/',
   sns_web: 'https://',
 };
 
