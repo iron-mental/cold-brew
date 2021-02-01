@@ -114,9 +114,30 @@ const insertAlert = async (insertData) => {
   }
 };
 
+const getMemberWithoutUserToken = async (study_id, user_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const getMemberSql = `
+      SELECT
+        u.id, u.device, u.push_token
+      FROM
+        participate p
+          LEFT JOIN user u
+          ON p.user_id = u.id
+      WHERE p.study_id = ? AND u.id != ?
+      ORDER BY u.device`;
+    const [memberRows] = await conn.query(getMemberSql, [study_id, user_id]);
+    return memberRows;
+  } catch (err) {
+    throw databaseError(500, err);
+  } finally {
+    await conn.release();
+  }
+};
 module.exports = {
   getMemberToken,
   getMemberWithoutHostToken,
+  getMemberWithoutUserToken,
   getOffMemberToken,
   getUserToken,
   getHostToken,

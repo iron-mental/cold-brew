@@ -161,7 +161,7 @@ const delegate = async ({ id: old_leader }, { study_id }, { new_leader }) => {
     throw customError(400, '위임 실패');
   }
 
-  push.emit('toStudy', PushEventEnum.study_delegate, study_id);
+  push.emit('toStudyWithoutUser', PushEventEnum.study_delegate, study_id, old_leader);
 };
 
 const search = async ({ id: user_id }, { word }) => {

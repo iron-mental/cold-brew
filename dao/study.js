@@ -328,8 +328,8 @@ const delegate = async (study_id, old_leader, new_leader) => {
     await conn.beginTransaction();
 
     const updateSql = 'UPDATE participate SET leader = ? WHERE study_id = ? AND user_id = ?';
-    const toLeaderRows = await conn.query(updateSql, [true, study_id, new_leader]);
     const toParticipateRows = await conn.query(updateSql, [false, study_id, old_leader]);
+    const toLeaderRows = await conn.query(updateSql, [true, study_id, new_leader]);
 
     await conn.commit();
     return { toLeaderRows, toParticipateRows };

@@ -24,4 +24,8 @@ push.on('toStudyWithoutHost', (pushEvent, study_id) => {
   pushService.toStudyWithoutHost(pushEvent, study_id);
 });
 
+push.on('toStudyWithoutUser', (pushEvent, study_id, user_id) => {
+  pushService.toStudyWithoutUser(pushEvent, study_id, user_id);
+});
+
 module.exports = push;
