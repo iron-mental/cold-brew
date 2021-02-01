@@ -31,6 +31,11 @@ const toStudyWithoutHost = async (pushEvent, study_id) => {
   send(tokenRows, pushEvent, study_id);
 };
 
+const toStudyWithoutUser = async (pushEvent, study_id, user_id) => {
+  const tokenRows = await pushDao.getMemberWithoutUserToken(study_id, user_id);
+  send(tokenRows, pushEvent, study_id);
+};
+
 const chat = async (study_id, chat) => {
   const tokenRows = await pushDao.getOffMemberToken(study_id, chat.nickname);
 
@@ -123,4 +128,5 @@ module.exports = {
   toHost,
   toStudy,
   toStudyWithoutHost,
+  toStudyWithoutUser,
 };
