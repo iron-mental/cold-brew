@@ -63,7 +63,9 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
     }
 
     const oldImagePath = path.join(destination, path.basename(previousPath[0].image));
-    fs.unlink(oldImagePath, (err) => {});
+    try {
+      fs.unlink(oldImagePath, (err) => {});
+    } catch (err) {}
 
     const newPath = path.join(destination, uploadedFile.basename);
     fs.rename(_tmpPath, newPath, (err) => {});
