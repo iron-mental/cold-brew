@@ -91,7 +91,9 @@ const userDetail = async ({ id }) => {
 const userImageUpdate = async ({ id }, updateData, { destination, uploadedFile, path: _tmpPath }) => {
   const previousPath = await userDao.getImage(id);
   const oldImagePath = path.join(destination, path.basename(previousPath[0].image || 'nullFileName'));
-  fs.unlink(oldImagePath, (err) => {});
+  try {
+    fs.unlink(oldImagePath, (err) => {});
+  } catch (err) {}
 
   const updateRows = await userDao.userUpdate(id, updateData);
   if (updateRows.affectedRows === 0) {
