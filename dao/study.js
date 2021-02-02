@@ -221,7 +221,7 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
   }
 };
 
-const studyPagingByNew = async (user_id, studyKeys) => {
+const studyPaging = async (user_id, studyKeys) => {
   const params = [...studyKeys, ...studyKeys, user_id];
   const conn = await pool.getConnection();
   try {
@@ -406,7 +406,7 @@ module.exports = {
   getMyStudy,
   getStudyListByNew,
   getStudyListByLength,
-  studyPagingByNew,
+  studyPaging,
   studyPagingByLength,
   checkTitle,
   leaveStudy,

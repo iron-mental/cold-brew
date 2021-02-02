@@ -118,11 +118,11 @@ const studyPaging = async ({ id: user_id }, query) => {
   const studyKeys = query.values.split(',');
   studyKeys.length = process.env.paging_size;
 
-  if (query.sort === 'length') {
+  if (query.option === 'distance') {
     const userData = await getUserLocation(user_id);
     studyListRows = await studyDao.studyPagingByLength(userData[0], user_id, studyKeys);
   } else {
-    studyListRows = await studyDao.studyPagingByNew(user_id, studyKeys);
+    studyListRows = await studyDao.studyPaging(user_id, studyKeys);
   }
 
   return toBoolean(studyListRows, ['is_member']);
@@ -155,12 +155,10 @@ const delegate = async ({ id: old_leader }, { study_id }, { new_leader }) => {
   if (old_leader === new_leader) {
     throw customError(400, '자기 자신에게 위임할 수 없습니다');
   }
-
   const { toLeaderRows, toParticipateRows } = await studyDao.delegate(study_id, old_leader, new_leader);
   if (toLeaderRows.affectedRows === 0 || toParticipateRows.affectedRows === 0) {
     throw customError(400, '위임 실패');
   }
-
   push.emit('toStudyWithoutUser', PushEventEnum.study_delegate, study_id, old_leader);
 };
 
@@ -168,7 +166,6 @@ const search = async ({ id: user_id }, { word }) => {
   Search.updateOne({ word }, { $inc: { count: 1 } }, { upsert: true }).exec();
   word = '%' + word + '%';
   let searchRows = await studyDao.search(user_id, word);
-
   searchRows = toBoolean(searchRows, ['is_member']);
   return cutId(searchRows);
 };
@@ -180,7 +177,6 @@ const ranking = async () => {
 const category = async ({ id }) => {
   const categoryRows = await studyDao.getCategoryRanking(id);
   const temp = Object.entries(categoryRows[0]);
-
   temp.sort((a, b) => {
     return b[1] - a[1];
   });
