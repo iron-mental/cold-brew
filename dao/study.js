@@ -221,7 +221,7 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
   }
 };
 
-const studyPagingByNew = async (user_id, studyKeys) => {
+const studyPaging = async (user_id, studyKeys) => {
   const params = [...studyKeys, ...studyKeys, user_id];
   const conn = await pool.getConnection();
   try {
@@ -287,8 +287,7 @@ const studyPagingByLength = async ({ latitude, longitude }, user_id, studyKeys) 
         SELECT user_id, study_id
         FROM participate
         WHERE user_id = ? ) P
-      ON S.id = P.study_id
-      ORDER BY S.distance`;
+      ON S.id = P.study_id`;
     const [listRows] = await conn.query(studyListSql, params);
     return listRows;
   } catch (err) {
@@ -406,7 +405,7 @@ module.exports = {
   getMyStudy,
   getStudyListByNew,
   getStudyListByLength,
-  studyPagingByNew,
+  studyPaging,
   studyPagingByLength,
   checkTitle,
   leaveStudy,
