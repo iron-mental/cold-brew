@@ -200,7 +200,7 @@ const updatePushToken = async ({ id }, updateData) => {
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-  redisTrigger(id, RedisEventEnum.push_token, { push_to });
+  redisTrigger(id, RedisEventEnum.push_token, { updateData });
 };
 
 // 주소 데이터
