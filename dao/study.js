@@ -287,8 +287,7 @@ const studyPagingByLength = async ({ latitude, longitude }, user_id, studyKeys) 
         SELECT user_id, study_id
         FROM participate
         WHERE user_id = ? ) P
-      ON S.id = P.study_id
-      ORDER BY S.distance`;
+      ON S.id = P.study_id`;
     const [listRows] = await conn.query(studyListSql, params);
     return listRows;
   } catch (err) {
