@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const nodemailer = require('nodemailer');
 
 const { mailer } = require('../configs/config');
@@ -13,21 +12,45 @@ const sendVerifyEmail = async (email) => {
     const message = {
       from: process.env.MAILER_auth_user,
       to: email,
-      subject: `Teminal 이메일 주소 인증`,
+      subject: `Teminal :study 이메일인증 메일`,
+      attachments: [
+        {
+          filename: 'logo.png',
+          path: process.env.PATH_logo,
+          cid: 'logo',
+        },
+      ],
       html: `
-      안녕하세요.<br>
-      다음 링크를 통해 이메일 주소를 인증하세요.<br><br>
+      <div style="background-color:#18171D; width:540px; border-radius: 1em;" align="center">
+      <a href='${process.env.DOMAIN}'>
+      <img src=${'cid:logo'} style="margin-left:5px; margin-right:10px; padding-top:25px; width:40px; height:40px" />
+      </a>
+      
+      <b>
+      <font size="8px" color="#2876F2">
+      Terminal :study<br>
+      </font>
+      <br>
 
-      <a href='${processUri}'>이메일 주소 인증하기</a> <br><br>
-
-      이 주소의 인증을 요청하지 않았다면 이 이메일을 무시하셔도 됩니다. <br>
-      감사합니다.<br>
-    
-      Terminal 팀`,
+      <font color="#2876F2" size="4px">
+      이메일 인증을 완료하고 스터디에 참여해보세요<br><br><br>
+      
+      <a href='${processUri}' style="text-decoration: none; color:white; size=4px;">
+      <div style="width:150px; height:30px; background-color:#2876F2; border-radius: 1em; padding-top:5px">
+      인증하기
+      </div></a>
+      
+      <br><br>
+      
+      <div align="right" style="padding-right:20px;">
+      Team Iron-mental <br><br>
+      </div>
+      </font></b></div>`,
     };
+
     await transporter.sendMail(message);
   } catch (err) {
-    customError(500, err);
+    throw customError(500, err);
   }
 };
 

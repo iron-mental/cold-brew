@@ -185,11 +185,11 @@ const emailVerificationProcess = async (email) => {
       })
       .then(async () => {
         const updateSql = 'UPDATE user SET ? WHERE ?';
-        const [updateRows] = await conn.query(updateSql, [{ email_verified: true }, { email }]);
+        await conn.query(updateSql, [{ email_verified: true }, { email }]);
 
-        const userSql = 'SELECT id FROM user WHERE ?';
+        const userSql = 'SELECT nickname FROM user WHERE ?';
         const [userRows] = await conn.query(userSql, { email });
-        return [updateRows, userRows];
+        return userRows;
       })
       .catch((err) => {
         throw firebaseError(err);

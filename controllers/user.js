@@ -1,5 +1,6 @@
 const userService = require('../services/user');
 const response = require('../utils/response');
+const { makeAlert } = require('../utils/makeAlert');
 
 const checkNickname = async (req, res) => {
   await userService.checkNickname(req.params);
@@ -48,7 +49,7 @@ const emailVerification = async (req, res) => {
 
 const emailVerificationProcess = async (req, res) => {
   await userService.emailVerificationProcess(req.params);
-  response(res, 200, `${req.params.email}님의 이메일인증이 완료되었습니다`);
+  return res.status(200).send(makeAlert(`${req.params.email}님의 이메일인증이 완료되었습니다`));
 };
 
 const reissuance = async (req, res) => {
