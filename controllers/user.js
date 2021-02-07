@@ -48,8 +48,8 @@ const emailVerification = async (req, res) => {
 };
 
 const emailVerificationProcess = async (req, res) => {
-  await userService.emailVerificationProcess(req.params);
-  return res.status(200).send(makeAlert(`${req.params.email}님의 이메일인증이 완료되었습니다`));
+  const nickname = await userService.emailVerificationProcess(req.params);
+  return res.status(200).send(makeAlert(`${nickname}님의 이메일인증이 완료되었습니다`));
 };
 
 const reissuance = async (req, res) => {
