@@ -45,17 +45,12 @@ const sendVerifyEmail = async (email) => {
       <div align="right" style="padding-right:20px;">
       Team Iron-mental <br><br>
       </div>
-      </font></b></div>
-      
-
-
-
-    `,
+      </font></b></div>`,
     };
 
     await transporter.sendMail(message);
   } catch (err) {
-    customError(500, err);
+    throw customError(500, err);
   }
 };
 
