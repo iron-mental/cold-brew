@@ -32,9 +32,10 @@ const sendVerifyEmail = async (email) => {
       </font>
       <br>
 
-      <font color="#2876F2" size="4px">
+      <font color="white" size="4px">
       이메일 인증을 완료하고 스터디에 참여해보세요<br><br><br>
-      
+      </font>
+      <font color="#2876F2" size="4px">
       <a href='${processUri}' style="text-decoration: none; color:white; size=4px;">
       <div style="width:150px; height:30px; background-color:#2876F2; border-radius: 1em; padding-top:5px">
       인증하기
