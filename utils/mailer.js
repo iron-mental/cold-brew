@@ -12,7 +12,7 @@ const sendVerifyEmail = async (email) => {
     const message = {
       from: process.env.MAILER_auth_user,
       to: email,
-      subject: `Teminal :study 이메일인증 메일`,
+      subject: `Teminal :study 계정인증 이메일`,
       attachments: [
         {
           filename: 'logo.png',
