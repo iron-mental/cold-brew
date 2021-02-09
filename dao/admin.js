@@ -31,7 +31,32 @@ const getUserStudyList = async (user_id) => {
   }
 };
 
+const deleteEmptyStudy = async () => {
+  const conn = await pool.getConnection();
+  try {
+    const studyListSql = `
+    DELETE FROM study
+    WHERE id in (
+      SELECT T.id
+      FROM (
+        SELECT S.id, count(P.id) as member_count
+        FROM study S
+          left join participate P
+          on S.id = P.study_id
+        GROUP BY S.id) T
+      WHERE T.member_count = 0
+    )`;
+    const [studyListRows] = await conn.query(studyListSql);
+    return studyListRows;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   getUserList,
   getUserStudyList,
+  deleteEmptyStudy,
 };

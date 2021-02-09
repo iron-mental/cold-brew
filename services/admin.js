@@ -1,4 +1,6 @@
 const adminDao = require('../dao/admin');
+const studyDao = require('../dao/study');
+
 const { authError } = require('../utils/errors/auth');
 const { RedisEventEnum } = require('../utils/variables/enum');
 const { redisTrigger, getUser } = require('./redis');
@@ -24,7 +26,15 @@ const getRedis = async ({ id }, { user_id }) => {
   return await getUser(user_id);
 };
 
+const deleteEmptyStudy = async ({ id }) => {
+  if (id !== 1) {
+    throw authError({ message: 'permission error' });
+  }
+  await adminDao.deleteEmptyStudy();
+};
+
 module.exports = {
   resetRedis,
   getRedis,
+  deleteEmptyStudy,
 };

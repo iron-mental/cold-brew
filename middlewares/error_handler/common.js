@@ -17,7 +17,7 @@ const commonErrorHandler = (err, req, res, next) => {
     },
     user: req.user,
   };
-  logger.error(`${format(new Date(), 'yyyy-MM-dd HH:mm:ss')}`, errObj);
+  logger.error(`${format(new Date(), 'yyyy-MM-dd HH:mm:ss', { timezone: 'GMT-9' })}`, errObj);
 
   if (req.file) {
     fs.unlink(req.file.path, (err) => {});

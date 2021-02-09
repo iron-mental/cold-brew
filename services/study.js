@@ -80,7 +80,7 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
 };
 
 const studyDelete = async ({ id: user_id }, { study_id }) => {
-  const studyRows = await studyDao.studyDelete(study_id);
+  const [userRows, studyRows] = await studyDao.studyDelete(study_id);
   if (studyRows.affectedRows === 0) {
     throw customError(400, '스터디 삭제 실패');
   }
@@ -89,7 +89,9 @@ const studyDelete = async ({ id: user_id }, { study_id }) => {
   User.updateOne({ user_id }, { $pull: { rooms: study_id } }).exec();
   Chat.deleteMany({ study_id }).exec();
 
-  redisTrigger(user_id, RedisEventEnum.leave, { study_id });
+  userRows.forEach(({ user_id }) => {
+    redisTrigger(user_id, RedisEventEnum.leave, { study_id });
+  });
 };
 
 const myStudy = async ({ id }) => {
@@ -134,21 +136,20 @@ const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
     if (participateRows.length > 1) {
       throw customError(400, '탈퇴할 수 없습니다. 스터디 장을 위임한 뒤 탈퇴하세요', 101);
     }
-    const studyRows = await studyDao.studyDelete(study_id);
-    if (studyRows.affectedRows === 0) {
-      throw customError(400, '스터디 탈퇴 실패', 102);
+    await studyDelete({ id }, { study_id });
+  }
+
+  if (authority === AuthEnum.member) {
+    const { applyRows, participateRows } = await studyDao.leaveStudy(id, study_id);
+    if (applyRows[0].affectedRows === 0 || participateRows[0].affectedRows === 0) {
+      throw customError(400, '스터디 탈퇴 실패');
     }
-  }
 
-  const { applyRows, participateRows } = await studyDao.leaveStudy(id, study_id);
-  if (applyRows.affectedRows === 0 || participateRows.affectedRows === 0) {
-    throw customError(400, '스터디 탈퇴 실패');
+    Room.updateOne({ study_id }, { $pull: { off_members: id, members: id } });
+    User.updateOne({ user_id: id }, { $pull: { rooms: study_id } }).exec();
+    redisTrigger(id, RedisEventEnum.leave, { study_id });
+    broadcast.leave(study_id, nickname);
   }
-
-  Room.updateOne({ study_id }, { $pull: { off_members: id, members: id } });
-  User.updateOne({ user_id: id }, { $pull: { rooms: study_id } }).exec();
-  redisTrigger(id, RedisEventEnum.leave, { study_id });
-  broadcast.leave(study_id, nickname);
 };
 
 const delegate = async ({ id: old_leader }, { study_id }, { new_leader }) => {
