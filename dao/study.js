@@ -90,25 +90,15 @@ const studyDelete = async (study_id) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
+    const userSql = 'SELECT user_id FROM participate WHERE study_id = ?';
+    const [userRows] = await conn.query(userSql, study_id);
+
     const studySql = 'DELETE FROM study WHERE id = ?';
     const [studyRows] = await conn.query(studySql, study_id);
 
-    const alertSql = 'DELETE FROM alert WHERE study_id = ?';
-    await conn.query(alertSql, study_id);
-
-    const applySql = 'DELETE FROM apply WHERE study_id = ?';
-    await conn.query(applySql, study_id);
-
-    const participateSql = 'DELETE FROM participate WHERE study_id = ?';
-    await conn.query(participateSql, study_id);
-
-    const noticeSql = 'DELETE FROM notice WHERE study_id = ?';
-    await conn.query(noticeSql, study_id);
-
     await conn.commit();
-    return studyRows;
+    return [userRows, studyRows];
   } catch (err) {
-    console.log('err: ', err);
     await conn.rollback();
     throw databaseError(err);
   } finally {
