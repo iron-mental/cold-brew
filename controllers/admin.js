@@ -11,7 +11,13 @@ const getRedis = async (req, res) => {
   response(res, 200, userData);
 };
 
+const deleteEmptyStudy = async (req, res) => {
+  await adminService.deleteEmptyStudy(req.user);
+  response(res, 200, '유저 없는 스터디 제거 완료');
+};
+
 module.exports = {
   resetRedis,
   getRedis,
+  deleteEmptyStudy,
 };
