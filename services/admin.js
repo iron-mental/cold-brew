@@ -30,8 +30,7 @@ const deleteEmptyStudy = async ({ id }) => {
   if (id !== 1) {
     throw authError({ message: 'permission error' });
   }
-  const tmp = await adminDao.deleteEmptyStudy();
-  console.log('tmp: ', tmp);
+  await adminDao.deleteEmptyStudy();
 };
 
 module.exports = {
