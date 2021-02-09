@@ -136,11 +136,7 @@ const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
     if (participateRows.length > 1) {
       throw customError(400, '탈퇴할 수 없습니다. 스터디 장을 위임한 뒤 탈퇴하세요', 101);
     }
-
-    const studyRows = await studyDao.studyDelete(study_id);
-    if (studyRows.affectedRows === 0) {
-      throw customError(400, '스터디 탈퇴 실패', 102);
-    }
+    await studyDelete({ id }, { study_id });
   }
 
   if (authority === AuthEnum.member) {
@@ -148,12 +144,12 @@ const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
     if (applyRows[0].affectedRows === 0 || participateRows[0].affectedRows === 0) {
       throw customError(400, '스터디 탈퇴 실패');
     }
-  }
 
-  Room.updateOne({ study_id }, { $pull: { off_members: id, members: id } });
-  User.updateOne({ user_id: id }, { $pull: { rooms: study_id } }).exec();
-  redisTrigger(id, RedisEventEnum.leave, { study_id });
-  broadcast.leave(study_id, nickname);
+    Room.updateOne({ study_id }, { $pull: { off_members: id, members: id } });
+    User.updateOne({ user_id: id }, { $pull: { rooms: study_id } }).exec();
+    redisTrigger(id, RedisEventEnum.leave, { study_id });
+    broadcast.leave(study_id, nickname);
+  }
 };
 
 const delegate = async ({ id: old_leader }, { study_id }, { new_leader }) => {
