@@ -70,7 +70,7 @@ const redisProcess = async (userData, redisEvent, data) => {
       break;
 
     case RedisEventEnum.reset:
-      userData = redisUserModel;
+      userData = JSON.parse(JSON.stringify(redisUserModel));
       for (let study of data) {
         userData.chat[study.id] = 0;
         userData.alert[study.id] = 0;
