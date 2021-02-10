@@ -4,26 +4,12 @@ const { RedisEventEnum } = require('../utils/variables/enum');
 
 const client = redis.createClient();
 
-const getData = (user_id) => {
-  return new Promise((resolve, reject) => {
-    client.get(user_id, (err, userData) => {
-      if (err) reject(err);
-      else resolve(JSON.parse(userData));
-    });
-  });
-};
-
-const setData = (user_id, userData) => {
-  return new Promise((resolve, reject) => {
-    client.set(user_id, JSON.stringify(userData), (err) => {
-      if (err) reject(err);
-      else resolve('ok');
-    });
-  });
-};
-
 const redisSignup = async (user_id) => {
   await setData(user_id, redisUserModel);
+};
+
+const redisWithdraw = async (user_id) => {
+  await client.DEL(user_id, (err, tmp) => {});
 };
 
 const getUser = async (user_id) => {
@@ -32,12 +18,7 @@ const getUser = async (user_id) => {
 
 const redisTrigger = async (user_id, redisEvent, data) => {
   let userData = await getData(user_id);
-  userData = await redisProcess(userData, redisEvent, data);
-  await setData(user_id, userData);
-  return userData;
-};
 
-const redisProcess = async (userData, redisEvent, data) => {
   switch (redisEvent) {
     case RedisEventEnum.push_token:
       userData.push = data;
@@ -79,7 +60,27 @@ const redisProcess = async (userData, redisEvent, data) => {
   }
 
   userData = await totalCount(userData);
+  await setData(user_id, userData);
+
   return userData;
+};
+
+const getData = (user_id) => {
+  return new Promise((resolve, reject) => {
+    client.get(user_id, (err, userData) => {
+      if (err) reject(err);
+      else resolve(JSON.parse(userData));
+    });
+  });
+};
+
+const setData = (user_id, userData) => {
+  return new Promise((resolve, reject) => {
+    client.set(user_id, JSON.stringify(userData), (err) => {
+      if (err) reject(err);
+      else resolve('ok');
+    });
+  });
 };
 
 const totalCount = async (userData) => {
@@ -102,4 +103,5 @@ module.exports = {
   redisSignup,
   redisTrigger,
   getUser,
+  redisWithdraw,
 };
