@@ -8,12 +8,12 @@ const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, lengthSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
 const broadcast = require('../events/broadcast');
+const { redisTrigger } = require('./redis');
 
 const User = require('../models/user');
 const Room = require('../models/room');
 const Chat = require('../models/chat');
 const Search = require('../models/search');
-const { redisTrigger } = require('./redis');
 
 const createStudy = async ({ id: user_id }, createData) => {
   const checkRows = await studyDao.checkTitle(createData.title);
@@ -41,8 +41,13 @@ const studyDetail = async ({ id: user_id }, { study_id }) => {
   studyRows = toBoolean(studyRows, ['Pleader']);
   studyRows = rowSplit(studyRows, ['participate']);
 
-  redisTrigger(user_id, RedisEventEnum.alert_read, { study_id });
-  return locationMerge(studyRows);
+  const badgeCount = await redisTrigger(user_id, RedisEventEnum.alert_read, { study_id }); // 0으로 변경
+  const badge = {
+    alert: badgeCount.alert.total,
+    total: badgeCount.badge,
+  };
+
+  return locationMerge({ badge, ...studyRows });
 };
 
 const studyUpdate = async ({ study_id }, updateData, filedata) => {
