@@ -1,6 +1,7 @@
 const commonDao = require('../dao/common');
+
 const { authError } = require('../utils/errors/auth');
-const { AuthEnum, ApplyEnum } = require('../utils/variables/enum');
+const { AuthEnum, ApplyEnum, VersionUpdateEnum } = require('../utils/variables/enum');
 
 const isHost = async ({ id: user_id }, { study_id }) => {
   const checkRows = await commonDao.isHost(user_id, study_id);
@@ -31,8 +32,31 @@ const checkAuthority = async ({ id: user_id }, { study_id }, ...authority) => {
   return status;
 };
 
+const checkVersion = async ({ version }) => {
+  const result = {
+    latest_version: null,
+    force: 1,
+  };
+
+  const versionRows = await commonDao.checkVersion(version);
+
+  if (versionRows.length === 0) {
+    result.force = VersionUpdateEnum.none;
+  } else {
+    versionRows.forEach((row) => {
+      if (row.force === 1) {
+        result.force = VersionUpdateEnum.must;
+      }
+    });
+  }
+
+  result.latest_version = versionRows.slice(-1)[0] ? versionRows.slice(-1)[0].version : null;
+  return result;
+};
+
 module.exports = {
   isHost,
   checkAuth,
   checkAuthority,
+  checkVersion,
 };
