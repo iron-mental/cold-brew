@@ -274,10 +274,9 @@ const getAddress = async () => {
 
 const getAlert = async (user_id) => {
   const conn = await pool.getConnection();
-
   try {
     const alertSql = `
-      SELECT A.id, A.study_id, S.title study_title, A.pushEvent, A.message, DATE_FORMAT(A.created_at, "%Y-%c-%d %H:%i:%s") created_at
+      SELECT A.id, A.study_id, S.title study_title, A.pushEvent, A.message, A.confirm, DATE_FORMAT(A.created_at, "%Y-%c-%d %H:%i:%s") created_at
       FROM alert A
         LEFT JOIN study S
         ON A.study_id = S.id
