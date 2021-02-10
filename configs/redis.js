@@ -3,6 +3,6 @@ const client = redis.createClient();
 
 module.exports = () => {
   client.on('error', (err) => {
-    console.log('### 레디스에러: ', err);
+    throw new Error(err);
   });
 };

@@ -66,9 +66,29 @@ const getUserLocation = async (user_id) => {
   }
 };
 
+const checkVersion = async (version) => {
+  const conn = await pool.getConnection();
+  try {
+    const checkSql = `
+      SELECT V.force, V.version
+      FROM version V
+      WHERE id > (
+        SELECT id 
+        FROM version 
+        WHERE version = ? )`;
+    const [checkRows] = await conn.query(checkSql, version);
+    return checkRows;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   isHost,
   checkMember,
   checkApply,
   getUserLocation,
+  checkVersion,
 };

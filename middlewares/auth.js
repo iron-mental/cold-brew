@@ -3,13 +3,19 @@ const jwt = require('jsonwebtoken');
 const { authError } = require('../utils/errors/auth');
 const { CategoryEnum } = require('../utils/variables/enum');
 
-const exceptionList = [
-  ['check-nickname', 'check-email', 'login', 'emailVerify-process', 'reset-password', 'reissuance'].concat(Object.keys(CategoryEnum)),
-  ['/v1/user', '/v1/chat/http', '/v1/chat/https', '/v1/push/test'],
-];
+const passUrl = {
+  slice: ['check-nickname', 'check-email', 'login', 'emailVerify-process', 'reset-password', 'reissuance', ...Object.keys(CategoryEnum)],
+  full: ['/v1/user', '/v1/chat/http', '/v1/chat/https', '/v1/push/test'],
+};
 
 const verify = async (req, res, next) => {
-  if (exceptionList[0].indexOf(req.url.split('/')[3]) > -1 || exceptionList[1].indexOf(req.url) > -1) {
+  if ('check-version' === req.url.split('/')[2].split('?')[0]) {
+    return next();
+  }
+  if (passUrl.slice.indexOf(req.url.split('/')[3]) > -1) {
+    return next();
+  }
+  if (passUrl.full.indexOf(req.url) > -1) {
     return next();
   }
 
@@ -41,8 +47,16 @@ const emailCompare = (req, res, next) => {
   next();
 };
 
+const checkAdmin = (req, res, next) => {
+  if (req.user.id !== 1) {
+    throw authError({ message: 'permission error' });
+  }
+  next();
+};
+
 module.exports = {
   verify,
   idCompare,
   emailCompare,
+  checkAdmin,
 };

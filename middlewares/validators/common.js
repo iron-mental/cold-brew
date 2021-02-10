@@ -1,3 +1,6 @@
+const Joi = require('joi');
+
+const { validError } = require('../../utils/errors/validation');
 const { CategoryEnum } = require('../../utils/variables/enum');
 
 const categoryValid = (value, helpers) => {
@@ -42,8 +45,21 @@ const setTrim = (req, res, next) => {
   return next();
 };
 
+const checkVersion = async (req, res, next) => {
+  const querySchema = Joi.object({
+    version: Joi.string().required(),
+  });
+  try {
+    await querySchema.validateAsync(req.query);
+    next();
+  } catch (err) {
+    next(validError(err));
+  }
+};
+
 module.exports = {
   categoryValid,
   uriMethod,
   setTrim,
+  checkVersion,
 };
