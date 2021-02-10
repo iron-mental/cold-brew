@@ -2,7 +2,9 @@ const { DatabaseError } = require('../../utils/errors/database');
 
 const databaseErrorHandler = (err, req, res, next) => {
   if (err instanceof DatabaseError) {
-    return res.status(500).json(err);
+    const status = err.status || 500;
+    delete err.status;
+    return res.status(status).json(err);
   }
   return next(err);
 };
