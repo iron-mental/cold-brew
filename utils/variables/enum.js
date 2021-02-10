@@ -90,6 +90,12 @@ const RedisEventEnum = Object.freeze({
   leave: 'leave',
 });
 
+const VersionUpdateEnum = Object.freeze({
+  none: 0,
+  should: 1,
+  must: 2,
+});
+
 module.exports = {
   AuthEnum,
   ApplyEnum,
@@ -99,4 +105,5 @@ module.exports = {
   MessageEnum,
   DBTableEnum,
   RedisEventEnum,
+  VersionUpdateEnum,
 };
