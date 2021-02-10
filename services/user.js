@@ -3,6 +3,7 @@ const path = require('path');
 const firebase = require('firebase');
 
 const userDao = require('../dao/user');
+const studyDao = require('../dao/study');
 const { toBoolean, parsingAddress } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
 const { verify, getAccessToken, getRefreshToken } = require('../utils/jwt.js');
@@ -14,7 +15,7 @@ const push = require('../events/push');
 const User = require('../models/user');
 const Chat = require('../models/chat');
 const { RedisEventEnum, PushEventEnum } = require('../utils/variables/enum');
-const { redisTrigger, redisSignup } = require('./redis');
+const { redisTrigger, redisSignup, redisWithdraw } = require('./redis');
 
 // 닉네임 중복체크
 const checkNickname = async ({ nickname }) => {
@@ -121,10 +122,16 @@ const userUpdate = async ({ id }, updateData) => {
 
 // 회원탈퇴
 const withdraw = async ({ id }, { email, password }) => {
+  const studyList = await studyDao.getMyStudy(id);
+  if (studyList.length > 0) {
+    throw customError(400, '가입한 스터디를 탈퇴하고 다시 시도하세요');
+  }
+
   try {
     await userDao.withdraw(id, email, password);
-    User.remove({ user_id: id }).exec();
+    User.deleteOne({ user_id: id }).exec();
     Chat.updateMany({ user_id: id }, { nickname: '(알수없음)' }).exec();
+    redisWithdraw(id);
   } catch (err) {
     throw err;
   }
