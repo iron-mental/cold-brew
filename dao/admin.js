@@ -55,8 +55,22 @@ const deleteEmptyStudy = async () => {
   }
 };
 
+const setVersion = async (versionData) => {
+  const conn = await pool.getConnection();
+  try {
+    const versionSql = 'INSERT INTO version SET ?';
+    const [versionRows] = await conn.query(versionSql, versionData);
+    return versionRows;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   getUserList,
   getUserStudyList,
   deleteEmptyStudy,
+  setVersion,
 };

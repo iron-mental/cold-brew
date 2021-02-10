@@ -1,15 +1,11 @@
 const adminDao = require('../dao/admin');
-const studyDao = require('../dao/study');
 
 const { authError } = require('../utils/errors/auth');
+const { customError } = require('../utils/errors/custom');
 const { RedisEventEnum } = require('../utils/variables/enum');
 const { redisTrigger, getUser } = require('./redis');
 
-// 레디스 초기화
-const resetRedis = async ({ id: user_id }) => {
-  if (user_id !== 1) {
-    throw authError({ message: 'permission error' });
-  }
+const resetRedis = async () => {
   let study_list = [];
   const userRows = await adminDao.getUserList();
 
@@ -19,22 +15,24 @@ const resetRedis = async ({ id: user_id }) => {
   });
 };
 
-const getRedis = async ({ id }, { user_id }) => {
-  if (id !== 1) {
-    throw authError({ message: 'permission error' });
-  }
+const getRedis = async ({ user_id }) => {
   return await getUser(user_id);
 };
 
-const deleteEmptyStudy = async ({ id }) => {
-  if (id !== 1) {
-    throw authError({ message: 'permission error' });
-  }
+const deleteEmptyStudy = async () => {
   await adminDao.deleteEmptyStudy();
+};
+
+const setVersion = async (versionData) => {
+  const versionRows = await adminDao.setVersion(versionData);
+  if (versionRows.affectedRows === 0) {
+    throw customError(400, '버전 설정에 실패했습니다');
+  }
 };
 
 module.exports = {
   resetRedis,
   getRedis,
   deleteEmptyStudy,
+  setVersion,
 };
