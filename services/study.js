@@ -8,7 +8,7 @@ const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, lengthSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
 const broadcast = require('../events/broadcast');
-const { redisTrigger } = require('./redis');
+const { redisTrigger, getUser } = require('./redis');
 
 const User = require('../models/user');
 const Room = require('../models/room');
@@ -101,7 +101,14 @@ const studyDelete = async ({ id: user_id }, { study_id }) => {
 
 const myStudy = async ({ id }) => {
   const myStudyList = await studyDao.getMyStudy(id);
-  return myStudyList;
+
+  const badgeCount = await getUser(id);
+  const badge = {
+    alert: badgeCount.alert.total,
+    total: badgeCount.badge,
+  };
+
+  return { badge, ...myStudyList };
 };
 
 const studyList = async ({ id: user_id }, { category, sort }) => {
