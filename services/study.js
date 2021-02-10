@@ -32,14 +32,14 @@ const createStudy = async ({ id: user_id }, createData) => {
   return createRows.insertId;
 };
 
-const studyDetail = async ({ id: user_id }, { study_id }) => {
-  let studyRows = await studyDao.getStudy(study_id);
+const studyDetail = async ({ id: user_id }, { study_id }, { alert_id }) => {
+  let studyRows = await studyDao.getStudy(study_id, alert_id);
   if (studyRows.length === 0) {
     throw customError(404, '조회된 스터디가 없습니다');
   }
-
   studyRows = toBoolean(studyRows, ['Pleader']);
   studyRows = rowSplit(studyRows, ['participate']);
+  studyRows = locationMerge(studyRows);
 
   const badgeCount = await redisTrigger(user_id, RedisEventEnum.alert_read, { study_id }); // 0으로 변경
   const badge = {
@@ -47,7 +47,7 @@ const studyDetail = async ({ id: user_id }, { study_id }) => {
     total: badgeCount.badge,
   };
 
-  return locationMerge({ badge, ...studyRows });
+  return { badge, ...studyRows };
 };
 
 const studyUpdate = async ({ study_id }, updateData, filedata) => {
