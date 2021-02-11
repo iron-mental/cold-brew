@@ -17,7 +17,6 @@ module.exports = (app) => {
   app.use(databaseErrorHandler);
   app.use(customErrorHandler);
 
-  // other Error
   app.use((err, req, res, next) => {
     return res.status(500).json({
       result: false,

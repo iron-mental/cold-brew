@@ -2,14 +2,14 @@ const mongoose = require('mongoose');
 
 const chatSchema = new mongoose.Schema(
   {
-    study_id: Number, // study_id
-    nickname: String, // 유저 닉네임
-    message: String, // 내용
-    date: String, // unixtime
+    study_id: Number,
+    nickname: String,
+    message: String,
+    date: String,
   },
   {
     versionKey: false,
-  }
+  },
 );
 
 const Chat = mongoose.model('Chat', chatSchema);

@@ -6,7 +6,7 @@ const commonController = require('../../controllers/common');
 
 const router = express.Router();
 
-// 버저닝
+// 버전 체크
 router.get('/check-version', commonValid.checkVersion, asyncWrap(commonController.checkVersion));
 
 module.exports = router;

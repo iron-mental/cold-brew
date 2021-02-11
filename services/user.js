@@ -220,7 +220,7 @@ const getAddress = async () => {
 // 알림 조회
 const getAlert = async ({ id: user_id }) => {
   const alertRows = await userDao.getAlert(user_id);
-  return alertRows;
+  return toBoolean(alertRows, ['confirm']);
 };
 
 // 푸시 테스트

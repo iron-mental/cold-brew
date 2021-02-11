@@ -37,7 +37,7 @@ router.put('/:id/push_token', idCompare, userValid.updatePushToken, asyncWrap(us
 router.get('/:id/emailVerify', idCompare, userValid.emailVerification, asyncWrap(userController.emailVerification)); // 이메일 인증 요청
 router.get('/emailVerify-process/:email', userValid.emailVerificationProcess, asyncWrap(userController.emailVerificationProcess)); // 이메일 인증 요청
 
-router.get('/:id/study', idCompare, studyValid.myStudy, asyncWrap(studyController.myStudy)); // 내 스터디 조회
+router.get('/:id/study', idCompare, studyValid.getMyStudy, asyncWrap(studyController.getMyStudy)); // 내 스터디 조회
 
 router.get('/:id/apply', idCompare, applyValid.applyListByUser, asyncWrap(applyController.applyListByUser)); // 스터디 신청목록 조회
 

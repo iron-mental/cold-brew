@@ -79,21 +79,6 @@ const lengthSorting = (sigungu, rows) => {
   return targetRows.concat(otherRows);
 };
 
-const tokenDivision = (memberRows) => {
-  const [user_id, fcm_token, apns_token] = [[], [], []];
-
-  memberRows.forEach((v) => {
-    user_id.push(v.id);
-    if (v.device === DeviceEnum.ios) {
-      apns_token.push([v.push_token, v.badge]);
-    } else {
-      fcm_token.push([v.push_token, v.badge]);
-    }
-  });
-
-  return [user_id, apns_token, fcm_token];
-};
-
 const parsingAddress = (addressRows) => {
   const location = [];
   const tmp = {
@@ -135,7 +120,6 @@ module.exports = {
   locationMerge,
   cutId,
   lengthSorting,
-  tokenDivision,
   parsingAddress,
   multiInsertQuery,
 };

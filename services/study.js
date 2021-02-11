@@ -8,12 +8,12 @@ const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, lengthSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
 const broadcast = require('../events/broadcast');
+const { redisTrigger, getUser } = require('./redis');
 
 const User = require('../models/user');
 const Room = require('../models/room');
 const Chat = require('../models/chat');
 const Search = require('../models/search');
-const { redisTrigger } = require('./redis');
 
 const createStudy = async ({ id: user_id }, createData) => {
   const checkRows = await studyDao.checkTitle(createData.title);
@@ -32,17 +32,22 @@ const createStudy = async ({ id: user_id }, createData) => {
   return createRows.insertId;
 };
 
-const studyDetail = async ({ id: user_id }, { study_id }) => {
-  let studyRows = await studyDao.getStudy(study_id);
+const getStudy = async ({ id: user_id }, { study_id }, { alert_id }) => {
+  let studyRows = await studyDao.getStudy(study_id, alert_id);
   if (studyRows.length === 0) {
     throw customError(404, '조회된 스터디가 없습니다');
   }
-
   studyRows = toBoolean(studyRows, ['Pleader']);
   studyRows = rowSplit(studyRows, ['participate']);
+  studyRows = locationMerge(studyRows);
 
-  redisTrigger(user_id, RedisEventEnum.alert_read, { study_id });
-  return locationMerge(studyRows);
+  const badgeCount = await redisTrigger(user_id, RedisEventEnum.alert_read, { study_id }); // 0으로 변경
+  const badge = {
+    alert: badgeCount.alert.total,
+    total: badgeCount.badge,
+  };
+
+  return { badge, ...studyRows };
 };
 
 const studyUpdate = async ({ study_id }, updateData, filedata) => {
@@ -94,12 +99,19 @@ const studyDelete = async ({ id: user_id }, { study_id }) => {
   });
 };
 
-const myStudy = async ({ id }) => {
+const getMyStudy = async ({ id }) => {
   const myStudyList = await studyDao.getMyStudy(id);
-  return myStudyList;
+
+  const badgeCount = await getUser(id);
+  const badge = {
+    alert: badgeCount.alert.total,
+    total: badgeCount.badge,
+  };
+
+  return { badge, ...myStudyList };
 };
 
-const studyList = async ({ id: user_id }, { category, sort }) => {
+const getStudyList = async ({ id: user_id }, { category, sort }) => {
   let studyListRows = '';
   if (sort === 'length') {
     const userData = await getUserLocation(user_id);
@@ -187,18 +199,17 @@ const category = async ({ id }) => {
   });
 };
 
-const getChatting = async ({ id: user_id }, { study_id }, { date }) => {
-  redisTrigger(user_id, RedisEventEnum.chat_read, { study_id });
+const getChatting = async ({ study_id }, { date }) => {
   return await Chat.find({ study_id, date: { $gt: date } }, { _id: 0 });
 };
 
 module.exports = {
   createStudy,
-  studyDetail,
+  getStudy,
   studyUpdate,
   studyDelete,
-  myStudy,
-  studyList,
+  getMyStudy,
+  getStudyList,
   studyPaging,
   leaveStudy,
   delegate,

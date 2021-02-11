@@ -21,7 +21,7 @@ router.get('/ranking', asyncWrap(studyController.ranking)); // 핫 등록 키워
 router.get('/category', asyncWrap(studyController.category)); // 카테고리
 
 router.post('/', imageUpload, studyValid.createStudy, asyncWrap(studyController.createStudy)); // 스터디 추가
-router.get('/:study_id', studyValid.studyDetail, asyncWrap(studyController.studyDetail)); // 스터디 상세조회
+router.get('/:study_id', studyValid.getStudy, asyncWrap(studyController.getStudy)); // 스터디 상세조회
 router.put('/:study_id', imageUpload, studyValid.studyUpdate, asyncWrap(studyController.studyUpdate)); // 스터디 수정
 router.delete('/:study_id', studyValid.studyDelete, asyncWrap(studyController.studyDelete)); // 스터디 수정
 
@@ -29,7 +29,7 @@ router.put('/:study_id/delegate', studyValid.delegate, asyncWrap(studyController
 router.post('/:study_id/leave', studyValid.leaveStudy, asyncWrap(studyController.leaveStudy)); // 스터디 탈퇴
 
 // StudyList
-router.get('/', studyValid.studyList, asyncWrap(studyController.studyList)); // 스터디 목록 조회
+router.get('/', studyValid.getStudyList, asyncWrap(studyController.getStudyList)); // 스터디 목록 조회
 router.get('/paging/list', studyValid.studyPaging, asyncWrap(studyController.studyPaging)); // 스터디 목록 조회 paging
 
 // Notice
