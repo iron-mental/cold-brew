@@ -6,10 +6,11 @@ const { CategoryEnum } = require('../utils/variables/enum');
 const passUrl = {
   slice: ['check-nickname', 'check-email', 'login', 'emailVerify-process', 'reset-password', 'reissuance', ...Object.keys(CategoryEnum)],
   full: ['/v1/user', '/v1/chat/http', '/v1/chat/https', '/v1/push/test'],
+  checkVersion: '/v1/check-version',
 };
 
 const verify = async (req, res, next) => {
-  if ('check-version' === req.url.split('/')[2].split('?')[0]) {
+  if (passUrl.checkVersion === req.url.slice(0, 17)) {
     return next();
   }
   if (passUrl.slice.indexOf(req.url.split('/')[3]) > -1) {
