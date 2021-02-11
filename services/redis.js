@@ -39,6 +39,7 @@ const redisTrigger = async (user_id, redisEvent, data) => {
 
     case RedisEventEnum.alert_read:
       userData.alert[data.study_id] = 0;
+      userData.chat[data.study_id] = 0;
       break;
 
     case RedisEventEnum.chat_read:
