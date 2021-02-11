@@ -8,8 +8,8 @@ const createStudy = async (req, res) => {
   response(res, 201, { study_id });
 };
 
-const studyDetail = async (req, res) => {
-  const studyData = await studyService.studyDetail(req.user, req.params, req.query);
+const getStudy = async (req, res) => {
+  const studyData = await studyService.getStudy(req.user, req.params, req.query);
   studyData.Authority = await checkAuth(req.user, req.params);
   response(res, 200, studyData);
 };
@@ -26,13 +26,13 @@ const studyDelete = async (req, res) => {
   response(res, 200, '스터디가 삭제되었습니다');
 };
 
-const myStudy = async (req, res) => {
-  const studyList = await studyService.myStudy(req.params);
+const getMyStudy = async (req, res) => {
+  const studyList = await studyService.getMyStudy(req.params);
   response(res, 200, studyList);
 };
 
-const studyList = async (req, res) => {
-  const studyList = await studyService.studyList(req.user, req.query);
+const getStudyList = async (req, res) => {
+  const studyList = await studyService.getStudyList(req.user, req.query);
   response(res, 200, studyList);
 };
 
@@ -76,11 +76,11 @@ const getChatting = async (req, res) => {
 
 module.exports = {
   createStudy,
-  studyDetail,
+  getStudy,
   studyUpdate,
   studyDelete,
-  myStudy,
-  studyList,
+  getMyStudy,
+  getStudyList,
   studyPaging,
   leaveStudy,
   delegate,

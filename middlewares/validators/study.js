@@ -30,7 +30,7 @@ const createStudy = async (req, res, next) => {
   }
 };
 
-const studyDetail = async (req, res, next) => {
+const getStudy = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
   });
@@ -89,7 +89,7 @@ const studyDelete = async (req, res, next) => {
   }
 };
 
-const myStudy = async (req, res, next) => {
+const getMyStudy = async (req, res, next) => {
   const paramSchema = Joi.object({
     id: Joi.number().required(),
   });
@@ -101,7 +101,7 @@ const myStudy = async (req, res, next) => {
   }
 };
 
-const studyList = async (req, res, next) => {
+const getStudyList = async (req, res, next) => {
   const querySchema = Joi.object({
     category: Joi.string().custom(commonValid.categoryValid).required(),
     sort: Joi.string().required(),
@@ -185,11 +185,11 @@ const getChatting = async (req, res, next) => {
 
 module.exports = {
   createStudy,
-  studyDetail,
+  getStudy,
   studyUpdate,
   studyDelete,
-  myStudy,
-  studyList,
+  getMyStudy,
+  getStudyList,
   studyPaging,
   leaveStudy,
   delegate,

@@ -32,7 +32,7 @@ const createStudy = async ({ id: user_id }, createData) => {
   return createRows.insertId;
 };
 
-const studyDetail = async ({ id: user_id }, { study_id }, { alert_id }) => {
+const getStudy = async ({ id: user_id }, { study_id }, { alert_id }) => {
   let studyRows = await studyDao.getStudy(study_id, alert_id);
   if (studyRows.length === 0) {
     throw customError(404, '조회된 스터디가 없습니다');
@@ -99,7 +99,7 @@ const studyDelete = async ({ id: user_id }, { study_id }) => {
   });
 };
 
-const myStudy = async ({ id }) => {
+const getMyStudy = async ({ id }) => {
   const myStudyList = await studyDao.getMyStudy(id);
 
   const badgeCount = await getUser(id);
@@ -111,7 +111,7 @@ const myStudy = async ({ id }) => {
   return { badge, ...myStudyList };
 };
 
-const studyList = async ({ id: user_id }, { category, sort }) => {
+const getStudyList = async ({ id: user_id }, { category, sort }) => {
   let studyListRows = '';
   if (sort === 'length') {
     const userData = await getUserLocation(user_id);
@@ -205,11 +205,11 @@ const getChatting = async ({ study_id }, { date }) => {
 
 module.exports = {
   createStudy,
-  studyDetail,
+  getStudy,
   studyUpdate,
   studyDelete,
-  myStudy,
-  studyList,
+  getMyStudy,
+  getStudyList,
   studyPaging,
   leaveStudy,
   delegate,
