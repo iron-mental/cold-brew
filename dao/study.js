@@ -5,11 +5,11 @@ const createStudy = async (user_id, createData) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-    const createSql = 'INSERT INTO study SET ?'; // study insert
+    const createSql = 'INSERT INTO study SET ?';
     const [createRows] = await conn.query(createSql, createData);
     const { insertId } = createRows;
 
-    const participateSql = 'INSERT INTO participate SET ?'; // participate insert
+    const participateSql = 'INSERT INTO participate SET ?';
     const participateData = { user_id, study_id: insertId, leader: true };
     await conn.query(participateSql, participateData);
 

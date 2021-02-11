@@ -20,7 +20,6 @@ app.use(verify);
 app.use('/v1', v1Router);
 app.use(express.static(__dirname + '/../public'));
 
-// error handler
 require('./middlewares/error_handler')(app);
 
 module.exports = app;
