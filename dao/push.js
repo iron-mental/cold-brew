@@ -102,10 +102,10 @@ const getHostToken = async (study_id) => {
 };
 
 const insertAlert = async (insertData) => {
-  const insertSql = multiInsertQuery(DBTableEnum.alert, insertData);
   const conn = await pool.getConnection();
   try {
-    const [insertRows] = await conn.query(insertSql);
+    const insertSql = `INSERT INTO alert SET ?`;
+    const [insertRows] = await conn.query(insertSql, insertData);
     return insertRows;
   } catch (err) {
     throw databaseError(500, err);
