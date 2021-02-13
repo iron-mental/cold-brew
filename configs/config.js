@@ -1,16 +1,5 @@
 require('dotenv').config();
 
-const rds = {
-  development: {
-    host: process.env.DB_host,
-    user: process.env.DB_user,
-    password: process.env.DB_password,
-    database: process.env.DB_database,
-    connectionLimit: process.env.DB_connectionLimit,
-    waitForConnections: process.env.DB_waitForConnections,
-  },
-};
-
 const firebase = {
   apiKey: process.env.FIREBASE_apiKey,
   authDomain: process.env.FIREBASE_authDomain,
@@ -41,4 +30,8 @@ const apn = {
   production: false, // NODE_ENV 변경하면 같이 변경하기
 };
 
-module.exports = { rds, firebase, mailer, apn };
+module.exports = {
+  firebase,
+  mailer,
+  apn,
+};
