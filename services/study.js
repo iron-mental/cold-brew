@@ -47,7 +47,10 @@ const getStudy = async ({ id: user_id }, { study_id }, { alert_id }) => {
     total: badgeCount.badge,
   };
 
-  return { badge, ...studyRows };
+  return {
+    studyInfo: studyRows,
+    badge,
+  };
 };
 
 const studyUpdate = async ({ study_id }, updateData, filedata) => {
@@ -108,7 +111,10 @@ const getMyStudy = async ({ id }) => {
     total: badgeCount.badge,
   };
 
-  return { badge, ...myStudyList };
+  return {
+    badge,
+    studyList: myStudyList,
+  };
 };
 
 const getStudyList = async ({ id: user_id }, { category, sort }) => {
