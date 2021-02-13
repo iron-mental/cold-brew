@@ -1,4 +1,4 @@
-const pool = require('./db');
+const pool = require('../configs/mysql');
 const { customError } = require('../utils/errors/custom');
 
 const updateChatStatus = async (status, study_id, user_id) => {

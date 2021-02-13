@@ -1,4 +1,4 @@
-const pool = require('./db');
+const pool = require('../configs/mysql');
 const { databaseError } = require('../utils/errors/database');
 
 const createStudy = async (user_id, createData) => {

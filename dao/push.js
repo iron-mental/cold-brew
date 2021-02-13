@@ -1,7 +1,5 @@
-const pool = require('./db');
+const pool = require('../configs/mysql');
 const { databaseError } = require('../utils/errors/database');
-const { multiInsertQuery } = require('../utils/query');
-const { DBTableEnum } = require('../utils/variables/enum');
 
 const getMemberToken = async (study_id) => {
   const conn = await pool.getConnection();

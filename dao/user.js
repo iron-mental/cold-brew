@@ -1,7 +1,7 @@
 const firebase = require('firebase');
 const admin = require('firebase-admin');
 
-const pool = require('./db');
+const pool = require('../configs/mysql');
 const { customError } = require('../utils/errors/custom');
 const { firebaseError } = require('../utils/errors/firebase');
 const { databaseError } = require('../utils/errors/database');
