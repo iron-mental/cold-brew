@@ -27,13 +27,13 @@ const getApplyByUser = async ({ study_id, user_id }) => {
   return applyData[0];
 };
 
-const applyUpdate = async ({ id: user_id }, { apply_id }, updateData) => {
-  const checkRows = await applyDao.applyCheck(user_id, apply_id);
+const applyUpdate = async ({ id: user_id }, { apply_id, study_id }, updateData) => {
+  const checkRows = await applyDao.applyCheck(user_id, study_id, apply_id);
   if (checkRows[0] && checkRows[0].apply_status !== ApplyEnum.apply) {
     throw customError(403, '이미 처리된 가입신청입니다');
   }
 
-  const updateRows = await applyDao.applyUpdate(apply_id, updateData);
+  const updateRows = await applyDao.applyUpdate(user_id, study_id, apply_id, updateData);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 가입신청이 없습니다');
   }
