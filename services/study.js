@@ -113,7 +113,7 @@ const getMyStudy = async ({ id }) => {
 
   return {
     badge,
-    studyList: myStudyList,
+    study_list: myStudyList,
   };
 };
 
