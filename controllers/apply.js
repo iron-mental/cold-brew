@@ -17,7 +17,6 @@ const getApplyByUser = async (req, res) => {
 };
 
 const applyUpdate = async (req, res) => {
-  await checkAuthority(req.user, req.params, AuthEnum.applier);
   await applyService.applyUpdate(req.user, req.params, req.body);
   response(res, 200, '가입신청이 수정되었습니다');
 };

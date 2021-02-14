@@ -43,6 +43,8 @@ const checkApply = async (user_id, study_id) => {
       SELECT user_id, apply_status
       FROM apply
       WHERE user_id = ? and study_id = ?
+      ORDER BY id DESC
+      LIMIT 1
     `;
     const [listRows] = await conn.query(studyListSql, [user_id, study_id]);
     return listRows;
