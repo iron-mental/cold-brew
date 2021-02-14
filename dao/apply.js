@@ -62,11 +62,16 @@ const getApplyById = async (study_id, apply_id) => {
   }
 };
 
-const applyCheck = async (user_id, apply_id) => {
+const applyCheck = async (user_id, study_id, apply_id) => {
   const conn = await pool.getConnection();
   try {
-    const checkSql = 'SELECT apply_status FROM apply WHERE id = ? AND user_id = ?';
-    const [checkRows] = await conn.query(checkSql, [apply_id, user_id]);
+    const checkSql = `
+      SELECT apply_status 
+      FROM apply 
+      WHERE id = ? 
+        AND user_id = ? 
+        AND study_id = ?`;
+    const [checkRows] = await conn.query(checkSql, [apply_id, user_id, study_id]);
     return checkRows;
   } catch (err) {
     throw databaseError(err);
@@ -75,11 +80,17 @@ const applyCheck = async (user_id, apply_id) => {
   }
 };
 
-const applyUpdate = async (apply_id, updateData) => {
+const applyUpdate = async (user_id, study_id, apply_id, updateData) => {
   const conn = await pool.getConnection();
   try {
-    const updateSql = 'UPDATE apply SET ? WHERE id = ? AND apply_status = ?';
-    const [updateRows] = await conn.query(updateSql, [updateData, apply_id, ApplyEnum.apply]);
+    const updateSql = `
+      UPDATE apply 
+      SET ? 
+      WHERE id = ? 
+        AND user_id = ?
+        AND study_id = ?
+        AND apply_status = ?`;
+    const [updateRows] = await conn.query(updateSql, [updateData, apply_id, user_id, study_id, ApplyEnum.apply]);
     return updateRows;
   } catch (err) {
     throw databaseError(err);
