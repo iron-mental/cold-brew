@@ -62,11 +62,24 @@ const getApplyById = async (study_id, apply_id) => {
   }
 };
 
-const applyUpdate = async (user_id, apply_id, updateData) => {
+const applyCheck = async (user_id, apply_id) => {
   const conn = await pool.getConnection();
   try {
-    const updateSql = 'UPDATE apply SET ? WHERE id = ? AND user_id = ?';
-    const [updateRows] = await conn.query(updateSql, [updateData, apply_id, user_id]);
+    const checkSql = 'SELECT apply_status FROM apply WHERE id = ? AND user_id = ?';
+    const [checkRows] = await conn.query(checkSql, [apply_id, user_id]);
+    return checkRows;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
+const applyUpdate = async (apply_id, updateData) => {
+  const conn = await pool.getConnection();
+  try {
+    const updateSql = 'UPDATE apply SET ? WHERE id = ? AND apply_status = ?';
+    const [updateRows] = await conn.query(updateSql, [updateData, apply_id, ApplyEnum.apply]);
     return updateRows;
   } catch (err) {
     throw databaseError(err);
@@ -174,4 +187,5 @@ module.exports = {
   applyListByUser,
   setAllow,
   setReject,
+  applyCheck,
 };
