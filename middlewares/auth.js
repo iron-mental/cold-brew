@@ -10,6 +10,9 @@ const passUrl = {
 };
 
 const verify = async (req, res, next) => {
+  if ('/' === req.url) {
+    return next();
+  }
   if (passUrl.checkVersion === req.url.slice(0, 17)) {
     return next();
   }
