@@ -75,24 +75,21 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
     throw customError(400, '이미 처리된 회원입니다');
   }
 
-  if (allow) {
+  if (ApplyEnum.allow) {
     const allowRows = await applyDao.setAllow(study_id, apply_id, user_id);
     if (allowRows.affectedRows === 0) {
       throw customError(400, '수락 실패');
     }
-
     Room.updateOne({ study_id }, { $addToSet: { members: user_id } }).exec();
     User.updateOne({ user_id }, { $addToSet: { rooms: study_id } }).exec();
-
     redisTrigger(user_id, RedisEventEnum.participate, { study_id });
     broadcast.participate(study_id, nickname);
   } else {
-    const [rejectRows, userRows] = await applyDao.setReject(apply_id);
+    const rejectRows = await applyDao.setReject(apply_id);
     if (rejectRows.affectedRows === 0) {
       throw customError(400, '거절 실패');
     }
-
-    push.emit('toUser', PushEventEnum.apply_reject, userRows[0].user_id);
+    push.emit('toUser', PushEventEnum.apply_reject, user_id);
   }
 };
 

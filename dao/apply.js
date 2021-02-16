@@ -181,11 +181,7 @@ const setReject = async (apply_id) => {
       SET apply_status = ? 
       WHERE id = ? AND apply_status = ?`;
     const [rejectRows] = await conn.query(rejectSql, [ApplyEnum.reject, apply_id, ApplyEnum.apply]);
-
-    const userSql = 'SELECT user_id FROM apply WHERE id = ?';
-    const [userRows] = await conn.query(userSql, apply_id);
-
-    return [rejectRows, userRows];
+    return [rejectRows];
   } catch (err) {
     throw databaseError(err);
   } finally {
