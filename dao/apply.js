@@ -38,7 +38,7 @@ const getApplyByUser = async (study_id, user_id) => {
 const getApplyById = async (study_id, apply_id) => {
   const conn = await pool.getConnection();
   try {
-    const detailSql = `
+    const applySql = `
       SELECT
         a.id, a.user_id, a.study_id, a.message, a.apply_status,
         DATE_FORMAT(a.created_at, "%Y-%c-%d %H:%i:%s") created_at,
@@ -53,8 +53,8 @@ const getApplyById = async (study_id, apply_id) => {
         ON u.id = p.user_id
       WHERE
         a.study_id = ? AND a.id = ?`;
-    const [detailRows] = await conn.query(detailSql, [study_id, apply_id]);
-    return detailRows;
+    const [applyRows] = await conn.query(applySql, [study_id, apply_id]);
+    return applyRows;
   } catch (err) {
     throw databaseError(err);
   } finally {
@@ -155,17 +155,18 @@ const applyListByUser = async (user_id) => {
 const setAllow = async (study_id, apply_id, user_id) => {
   const conn = await pool.getConnection();
   try {
-    await conn.beginTransaction();
+    const allowSql = `
+      UPDATE apply 
+      SET apply_status = ? 
+      WHERE id = ? AND apply_status = ?`;
+    const [allowRows] = await conn.query(allowSql, [ApplyEnum.allow, apply_id, ApplyEnum.apply]);
 
-    const allowSql = `UPDATE apply SET apply_status = ? WHERE id = ?`;
-    await conn.query(allowSql, [ApplyEnum.allow, apply_id]);
-
-    const createdSql = `INSERT INTO participate SET ?`;
-    const [allowRows] = await conn.query(createdSql, { study_id, user_id });
-    await conn.commit();
+    if (allowRows.changedRows > 0) {
+      const participateSql = `INSERT INTO participate SET ?`;
+      await conn.query(participateSql, { study_id, user_id });
+    }
     return allowRows;
   } catch (err) {
-    await conn.rollback();
     throw databaseError(err);
   } finally {
     await conn.release();
@@ -175,8 +176,11 @@ const setAllow = async (study_id, apply_id, user_id) => {
 const setReject = async (apply_id) => {
   const conn = await pool.getConnection();
   try {
-    const rejectSql = 'UPDATE apply SET apply_status = ? WHERE id = ?';
-    const [rejectRows] = await conn.query(rejectSql, [ApplyEnum.reject, apply_id]);
+    const rejectSql = `
+      UPDATE apply 
+      SET apply_status = ? 
+      WHERE id = ? AND apply_status = ?`;
+    const [rejectRows] = await conn.query(rejectSql, [ApplyEnum.reject, apply_id, ApplyEnum.apply]);
 
     const userSql = 'SELECT user_id FROM apply WHERE id = ?';
     const [userRows] = await conn.query(userSql, apply_id);

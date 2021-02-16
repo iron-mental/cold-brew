@@ -72,34 +72,28 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
   }
   const { apply_status, user_id, nickname } = userRows[0];
   if (apply_status !== ApplyEnum.apply) {
-    // throw customError(400, '이미 처리된 회원입니다');
+    throw customError(400, '이미 처리된 회원입니다');
   }
 
   if (allow) {
-    // 수락 Dao
     const allowRows = await applyDao.setAllow(study_id, apply_id, user_id);
-    console.log('allowRows: ', allowRows[0]);
     if (allowRows.affectedRows === 0) {
       throw customError(400, '수락 실패');
     }
-    // participate Dao
 
     Room.updateOne({ study_id }, { $addToSet: { members: user_id } }).exec();
     User.updateOne({ user_id }, { $addToSet: { rooms: study_id } }).exec();
 
     redisTrigger(user_id, RedisEventEnum.participate, { study_id });
     broadcast.participate(study_id, nickname);
-  }
-  // else {
-  //   const [rejectRows, userRows] = await applyDao.setReject(apply_id);
-  //   console.log('userRows: ', userRows);
-  //   console.log('rejectRows: ', rejectRows);
-  //   if (rejectRows.changedRows === 0) {
-  //     throw customError(404, '조회된 신청내역이 없습니다');
-  //   }
+  } else {
+    const [rejectRows, userRows] = await applyDao.setReject(apply_id);
+    if (rejectRows.affectedRows === 0) {
+      throw customError(400, '거절 실패');
+    }
 
-  //   push.emit('toUser', PushEventEnum.apply_reject, userRows[0].user_id);
-  // }
+    push.emit('toUser', PushEventEnum.apply_reject, userRows[0].user_id);
+  }
 };
 
 module.exports = {
