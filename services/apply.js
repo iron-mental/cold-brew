@@ -75,7 +75,7 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
     throw customError(400, '이미 처리된 회원입니다');
   }
 
-  if (ApplyEnum.allow) {
+  if (allow === true) {
     const allowRows = await applyDao.setAllow(study_id, apply_id, user_id);
     if (allowRows.affectedRows === 0) {
       throw customError(400, '수락 실패');
