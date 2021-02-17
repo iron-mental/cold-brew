@@ -298,18 +298,17 @@ const leaveStudy = async (user_id, study_id) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-
-    const applySql = 'DELETE FROM apply WHERE user_id = ? AND study_id = ?';
-    const applyRows = await conn.query(applySql, [user_id, study_id]);
-
     const participateSQL = 'DELETE FROM participate WHERE user_id = ? AND study_id = ?';
     const participateRows = await conn.query(participateSQL, [user_id, study_id]);
 
+    const applySql = 'DELETE FROM apply WHERE user_id = ? AND study_id = ?';
+    await conn.query(applySql, [user_id, study_id]);
+
     const alertSQL = 'DELETE FROM alert WHERE user_id = ? AND study_id = ?';
-    const alertRows = await conn.query(participateSQL, [alertSQL, study_id]);
+    await conn.query(participateSQL, [alertSQL, study_id]);
 
     await conn.commit();
-    return { applyRows, participateRows, alertRows };
+    return participateRows;
   } catch (err) {
     await conn.rollback();
     throw databaseError(err);

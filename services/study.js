@@ -158,8 +158,8 @@ const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
   }
 
   if (authority === AuthEnum.member) {
-    const { applyRows, participateRows } = await studyDao.leaveStudy(id, study_id);
-    if (applyRows[0].affectedRows === 0 || participateRows[0].affectedRows === 0) {
+    const participateRows = await studyDao.leaveStudy(id, study_id);
+    if (participateRows[0].affectedRows === 0) {
       throw customError(400, '스터디 탈퇴 실패');
     }
 
