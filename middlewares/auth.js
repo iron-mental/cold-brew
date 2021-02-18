@@ -11,7 +11,7 @@ const passUrl = {
 };
 
 const checkPassUrl = (req) => {
-  if (passUrl.checkVersion === req.url.slice(0, 14)) {
+  if (passUrl.checkVersion === req._parsedUrl.pathname) {
     return true;
   }
   if (passUrl.slice.indexOf(req.url.split('/')[3]) > -1) {
