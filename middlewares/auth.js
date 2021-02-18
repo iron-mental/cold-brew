@@ -6,12 +6,12 @@ const { CategoryEnum } = require('../utils/variables/enum');
 const passUrl = {
   slice: ['check-nickname', 'check-email', 'login', 'emailVerify-process', 'reset-password', 'reissuance', ...Object.keys(CategoryEnum)],
   full: ['/v1/user', '/v1/chat/http', '/v1/chat/https', '/v1/push/test'],
-  checkVersion: '/check-version',
+  pathName: ['/check-version', '/'],
   web: 'web',
 };
 
 const checkPassUrl = (req) => {
-  if (passUrl.checkVersion === req._parsedUrl.pathname) {
+  if (passUrl.pathName.includes(req._parsedUrl.pathname)) {
     return true;
   }
   if (passUrl.slice.indexOf(req.url.split('/')[3]) > -1) {
