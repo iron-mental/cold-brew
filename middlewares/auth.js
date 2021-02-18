@@ -6,17 +6,28 @@ const { CategoryEnum } = require('../utils/variables/enum');
 const passUrl = {
   slice: ['check-nickname', 'check-email', 'login', 'emailVerify-process', 'reset-password', 'reissuance', ...Object.keys(CategoryEnum)],
   full: ['/v1/user', '/v1/chat/http', '/v1/chat/https', '/v1/push/test'],
-  checkVersion: '/v1/check-version',
+  pathName: ['/check-version', '/'],
+  web: 'web',
+};
+
+const checkPassUrl = (req) => {
+  if (passUrl.pathName.includes(req._parsedUrl.pathname)) {
+    return true;
+  }
+  if (passUrl.slice.indexOf(req.url.split('/')[3]) > -1) {
+    return true;
+  }
+  if (passUrl.full.indexOf(req.url) > -1) {
+    return true;
+  }
+  if (passUrl.web === req.url.split('/')[1]) {
+    return true;
+  }
+  return false;
 };
 
 const verify = async (req, res, next) => {
-  if (passUrl.checkVersion === req.url.slice(0, 17)) {
-    return next();
-  }
-  if (passUrl.slice.indexOf(req.url.split('/')[3]) > -1) {
-    return next();
-  }
-  if (passUrl.full.indexOf(req.url) > -1) {
+  if (checkPassUrl(req)) {
     return next();
   }
 
