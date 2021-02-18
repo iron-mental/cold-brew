@@ -11,7 +11,7 @@ router.get('/check-version', commonValid.checkVersion, asyncWrap(commonControlle
 
 // 웹
 router.get('/', (req, res, next) => {
-  res.redirect('http://3.35.154.27:3580');
+  res.redirect(process.env.WEB, 301);
 });
 
 module.exports = router;
