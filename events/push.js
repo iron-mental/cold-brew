@@ -8,8 +8,8 @@ push.on('chat', (study_id, chat) => {
   pushService.chat(study_id, chat);
 });
 
-push.on('toUser', (pushEvent, user_id) => {
-  pushService.toUser(pushEvent, user_id);
+push.on('toUser', (pushEvent, user_id, study_id) => {
+  pushService.toUser(pushEvent, user_id, study_id);
 });
 
 push.on('toHost', (pushEvent, study_id) => {

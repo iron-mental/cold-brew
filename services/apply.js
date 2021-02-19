@@ -89,7 +89,7 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
     if (rejectRows.affectedRows === 0) {
       throw customError(400, '거절 실패');
     }
-    push.emit('toUser', PushEventEnum.apply_reject, user_id);
+    push.emit('toUser', PushEventEnum.apply_reject, user_id, study_id);
   }
 };
 
