@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const { validError } = require('../../utils/errors/validation');
-const commonValid = require('./common');
+const { uriMethod, parseProjectGrapheme } = require('./common');
 
 const getProjectList = async (req, res, next) => {
   const paramSchema = Joi.object({
@@ -25,8 +25,8 @@ const updateProject = async (req, res, next) => {
     title: Joi.string().max(20).required(),
     contents: Joi.string().max(500).required(),
     sns_github: Joi.string().allow('').max(500),
-    sns_appstore: Joi.string().allow('').custom(commonValid.uriMethod).max(500),
-    sns_playstore: Joi.string().allow('').custom(commonValid.uriMethod).max(500),
+    sns_appstore: Joi.string().allow('').custom(uriMethod).max(500),
+    sns_playstore: Joi.string().allow('').custom(uriMethod).max(500),
   });
 
   const bodySchema = Joi.object({
@@ -34,8 +34,9 @@ const updateProject = async (req, res, next) => {
   });
 
   try {
+    req.parse = parseProjectGrapheme(req);
     await paramSchema.validateAsync(req.params);
-    await bodySchema.validateAsync(req.body);
+    await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
     next(validError(err));

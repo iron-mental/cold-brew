@@ -1,6 +1,7 @@
 const Joi = require('joi');
 
 const { validError } = require('../../utils/errors/validation');
+const { parseGrapheme } = require('./common');
 const commonValid = require('./common');
 
 const createStudy = async (req, res, next) => {
@@ -22,8 +23,10 @@ const createStudy = async (req, res, next) => {
     sns_web: Joi.string().allow('').custom(commonValid.uriMethod).max(500),
     image: Joi.allow(),
   });
+
   try {
-    await bodySchema.validateAsync(req.body);
+    req.parse = parseGrapheme(req);
+    await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
     next(validError(err));
@@ -69,8 +72,9 @@ const studyUpdate = async (req, res, next) => {
     image: Joi.allow(),
   }).min(1);
   try {
+    req.parse = parseGrapheme(req);
     await paramSchema.validateAsync(req.params);
-    await bodySchema.validateAsync(req.body);
+    await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
     next(validError(err));
@@ -160,7 +164,8 @@ const search = async (req, res, next) => {
     word: Joi.string().max(30).required(),
   });
   try {
-    await querySchema.validateAsync(req.query);
+    req.parse = parseGrapheme(req);
+    await querySchema.validateAsync(req.parse.query);
     next();
   } catch (err) {
     next(validError(err));

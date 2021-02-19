@@ -1,6 +1,7 @@
 const Joi = require('joi');
 
 const { validError } = require('../../utils/errors/validation');
+const { parseGrapheme } = require('./common');
 
 const createNotice = async (req, res, next) => {
   const paramSchema = Joi.object({
@@ -12,8 +13,9 @@ const createNotice = async (req, res, next) => {
     pinned: Joi.boolean().strict().required(),
   });
   try {
+    req.parse = parseGrapheme(req);
     await paramSchema.validateAsync(req.params);
-    await bodySchema.validateAsync(req.body);
+    await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
     next(validError(err));
@@ -44,8 +46,9 @@ const noticeUpdate = async (req, res, next) => {
     pinned: Joi.boolean().strict(),
   }).min(1);
   try {
+    req.parse = parseGrapheme(req);
     await paramSchema.validateAsync(req.params);
-    await bodySchema.validateAsync(req.body);
+    await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
     next(validError(err));
