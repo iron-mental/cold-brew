@@ -83,37 +83,36 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
       throw customError(404, '조회된 스터디가 없습니다');
     }
   }
-
   push.emit('toStudyWithoutHost', PushEventEnum.study_update, study_id);
 };
 
-const studyDelete = async ({ id: user_id }, { study_id }) => {
+const studyDelete = async ({ id: host_id }, { study_id }) => {
   const [userRows, studyRows] = await studyDao.studyDelete(study_id);
   if (studyRows.affectedRows === 0) {
     throw customError(400, '스터디 삭제 실패');
   }
-
   Room.deleteOne({ study_id }).exec();
-  User.updateOne({ user_id }, { $pull: { rooms: study_id } }).exec();
   Chat.deleteMany({ study_id }).exec();
 
   userRows.forEach(({ user_id }) => {
+    if (host_id !== user_id) {
+      push.emit('toUser', PushEventEnum.study_delete, user_id, study_id);
+    }
+    User.updateOne({ user_id }, { $pull: { rooms: study_id } }).exec();
     redisTrigger(user_id, RedisEventEnum.leave, { study_id });
   });
 };
 
 const getMyStudy = async ({ id }) => {
   const myStudyList = await studyDao.getMyStudy(id);
-
   const badgeCount = await getUser(id);
-  const badge = {
-    alert: badgeCount.alert.total,
-    total: badgeCount.badge,
-  };
 
   return {
-    badge,
     study_list: myStudyList,
+    badge: {
+      alert: badgeCount.alert.total,
+      total: badgeCount.badge,
+    },
   };
 };
 

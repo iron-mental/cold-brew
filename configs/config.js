@@ -27,7 +27,7 @@ const apn = {
     keyId: process.env.APNS_keyId,
     teamId: process.env.APNS_teamId,
   },
-  production: process.env.NODE_ENV === 'production' ? process.env.NODE_ENV : 'development',
+  production: Boolean(process.env.NODE_ENV === 'production'),
 };
 
 module.exports = {
