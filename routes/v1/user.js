@@ -21,6 +21,7 @@ router.get('/pushTest', asyncWrap(userController.pushTest)); // 푸시알림 테
 
 router.post('/', userValid.signup, asyncWrap(userController.signup)); // 회원 가입
 router.post('/login', userValid.login, asyncWrap(userController.login)); // 로그인
+router.post('/logout', idCompare, userValid.logout, asyncWrap(userController.logout)); // 로그인
 router.post('/reissuance', userValid.reissuance, asyncWrap(userController.reissuance)); // accessToken 재발급
 
 router.get('/:id', userValid.userDetail, asyncWrap(userController.userDetail)); // 유저 상세조회
@@ -37,7 +38,7 @@ router.put('/:id/push_token', idCompare, userValid.updatePushToken, asyncWrap(us
 router.get('/:id/emailVerify', idCompare, userValid.emailVerification, asyncWrap(userController.emailVerification)); // 이메일 인증 요청
 router.get('/emailVerify-process/:email', userValid.emailVerificationProcess, asyncWrap(userController.emailVerificationProcess)); // 이메일 인증 요청
 
-router.get('/:id/study', idCompare, studyValid.myStudy, asyncWrap(studyController.myStudy)); // 내 스터디 조회
+router.get('/:id/study', idCompare, studyValid.getMyStudy, asyncWrap(studyController.getMyStudy)); // 내 스터디 조회
 
 router.get('/:id/apply', idCompare, applyValid.applyListByUser, asyncWrap(applyController.applyListByUser)); // 스터디 신청목록 조회
 

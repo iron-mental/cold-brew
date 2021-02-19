@@ -38,6 +38,7 @@ const DeviceEnum = Object.freeze({
 
 const PushEventEnum = Object.freeze({
   chat: 'chat',
+
   study_update: 'study_update',
   study_delegate: 'study_delegate',
   study_delete: 'study_delete',

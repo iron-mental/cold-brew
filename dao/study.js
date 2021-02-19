@@ -1,15 +1,15 @@
-const pool = require('./db');
+const pool = require('../configs/mysql');
 const { databaseError } = require('../utils/errors/database');
 
 const createStudy = async (user_id, createData) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-    const createSql = 'INSERT INTO study SET ?'; // study insert
+    const createSql = 'INSERT INTO study SET ?';
     const [createRows] = await conn.query(createSql, createData);
     const { insertId } = createRows;
 
-    const participateSql = 'INSERT INTO participate SET ?'; // participate insert
+    const participateSql = 'INSERT INTO participate SET ?';
     const participateData = { user_id, study_id: insertId, leader: true };
     await conn.query(participateSql, participateData);
 
@@ -36,9 +36,10 @@ const checkTitle = async (title) => {
   }
 };
 
-const getStudy = async (study_id) => {
+const getStudy = async (study_id, alert_id) => {
   const conn = await pool.getConnection();
   try {
+    await conn.beginTransaction();
     const studySql = `
       SELECT
         s.id, s.category, s.title ,s.introduce, s.image, s.progress, s.study_time, s.sns_notion, s.sns_evernote, s.sns_web,
@@ -52,8 +53,14 @@ const getStudy = async (study_id) => {
         ON u.id = p.user_id
       WHERE s.id = ?`;
     const [studyRows] = await conn.query(studySql, study_id);
+
+    const alertSql = 'UPDATE alert SET confirm = ? WHERE id = ?';
+    await conn.query(alertSql, [true, alert_id]);
+
+    await conn.commit();
     return studyRows;
   } catch (err) {
+    await conn.rollback();
     throw databaseError(err);
   } finally {
     await conn.release();
@@ -291,18 +298,17 @@ const leaveStudy = async (user_id, study_id) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
-
-    const applySql = 'DELETE FROM apply WHERE user_id = ? AND study_id = ?';
-    const applyRows = await conn.query(applySql, [user_id, study_id]);
-
     const participateSQL = 'DELETE FROM participate WHERE user_id = ? AND study_id = ?';
     const participateRows = await conn.query(participateSQL, [user_id, study_id]);
 
+    const applySql = 'DELETE FROM apply WHERE user_id = ? AND study_id = ?';
+    await conn.query(applySql, [user_id, study_id]);
+
     const alertSQL = 'DELETE FROM alert WHERE user_id = ? AND study_id = ?';
-    const alertRows = await conn.query(participateSQL, [alertSQL, study_id]);
+    await conn.query(participateSQL, [alertSQL, study_id]);
 
     await conn.commit();
-    return { applyRows, participateRows, alertRows };
+    return participateRows;
   } catch (err) {
     await conn.rollback();
     throw databaseError(err);

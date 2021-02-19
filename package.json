@@ -17,6 +17,7 @@
     "express": "~4.16.1",
     "firebase": "^7.24.0",
     "firebase-admin": "^9.4.1",
+    "grapheme-splitter": "^1.0.4",
     "http-errors": "~1.6.3",
     "joi": "^17.3.0",
     "jsonwebtoken": "^8.5.1",

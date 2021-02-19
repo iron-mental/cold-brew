@@ -27,8 +27,8 @@ getChatPayload = (chat) => {
   const note = new Note(alert, chat);
 
   return {
-    apns: new apn.Notification(note),
-    fcm: new Payload(alert, JSON.stringify(chat)),
+    apnsPayload: new apn.Notification(note),
+    fcmPayload: new Payload(alert, JSON.stringify(chat)),
   };
 };
 
@@ -41,8 +41,8 @@ getPushPayload = (pushEvent, study_id) => {
   const note = new Note(alert, payload);
 
   return {
-    apns: new apn.Notification(note),
-    fcm: new Payload(alert, JSON.stringify(payload)),
+    apnsPayload: new apn.Notification(note),
+    fcmPayload: new Payload(alert, payload),
   };
 };
 

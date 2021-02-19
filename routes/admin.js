@@ -1,9 +1,9 @@
 const express = require('express');
 
-const { checkAdmin } = require('../../middlewares/auth');
-const asyncWrap = require('../../utils/errors/wrap');
-const adminValid = require('../../middlewares/validators/admin');
-const adminController = require('../../controllers/admin');
+const { checkAdmin } = require('../middlewares/auth');
+const asyncWrap = require('../utils/errors/wrap');
+const adminValid = require('../middlewares/validators/admin');
+const adminController = require('../controllers/admin');
 
 const router = express.Router();
 

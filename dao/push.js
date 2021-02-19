@@ -1,7 +1,5 @@
-const pool = require('./db');
+const pool = require('../configs/mysql');
 const { databaseError } = require('../utils/errors/database');
-const { multiInsertQuery } = require('../utils/query');
-const { DBTableEnum } = require('../utils/variables/enum');
 
 const getMemberToken = async (study_id) => {
   const conn = await pool.getConnection();
@@ -102,10 +100,10 @@ const getHostToken = async (study_id) => {
 };
 
 const insertAlert = async (insertData) => {
-  const insertSql = multiInsertQuery(DBTableEnum.alert, insertData);
   const conn = await pool.getConnection();
   try {
-    const [insertRows] = await conn.query(insertSql);
+    const insertSql = `INSERT INTO alert SET ?`;
+    const [insertRows] = await conn.query(insertSql, insertData);
     return insertRows;
   } catch (err) {
     throw databaseError(500, err);

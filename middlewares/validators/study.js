@@ -1,6 +1,7 @@
 const Joi = require('joi');
 
 const { validError } = require('../../utils/errors/validation');
+const { parseGrapheme } = require('./common');
 const commonValid = require('./common');
 
 const createStudy = async (req, res, next) => {
@@ -22,20 +23,26 @@ const createStudy = async (req, res, next) => {
     sns_web: Joi.string().allow('').custom(commonValid.uriMethod).max(500),
     image: Joi.allow(),
   });
+
   try {
-    await bodySchema.validateAsync(req.body);
+    req.parse = parseGrapheme(req);
+    await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
     next(validError(err));
   }
 };
 
-const studyDetail = async (req, res, next) => {
+const getStudy = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
   });
+  const querySchema = Joi.object({
+    alert_id: Joi.number(),
+  });
   try {
     await paramSchema.validateAsync(req.params);
+    await querySchema.validateAsync(req.query);
     next();
   } catch (err) {
     next(validError(err));
@@ -65,8 +72,9 @@ const studyUpdate = async (req, res, next) => {
     image: Joi.allow(),
   }).min(1);
   try {
+    req.parse = parseGrapheme(req);
     await paramSchema.validateAsync(req.params);
-    await bodySchema.validateAsync(req.body);
+    await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
     next(validError(err));
@@ -85,7 +93,7 @@ const studyDelete = async (req, res, next) => {
   }
 };
 
-const myStudy = async (req, res, next) => {
+const getMyStudy = async (req, res, next) => {
   const paramSchema = Joi.object({
     id: Joi.number().required(),
   });
@@ -97,7 +105,7 @@ const myStudy = async (req, res, next) => {
   }
 };
 
-const studyList = async (req, res, next) => {
+const getStudyList = async (req, res, next) => {
   const querySchema = Joi.object({
     category: Joi.string().custom(commonValid.categoryValid).required(),
     sort: Joi.string().required(),
@@ -156,7 +164,8 @@ const search = async (req, res, next) => {
     word: Joi.string().max(30).required(),
   });
   try {
-    await querySchema.validateAsync(req.query);
+    req.parse = parseGrapheme(req);
+    await querySchema.validateAsync(req.parse.query);
     next();
   } catch (err) {
     next(validError(err));
@@ -181,11 +190,11 @@ const getChatting = async (req, res, next) => {
 
 module.exports = {
   createStudy,
-  studyDetail,
+  getStudy,
   studyUpdate,
   studyDelete,
-  myStudy,
-  studyList,
+  getMyStudy,
+  getStudyList,
   studyPaging,
   leaveStudy,
   delegate,

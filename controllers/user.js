@@ -22,6 +22,11 @@ const login = async (req, res) => {
   response(res, 200, tokenSet);
 };
 
+const logout = async (req, res) => {
+  await userService.logout(req.body);
+  response(res, 200, '로그아웃이 완료되었습니다');
+};
+
 const userDetail = async (req, res) => {
   const userData = await userService.userDetail(req.params);
   response(res, 200, userData);
@@ -91,6 +96,7 @@ const pushTest = async (req, res) => {
 module.exports = {
   signup,
   login,
+  logout,
   userDetail,
   userImageUpdate,
   userUpdate,

@@ -1,7 +1,10 @@
 const Joi = require('joi');
+const GraphemeSplitter = require('grapheme-splitter');
 
 const { validError } = require('../../utils/errors/validation');
-const { CategoryEnum } = require('../../utils/variables/enum');
+const { CategoryEnum, DeviceEnum } = require('../../utils/variables/enum');
+
+const splitter = new GraphemeSplitter();
 
 const categoryValid = (value, helpers) => {
   const category = CategoryEnum[value];
@@ -29,7 +32,48 @@ const uriList = {
   sns_web: 'https://',
 };
 
-const setTrim = (req, res, next) => {
+const checkVersion = async (req, res, next) => {
+  const querySchema = Joi.object({
+    version: Joi.string().required(),
+    device: Joi.equal(...Object.values(DeviceEnum)).required(),
+  });
+  try {
+    await querySchema.validateAsync(req.query);
+    next();
+  } catch (err) {
+    next(validError(err));
+  }
+};
+
+const parseGrapheme = (req) => {
+  const targets = ['body', 'params', 'query'];
+  const grapheme = {
+    body: {},
+    params: {},
+    query: {},
+  };
+  let tmp = '';
+
+  targets.forEach((target) => {
+    if (Object.keys(req[target]).length) {
+      for (let prop in req[target]) {
+        tmp = '';
+        if (typeof req[target][prop] === 'boolean') {
+          tmp = req[target][prop];
+        } else {
+          splitter.splitGraphemes(req[target][prop]).forEach((char) => {
+            char.length > 1 ? (tmp += 'A') : (tmp += char);
+          });
+        }
+        grapheme[target][prop] = tmp;
+      }
+    }
+  });
+
+  return grapheme;
+};
+
+const parseRequest = (req, res, next) => {
   for (let prop in req.params) {
     req.params[prop] = typeof req.params[prop] === 'String' ? req.params[prop].trim() : req.params[prop];
   }
@@ -41,25 +85,36 @@ const setTrim = (req, res, next) => {
   for (let prop in req.query) {
     req.query[prop] = typeof req.query[prop] === 'String' ? req.query[prop].trim() : req.query[prop];
   }
-
   return next();
 };
 
-const checkVersion = async (req, res, next) => {
-  const querySchema = Joi.object({
-    version: Joi.string().required(),
+const parseProjectGrapheme = (req) => {
+  const parse = {
+    body: {
+      project_list: [],
+    },
+  };
+  let tmp = {};
+
+  parse.body.project_list = req.body.project_list.map((project) => {
+    tmp = {};
+    Object.entries(project).forEach(([key, value]) => {
+      tmp[key] = '';
+      splitter.splitGraphemes(value).forEach((char) => {
+        char.length > 1 ? (tmp[key] += 'A') : (tmp[key] += char);
+      });
+    });
+    return tmp;
   });
-  try {
-    await querySchema.validateAsync(req.query);
-    next();
-  } catch (err) {
-    next(validError(err));
-  }
+
+  return parse;
 };
 
 module.exports = {
   categoryValid,
   uriMethod,
-  setTrim,
+  parseRequest,
   checkVersion,
+  parseGrapheme,
+  parseProjectGrapheme,
 };

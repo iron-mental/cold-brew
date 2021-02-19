@@ -2,6 +2,7 @@ const Joi = require('joi');
 
 const { validError } = require('../../utils/errors/validation');
 const { DeviceEnum } = require('../../utils/variables/enum');
+const { parseGrapheme } = require('./common');
 const commonValid = require('./common');
 
 const checkNickname = async (req, res, next) => {
@@ -9,7 +10,8 @@ const checkNickname = async (req, res, next) => {
     nickname: Joi.string().required().min(2).max(8),
   });
   try {
-    await paramSchema.validateAsync(req.params);
+    req.parse = parseGrapheme(req);
+    await paramSchema.validateAsync(req.parse.params);
     next();
   } catch (err) {
     next(validError(err));
@@ -35,7 +37,8 @@ const signup = async (req, res, next) => {
     nickname: Joi.string().required().min(2).max(8),
   });
   try {
-    await bodySchema.validateAsync(req.body);
+    req.parse = parseGrapheme(req);
+    await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
     next(validError(err));
@@ -48,6 +51,18 @@ const login = async (req, res, next) => {
     password: Joi.string().required().min(6).max(20),
     push_token: Joi.string().required(),
     device: Joi.equal(...Object.values(DeviceEnum)).required(),
+  });
+  try {
+    await bodySchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    next(validError(err));
+  }
+};
+
+const logout = async (req, res, next) => {
+  const bodySchema = Joi.object({
+    id: Joi.number().required(),
   });
   try {
     await bodySchema.validateAsync(req.body);
@@ -78,8 +93,9 @@ const userInfoUpdate = async (req, res, next) => {
     introduce: Joi.string().allow('').max(200),
   }).min(1);
   try {
+    req.parse = parseGrapheme(req);
     await paramSchema.validateAsync(req.params);
-    await bodySchema.validateAsync(req.body);
+    await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
     next(validError(err));
@@ -111,8 +127,9 @@ const userCareerUpdate = async (req, res, next) => {
     career_contents: Joi.string().allow('').max(200),
   }).min(1);
   try {
+    req.parse = parseGrapheme(req);
     await paramSchema.validateAsync(req.params);
-    await bodySchema.validateAsync(req.body);
+    await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
     next(validError(err));
@@ -265,6 +282,7 @@ module.exports = {
   checkEmail,
   signup,
   login,
+  logout,
   userDetail,
   userInfoUpdate,
   userImageUpdate,

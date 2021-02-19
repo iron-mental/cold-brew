@@ -3,6 +3,7 @@ const path = require('path');
 const firebase = require('firebase');
 
 const userDao = require('../dao/user');
+const studyDao = require('../dao/study');
 const { toBoolean, parsingAddress } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
 const { verify, getAccessToken, getRefreshToken } = require('../utils/jwt.js');
@@ -14,7 +15,7 @@ const push = require('../events/push');
 const User = require('../models/user');
 const Chat = require('../models/chat');
 const { RedisEventEnum, PushEventEnum } = require('../utils/variables/enum');
-const { redisTrigger, redisSignup } = require('./redis');
+const { redisTrigger, redisSignup, redisWithdraw } = require('./redis');
 
 // 닉네임 중복체크
 const checkNickname = async ({ nickname }) => {
@@ -78,6 +79,19 @@ const login = async ({ email, password, device, push_token }) => {
   return { id, access_token, refresh_token };
 };
 
+// 로그아웃
+const logout = async ({ id }) => {
+  const emptyToken = {
+    push_token: '',
+    access_token: '',
+    refresh_token: '',
+  };
+  const logoutRows = await userDao.userUpdate(id, emptyToken);
+  if (logoutRows.length === 0) {
+    throw customError(400, '로그아웃 실패');
+  }
+};
+
 // 상세 조회
 const userDetail = async ({ id }) => {
   const userDataRows = await userDao.userDetail(id);
@@ -121,10 +135,16 @@ const userUpdate = async ({ id }, updateData) => {
 
 // 회원탈퇴
 const withdraw = async ({ id }, { email, password }) => {
+  const studyList = await studyDao.getMyStudy(id);
+  if (studyList.length > 0) {
+    throw customError(400, '가입한 스터디를 탈퇴하고 다시 시도하세요');
+  }
+
   try {
     await userDao.withdraw(id, email, password);
-    User.remove({ user_id: id }).exec();
+    User.deleteOne({ user_id: id }).exec();
     Chat.updateMany({ user_id: id }, { nickname: '(알수없음)' }).exec();
+    redisWithdraw(id);
   } catch (err) {
     throw err;
   }
@@ -213,17 +233,18 @@ const getAddress = async () => {
 // 알림 조회
 const getAlert = async ({ id: user_id }) => {
   const alertRows = await userDao.getAlert(user_id);
-  return alertRows;
+  return toBoolean(alertRows, ['confirm']);
 };
 
 // 푸시 테스트
 const pushTest = async ({ id: user_id }) => {
-  push.emit('toUser', PushEventEnum.push_test, user_id);
+  push.emit('toUser', PushEventEnum.push_test, user_id, 1);
 };
 
 module.exports = {
   signup,
   login,
+  logout,
   userDetail,
   userImageUpdate,
   userUpdate,

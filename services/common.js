@@ -17,7 +17,7 @@ const checkAuth = async ({ id: user_id }, { study_id }) => {
   }
 
   const applyCheckRows = await commonDao.checkApply(user_id, study_id);
-  if (applyCheckRows.length === 1) {
+  if (applyCheckRows.length >= 1) {
     return AuthEnum[applyCheckRows[0].apply_status === ApplyEnum.apply ? AuthEnum.applier : AuthEnum.reject];
   }
 
@@ -32,14 +32,13 @@ const checkAuthority = async ({ id: user_id }, { study_id }, ...authority) => {
   return status;
 };
 
-const checkVersion = async ({ version }) => {
+const checkVersion = async ({ version, device }) => {
   const result = {
     latest_version: null,
     force: 1,
   };
 
-  const versionRows = await commonDao.checkVersion(version);
-
+  const versionRows = await commonDao.checkVersion(version, device);
   if (versionRows.length === 0) {
     result.force = VersionUpdateEnum.none;
   } else {

@@ -1,7 +1,7 @@
 const firebase = require('firebase');
 const admin = require('firebase-admin');
 
-const pool = require('./db');
+const pool = require('../configs/mysql');
 const { customError } = require('../utils/errors/custom');
 const { firebaseError } = require('../utils/errors/firebase');
 const { databaseError } = require('../utils/errors/database');
@@ -274,23 +274,18 @@ const getAddress = async () => {
 
 const getAlert = async (user_id) => {
   const conn = await pool.getConnection();
-
   try {
-    conn.beginTransaction();
     const alertSql = `
-      SELECT A.id, A.study_id, S.title study_title, A.pushEvent, A.message, DATE_FORMAT(A.created_at, "%Y-%c-%d %H:%i:%s") created_at
+      SELECT A.id, A.study_id, S.title study_title, A.pushEvent, A.message, A.confirm, DATE_FORMAT(A.created_at, "%Y-%c-%d %H:%i:%s") created_at
       FROM alert A
         LEFT JOIN study S
         ON A.study_id = S.id
-      WHERE user_id = ? AND confirm = ?`;
+      WHERE user_id = ?
+      ORDER BY id DESC
+      LIMIT 50`;
     const [alertRows] = await conn.query(alertSql, [user_id, false]);
-
-    const updateSql = `UPDATE alert SET confirm = ? WHERE user_id = ? `;
-    const [updateRows] = await conn.query(updateSql, [true, user_id]);
-    conn.commit();
     return alertRows;
   } catch (err) {
-    conn.rollback();
     throw databaseError(err);
   } finally {
     await conn.release();
