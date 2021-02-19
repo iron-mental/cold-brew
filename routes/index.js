@@ -2,12 +2,14 @@ const express = require('express');
 
 const v1Router = require('./v1');
 const commonRouter = require('./common');
+const adminRouter = require('./admin');
 
 const router = express.Router();
 
 /* routing */
 router.use('/v1', v1Router);
 router.use('/', commonRouter);
+router.use('/admin', adminRouter);
 
 // 채팅 뷰 제공
 router.get('/chat/https', (req, res, next) => {
