@@ -3,6 +3,7 @@ const { EventEmitter } = require('events');
 const pushService = require('../services/push');
 
 const push = new EventEmitter();
+push.setMaxListeners(12);
 
 push.on('chat', (study_id, chat) => {
   pushService.chat(study_id, chat);
