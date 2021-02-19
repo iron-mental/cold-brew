@@ -1,5 +1,7 @@
 const Joi = require('joi');
+
 const { validError } = require('../../utils/errors/validation');
+const { parseGrapheme } = require('./common');
 
 const createApply = async (req, res, next) => {
   const paramSchema = Joi.object({
@@ -9,8 +11,9 @@ const createApply = async (req, res, next) => {
     message: Joi.string().required().max(100),
   });
   try {
+    req.parse = parseGrapheme(req);
     await paramSchema.validateAsync(req.params);
-    await bodySchema.validateAsync(req.body);
+    await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
     next(validError(err));
@@ -52,8 +55,9 @@ const applyUpdate = async (req, res, next) => {
     message: Joi.string().required().max(100),
   }).min(1);
   try {
+    req.parse = parseGrapheme(req);
     await paramSchema.validateAsync(req.params);
-    await bodySchema.validateAsync(req.body);
+    await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
     next(validError(err));
