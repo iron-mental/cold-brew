@@ -44,7 +44,7 @@ const verify = async (req, res, next) => {
 };
 
 const idCompare = (req, res, next) => {
-  const id = req.params.id || req.params.user_id;
+  const id = req.params.id || req.params.user_id || req.body.id;
   if (req.user.id !== parseInt(id, 10)) {
     next(authError({ message: 'permission error' }));
   }
