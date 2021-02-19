@@ -39,7 +39,6 @@ const checkVersion = async ({ version, device }) => {
   };
 
   const versionRows = await commonDao.checkVersion(version, device);
-  console.log('versionRows: ', versionRows);
   if (versionRows.length === 0) {
     result.force = VersionUpdateEnum.none;
   } else {
