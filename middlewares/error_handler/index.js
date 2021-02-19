@@ -9,7 +9,16 @@ const { commonErrorHandler } = require('./common');
 sentry.init({ dsn: process.env.SENTRY_DSN });
 
 module.exports = (app) => {
-  app.use(sentry.Handlers.errorHandler());
+  app.use(
+    sentry.Handlers.errorHandler({
+      shouldHandleError(err) {
+        if (err.status === 404 || err.status > 500) {
+          return true;
+        }
+        return false;
+      },
+    }),
+  );
   app.use(commonErrorHandler);
   app.use(authErrorHandler);
   app.use(validErrorHandler);
