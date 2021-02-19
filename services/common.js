@@ -32,13 +32,13 @@ const checkAuthority = async ({ id: user_id }, { study_id }, ...authority) => {
   return status;
 };
 
-const checkVersion = async ({ version }) => {
+const checkVersion = async ({ version, device }) => {
   const result = {
     latest_version: null,
     force: 1,
   };
 
-  const versionRows = await commonDao.checkVersion(version);
+  const versionRows = await commonDao.checkVersion(version, device);
   if (versionRows.length === 0) {
     result.force = VersionUpdateEnum.none;
   } else {

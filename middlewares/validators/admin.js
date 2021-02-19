@@ -1,5 +1,6 @@
 const Joi = require('joi');
 
+const { DeviceEnum } = require('../../utils/variables/enum');
 const { validError } = require('../../utils/errors/validation');
 
 const getRedis = async (req, res, next) => {
@@ -17,6 +18,7 @@ const getRedis = async (req, res, next) => {
 const setVersion = async (req, res, next) => {
   const bodySchema = Joi.object({
     version: Joi.string().required(),
+    device: Joi.equal(...Object.values(DeviceEnum)).required(),
     force: Joi.bool().required(),
   });
   try {
