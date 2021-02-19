@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const router = require('./routes');
 const { verify } = require('./middlewares/auth');
 const { stream } = require('./configs/winston');
-const { setTrim } = require('./middlewares/validators/common');
+const { parseRequest } = require('./middlewares/validators/common');
 
 const app = express();
 
@@ -15,7 +15,7 @@ app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(setTrim);
+app.use(parseRequest);
 app.use(verify);
 
 app.use('/', router);
