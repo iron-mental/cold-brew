@@ -27,7 +27,7 @@ const apn = {
     keyId: process.env.APNS_keyId,
     teamId: process.env.APNS_teamId,
   },
-  production: false, // NODE_ENV 변경하면 같이 변경하기
+  production: process.env.NODE_ENV === 'production' ? process.env.NODE_ENV : 'development',
 };
 
 module.exports = {

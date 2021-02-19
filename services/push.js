@@ -15,9 +15,9 @@ const toHost = async (pushEvent, study_id) => {
   send(tokenRows, pushEvent, study_id);
 };
 
-const toUser = async (pushEvent, user_id) => {
+const toUser = async (pushEvent, user_id, study_id) => {
   const tokenRows = await pushDao.getUserToken(user_id);
-  send(tokenRows, pushEvent, user_id);
+  send(tokenRows, pushEvent, study_id);
 };
 
 const toStudy = async (pushEvent, study_id) => {

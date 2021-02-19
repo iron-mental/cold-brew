@@ -225,7 +225,7 @@ const getAlert = async ({ id: user_id }) => {
 
 // 푸시 테스트
 const pushTest = async ({ id: user_id }) => {
-  push.emit('toUser', PushEventEnum.push_test, user_id);
+  push.emit('toUser', PushEventEnum.push_test, user_id, 1);
 };
 
 module.exports = {
