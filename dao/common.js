@@ -68,17 +68,18 @@ const getUserLocation = async (user_id) => {
   }
 };
 
-const checkVersion = async (version) => {
+const checkVersion = async (version, device) => {
   const conn = await pool.getConnection();
   try {
     const checkSql = `
-      SELECT V.force, V.version
+      SELECT V.id, V.device, V.version, V.force
       FROM version V
       WHERE id > (
         SELECT id 
         FROM version 
-        WHERE version = ? )`;
-    const [checkRows] = await conn.query(checkSql, version);
+        WHERE version = ? AND device = ?
+      ) AND device = ?`;
+    const [checkRows] = await conn.query(checkSql, [version, device, device]);
     return checkRows;
   } catch (err) {
     throw databaseError(err);

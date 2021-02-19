@@ -2,7 +2,7 @@ const Joi = require('joi');
 const GraphemeSplitter = require('grapheme-splitter');
 
 const { validError } = require('../../utils/errors/validation');
-const { CategoryEnum } = require('../../utils/variables/enum');
+const { CategoryEnum, DeviceEnum } = require('../../utils/variables/enum');
 
 const splitter = new GraphemeSplitter();
 
@@ -35,9 +35,10 @@ const uriList = {
 const checkVersion = async (req, res, next) => {
   const querySchema = Joi.object({
     version: Joi.string().required(),
+    device: Joi.equal(...Object.values(DeviceEnum)).required(),
   });
   try {
-    await querySchema.validateAsync(req.parse.query);
+    await querySchema.validateAsync(req.query);
     next();
   } catch (err) {
     next(validError(err));
