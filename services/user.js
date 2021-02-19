@@ -79,6 +79,19 @@ const login = async ({ email, password, device, push_token }) => {
   return { id, access_token, refresh_token };
 };
 
+// 로그아웃
+const logout = async ({ id }) => {
+  const emptyToken = {
+    push_token: '',
+    access_token: '',
+    refresh_token: '',
+  };
+  const logoutRows = await userDao.userUpdate(id, emptyToken);
+  if (logoutRows.length === 0) {
+    throw customError(400, '로그아웃 실패');
+  }
+};
+
 // 상세 조회
 const userDetail = async ({ id }) => {
   const userDataRows = await userDao.userDetail(id);
@@ -231,6 +244,7 @@ const pushTest = async ({ id: user_id }) => {
 module.exports = {
   signup,
   login,
+  logout,
   userDetail,
   userImageUpdate,
   userUpdate,

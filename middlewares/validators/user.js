@@ -60,6 +60,18 @@ const login = async (req, res, next) => {
   }
 };
 
+const logout = async (req, res, next) => {
+  const bodySchema = Joi.object({
+    id: Joi.number().required(),
+  });
+  try {
+    await bodySchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    next(validError(err));
+  }
+};
+
 const userDetail = async (req, res, next) => {
   const paramSchema = Joi.object({
     id: Joi.number().required(),
@@ -270,6 +282,7 @@ module.exports = {
   checkEmail,
   signup,
   login,
+  logout,
   userDetail,
   userInfoUpdate,
   userImageUpdate,

@@ -21,6 +21,7 @@ router.get('/pushTest', asyncWrap(userController.pushTest)); // 푸시알림 테
 
 router.post('/', userValid.signup, asyncWrap(userController.signup)); // 회원 가입
 router.post('/login', userValid.login, asyncWrap(userController.login)); // 로그인
+router.post('/logout', idCompare, userValid.logout, asyncWrap(userController.logout)); // 로그인
 router.post('/reissuance', userValid.reissuance, asyncWrap(userController.reissuance)); // accessToken 재발급
 
 router.get('/:id', userValid.userDetail, asyncWrap(userController.userDetail)); // 유저 상세조회
