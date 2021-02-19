@@ -30,8 +30,6 @@ const apn = {
   production: Boolean(process.env.NODE_ENV === 'production'),
 };
 
-console.log(apn.production);
-
 module.exports = {
   firebase,
   mailer,
