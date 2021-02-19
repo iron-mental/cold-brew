@@ -24,11 +24,6 @@ const redisTrigger = async (user_id, redisEvent, data) => {
       userData.push = data;
       break;
 
-    case RedisEventEnum.participate:
-      userData.chat[data.study_id] = 0;
-      userData.alert[data.study_id] = 0;
-      break;
-
     case RedisEventEnum.alert:
       userData.alert[data.study_id] += 1;
       break;
@@ -37,18 +32,8 @@ const redisTrigger = async (user_id, redisEvent, data) => {
       userData.chat[data.study_id] += 1;
       break;
 
-    case RedisEventEnum.alert_read:
-      userData.alert[data.study_id] = 0;
-      userData.chat[data.study_id] = 0;
-      break;
-
     case RedisEventEnum.chat_read:
       userData.chat[data.study_id] = 0;
-      break;
-
-    case RedisEventEnum.leave:
-      delete userData.chat[data.study_id];
-      delete userData.alert[data.study_id];
       break;
 
     case RedisEventEnum.reset:
@@ -57,6 +42,11 @@ const redisTrigger = async (user_id, redisEvent, data) => {
         userData.chat[study.id] = 0;
         userData.alert[study.id] = 0;
       }
+      break;
+
+    default:
+      userData.chat[data.study_id] = 0;
+      userData.alert[data.study_id] = 0;
       break;
   }
 
