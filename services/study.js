@@ -96,7 +96,7 @@ const studyDelete = async ({ id: host_id }, { study_id }) => {
 
   userRows.forEach(({ user_id }) => {
     if (host_id !== user_id) {
-      push.emit('toUser', PushEventEnum.study_delete, user_id, study_id);
+      push.emit('toUser', PushEventEnum.study_delete, study_id, user_id);
     }
     User.updateOne({ user_id }, { $pull: { rooms: study_id } }).exec();
     redisTrigger(user_id, RedisEventEnum.leave, { study_id });
