@@ -1,27 +1,6 @@
 const pool = require('../configs/mysql');
 const { databaseError } = require('../utils/errors/database');
 
-const getMemberToken = async (study_id) => {
-  const conn = await pool.getConnection();
-  try {
-    const getMemberSql = `
-      SELECT
-        u.id, u.device, u.push_token
-      FROM
-        participate p
-          LEFT JOIN user u
-          ON p.user_id = u.id
-      WHERE p.study_id = ?
-      ORDER BY u.device`;
-    const [memberRows] = await conn.query(getMemberSql, study_id);
-    return memberRows;
-  } catch (err) {
-    throw databaseError(500, err);
-  } finally {
-    await conn.release();
-  }
-};
-
 const getMemberWithoutHostToken = async (study_id) => {
   const conn = await pool.getConnection();
   try {
@@ -132,12 +111,29 @@ const getMemberWithoutUserToken = async (study_id, user_id) => {
     await conn.release();
   }
 };
+
+const getStudyTitle = async (study_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const getTitleSql = `
+      SELECT study_title title 
+      FROM alert 
+      WHERE study_id = ?`;
+    const [titleRows] = await conn.query(getTitleSql, study_id);
+    return titleRows;
+  } catch (err) {
+    throw databaseError(500, err);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
-  getMemberToken,
   getMemberWithoutHostToken,
   getMemberWithoutUserToken,
   getOffMemberToken,
   getUserToken,
   getHostToken,
   insertAlert,
+  getStudyTitle,
 };
