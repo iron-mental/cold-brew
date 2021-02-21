@@ -90,19 +90,25 @@ const parseRequest = (req, res, next) => {
 
 const parseProjectGrapheme = (req) => {
   const parse = {
-    body: {
-      project_list: [],
-    },
+    body: {},
   };
+
+  if (!req.body.project_list) {
+    return parse;
+  }
   let tmp = {};
 
   parse.body.project_list = req.body.project_list.map((project) => {
     tmp = {};
     Object.entries(project).forEach(([key, value]) => {
-      tmp[key] = '';
-      splitter.splitGraphemes(value).forEach((char) => {
-        char.length > 1 ? (tmp[key] += 'A') : (tmp[key] += char);
-      });
+      if (value === null) {
+        tmp[key] = null;
+      } else {
+        tmp[key] = '';
+        splitter.splitGraphemes(value).forEach((char) => {
+          char.length > 1 ? (tmp[key] += 'A') : (tmp[key] += char);
+        });
+      }
     });
     return tmp;
   });
