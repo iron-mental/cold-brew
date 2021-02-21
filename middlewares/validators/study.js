@@ -37,12 +37,8 @@ const getStudy = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
   });
-  const querySchema = Joi.object({
-    alert_id: Joi.number(),
-  });
   try {
     await paramSchema.validateAsync(req.params);
-    await querySchema.validateAsync(req.query);
     next();
   } catch (err) {
     next(validError(err));

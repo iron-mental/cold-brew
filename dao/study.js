@@ -36,7 +36,7 @@ const checkTitle = async (title) => {
   }
 };
 
-const getStudy = async (study_id, alert_id) => {
+const getStudy = async (study_id) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
@@ -53,10 +53,6 @@ const getStudy = async (study_id, alert_id) => {
         ON u.id = p.user_id
       WHERE s.id = ?`;
     const [studyRows] = await conn.query(studySql, study_id);
-
-    const alertSql = 'UPDATE alert SET confirm = ? WHERE id = ?';
-    await conn.query(alertSql, [true, alert_id]);
-
     await conn.commit();
     return studyRows;
   } catch (err) {

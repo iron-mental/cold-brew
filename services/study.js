@@ -32,8 +32,8 @@ const createStudy = async ({ id: user_id }, createData) => {
   return createRows.insertId;
 };
 
-const getStudy = async ({ id: user_id }, { study_id }, { alert_id }) => {
-  let studyRows = await studyDao.getStudy(study_id, alert_id);
+const getStudy = async ({ id: user_id }, { study_id }) => {
+  let studyRows = await studyDao.getStudy(study_id);
   if (studyRows.length === 0) {
     throw customError(404, '조회된 스터디가 없습니다');
   }
