@@ -1,5 +1,5 @@
 const socketDao = require('../dao/socket');
-const push = require('../events/push');
+const push = require('./push');
 
 const Chat = require('../models/chat');
 
@@ -15,7 +15,7 @@ const chat = (terminal, study_id, nickname, message) => {
   const userChat = Chat.getInstance({ study_id, nickname, message });
   terminal.to(study_id).emit('message', JSON.stringify(userChat));
   Chat.create(userChat);
-  push.emit('chat', study_id, userChat);
+  push.chat(study_id, userChat);
 };
 
 module.exports = {
