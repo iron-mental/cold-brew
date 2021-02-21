@@ -9,8 +9,7 @@ const { sendVerifyEmail } = require('../utils/mailer');
 const { verify, getAccessToken, getRefreshToken } = require('../utils/jwt.js');
 const { customError } = require('../utils/errors/custom');
 const { firebaseError } = require('../utils/errors/firebase');
-
-const push = require('../events/push');
+const { push } = require('./push');
 
 const User = require('../models/user');
 const Chat = require('../models/chat');
@@ -238,7 +237,7 @@ const getAlert = async ({ id: user_id }) => {
 
 // 푸시 테스트
 const pushTest = async ({ id: user_id }) => {
-  push.emit('toUser', PushEventEnum.push_test, user_id, 1);
+  push(PushEventEnum.push_test, 1, user_id);
 };
 
 module.exports = {

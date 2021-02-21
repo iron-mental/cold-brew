@@ -3,7 +3,7 @@ const noticeDao = require('../dao/notice');
 const { toBoolean, cutId } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
 const { PushEventEnum } = require('../utils/variables/enum');
-const push = require('../events/push');
+const { push } = require('./push');
 
 const createNotice = async ({ study_id }, createData) => {
   createData.study_id = study_id;
@@ -12,7 +12,7 @@ const createNotice = async ({ study_id }, createData) => {
     throw customError(404, '조회된 스터디가 없습니다');
   }
 
-  push.emit('toStudyWithoutHost', PushEventEnum.notice_new, study_id);
+  push(PushEventEnum.notice_new, study_id);
   return newNotice.insertId;
 };
 
@@ -31,7 +31,7 @@ const noticeUpdate = async ({ study_id, notice_id }, updateData) => {
     throw customError(404, '조회된 공지사항이 없습니다');
   }
 
-  push.emit('toStudyWithoutHost', PushEventEnum.notice_update, study_id);
+  push(PushEventEnum.notice_update, study_id);
 };
 
 const noticeDelete = async ({ study_id, notice_id }) => {

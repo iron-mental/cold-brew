@@ -1,5 +1,5 @@
 const broadcast = require('./broadcast');
-const push = require('./push');
+const push = require('../services/push');
 
 const Chat = require('../models/chat');
 
@@ -9,7 +9,7 @@ const register = (io) => {
   broadcast.on('chat', (study_id, message) => {
     const systemChat = Chat.getInstance({ study_id, message });
     terminal.to(study_id).emit('message', JSON.stringify(systemChat));
-    push.emit('chat', study_id, systemChat);
+    push.chat(study_id, systemChat);
     Chat.create(systemChat);
   });
 };

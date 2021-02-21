@@ -1,38 +1,29 @@
-const admin = require('firebase-admin');
-const apn = require('apn');
-
-const { apn: options } = require('../configs/config');
-const { getChatPayload, getPushPayload } = require('../models/push');
 const pushDao = require('../dao/push');
+const studyDao = require('../dao/study');
+const { getChatPayload, getPushPayload } = require('../models/push');
 const { customError } = require('../utils/errors/custom');
-const { RedisEventEnum, PushEventEnum, DeviceEnum } = require('../utils/variables/enum');
+const { RedisEventEnum, PushEventEnum, DeviceEnum, MessageEnum } = require('../utils/variables/enum');
 const { redisTrigger } = require('./redis');
+const { apnSender, fcmSender } = require('../utils/push');
 
-const apnProvider = new apn.Provider(options);
+const getTokenRows = async (pushEvent, study_id, user_id) => {
+  const target = {
+    toHost: [PushEventEnum.apply_new],
+    toUser: [PushEventEnum.push_test, PushEventEnum.study_delete, PushEventEnum.apply_reject],
+    chat: [PushEventEnum.chat, PushEventEnum.apply_allow],
+    toStudyWithoutHost: [PushEventEnum.study_update, PushEventEnum.notice_new, PushEventEnum.notice_update],
+    toStudyWithoutUser: [PushEventEnum.study_delegate],
+  };
 
-const toHost = async (pushEvent, study_id) => {
-  const tokenRows = await pushDao.getHostToken(study_id);
-  send(tokenRows, pushEvent, study_id);
-};
-
-const toUser = async (pushEvent, user_id, study_id) => {
-  const tokenRows = await pushDao.getUserToken(user_id);
-  send(tokenRows, pushEvent, study_id);
-};
-
-const toStudy = async (pushEvent, study_id) => {
-  const tokenRows = await pushDao.getMemberToken(study_id);
-  send(tokenRows, pushEvent, study_id);
-};
-
-const toStudyWithoutHost = async (pushEvent, study_id) => {
-  const tokenRows = await pushDao.getMemberWithoutHostToken(study_id);
-  send(tokenRows, pushEvent, study_id);
-};
-
-const toStudyWithoutUser = async (pushEvent, study_id, user_id) => {
-  const tokenRows = await pushDao.getMemberWithoutUserToken(study_id, user_id);
-  send(tokenRows, pushEvent, study_id);
+  if (target.toHost.includes(pushEvent)) {
+    return await pushDao.getHostToken(study_id);
+  } else if (target.toUser.includes(pushEvent)) {
+    return await pushDao.getUserToken(user_id);
+  } else if (target.toStudyWithoutHost.includes(pushEvent)) {
+    return await pushDao.getMemberWithoutHostToken(study_id);
+  } else if (target.toStudyWithoutUser.includes(pushEvent)) {
+    return await pushDao.getMemberWithoutUserToken(study_id, user_id);
+  }
 };
 
 const chat = async (study_id, chat) => {
@@ -42,6 +33,7 @@ const chat = async (study_id, chat) => {
 
   for (let row of tokenRows) {
     redisData = await redisTrigger(row.id, RedisEventEnum.chat, { study_id });
+    apnsPayload.badge = redisData.badge;
 
     if (row.device === DeviceEnum.ios) {
       apnsPayload.badge = redisData.badge;
@@ -54,62 +46,50 @@ const chat = async (study_id, chat) => {
   }
 };
 
-const send = async (tokenRows, pushEvent, study_id) => {
-  const { apnsPayload, fcmPayload } = getPushPayload(pushEvent, study_id);
+const push = async (pushEvent, study_id, user_id) => {
+  const studyRows = Boolean(pushEvent === PushEventEnum.study_delete)
+    ? await pushDao.getStudyTitle(study_id)
+    : await studyDao.getStudy(study_id);
+
   const insertData = {
-    user_id: '',
-    study_id,
     pushEvent,
-    message: apnsPayload.aps.alert,
+    study_id,
+    study_title: studyRows[0].title,
+    message: MessageEnum[pushEvent],
   };
-  let redisData = '';
 
-  // Alert Insert to DB
+  const tokenRows = await getTokenRows(pushEvent, study_id, user_id);
+
   for (let row of tokenRows) {
-    const alertRows = await pushDao.insertAlert({ ...insertData, user_id: row.id });
+    alertRows = await pushDao.insertAlert({ ...insertData, user_id: row.id });
+    row.alert_id = alertRows.insertId;
     redisData = await redisTrigger(row.id, RedisEventEnum.alert, { study_id });
+    row.badge = redisData.badge;
+  }
 
+  const { apnsPayload, fcmPayload } = getPushPayload(pushEvent, study_id);
+  return send(tokenRows, apnsPayload, fcmPayload);
+
+  // return send(tokenRows, pushEvent, study_id);
+};
+
+const send = async (tokenRows, apnsPayload, fcmPayload) => {
+  // const send = async (tokenRows, pushEvent, study_id) => {
+  for (let row of tokenRows) {
     if (row.device === DeviceEnum.ios) {
-      apnsPayload.badge = redisData.badge;
-      apnsPayload.payload.alert_id = alertRows.insertId;
+      apnsPayload.badge = row.badge;
+      apnsPayload.payload.alert_id = row.insertId;
       apnSender(row.push_token, apnsPayload);
     } else {
-      fcmPayload.payload.alert_id = alertRows.insertId;
-      fcmPayload.notification.badge = redisData.badge;
+      fcmPayload.payload.alert_id = row.insertId;
+      fcmPayload.notification.badge = row.badge;
       fcmPayload.tokens = row.push_token;
       fcmSender({ ...fcmPayload, payload: JSON.stringify(fcmPayload.payload) });
     }
   }
 };
 
-const apnSender = (apns_token, note) => {
-  apnProvider.send(note, apns_token).then((result) => {
-    if (result.failed.length > 0) {
-      console.log('## APNs 에러: ', result.failed); // BadDeviceToken
-    } else {
-      console.log('## APNs: ', result);
-    }
-  });
-};
-
-const fcmSender = (payload) => {
-  try {
-    admin
-      .messaging()
-      .sendMulticast(payload)
-      .catch((err) => {
-        console.log('## FCM 에러: ', err);
-      });
-  } catch (err) {
-    console.log('## FCM 에러: ', err);
-  }
-};
-
 module.exports = {
   chat,
-  toUser,
-  toHost,
-  toStudy,
-  toStudyWithoutHost,
-  toStudyWithoutUser,
+  push,
 };

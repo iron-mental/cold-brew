@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const studyDao = require('../dao/study');
-const push = require('../events/push');
+const { push } = require('./push');
 const { PushEventEnum, AuthEnum, RedisEventEnum } = require('../utils/variables/enum');
 const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, lengthSorting } = require('../utils/query');
@@ -83,7 +83,7 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
       throw customError(404, '조회된 스터디가 없습니다');
     }
   }
-  push.emit('toStudyWithoutHost', PushEventEnum.study_update, study_id);
+  push(PushEventEnum.study_update, study_id);
 };
 
 const studyDelete = async ({ id: host_id }, { study_id }) => {
@@ -96,7 +96,7 @@ const studyDelete = async ({ id: host_id }, { study_id }) => {
 
   userRows.forEach(({ user_id }) => {
     if (host_id !== user_id) {
-      push.emit('toUser', PushEventEnum.study_delete, user_id, study_id);
+      push(PushEventEnum.study_delete, study_id, user_id);
     }
     User.updateOne({ user_id }, { $pull: { rooms: study_id } }).exec();
     redisTrigger(user_id, RedisEventEnum.leave, { study_id });
@@ -177,7 +177,7 @@ const delegate = async ({ id: old_leader }, { study_id }, { new_leader }) => {
   if (toLeaderRows.affectedRows === 0 || toParticipateRows.affectedRows === 0) {
     throw customError(400, '위임 실패');
   }
-  push.emit('toStudyWithoutUser', PushEventEnum.study_delegate, study_id, old_leader);
+  push(PushEventEnum.study_delegate, study_id, old_leader);
 };
 
 const search = async ({ id: user_id }, { word }) => {

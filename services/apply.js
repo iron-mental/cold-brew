@@ -1,8 +1,8 @@
 const applyDao = require('../dao/apply');
 
-const push = require('../events/push');
-const { PushEventEnum, RedisEventEnum } = require('../utils/variables/enum');
+const { push } = require('./push');
 const broadcast = require('../events/broadcast');
+const { PushEventEnum, RedisEventEnum } = require('../utils/variables/enum');
 const { rowSplit, toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
 const { ApplyEnum } = require('../utils/variables/enum');
@@ -16,7 +16,7 @@ const createApply = async ({ user_id, study_id, message }) => {
   if (createdRows.affectedRows === 0) {
     throw customError(404, '조회된 스터디가 없습니다');
   }
-  push.emit('toHost', PushEventEnum.apply_new, study_id);
+  push(PushEventEnum.apply_new, study_id);
 };
 
 const getApplyByUser = async ({ study_id, user_id }) => {
@@ -89,7 +89,7 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
     if (rejectRows.affectedRows === 0) {
       throw customError(400, '거절 실패');
     }
-    push.emit('toUser', PushEventEnum.apply_reject, user_id, study_id);
+    push(PushEventEnum.apply_reject, study_id, user_id);
   }
 };
 
