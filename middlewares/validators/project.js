@@ -30,15 +30,17 @@ const updateProject = async (req, res, next) => {
   });
 
   const bodySchema = Joi.object({
-    project_list: Joi.array().items(projectSchema),
+    project_list: Joi.array().items(projectSchema).required(),
   });
 
   try {
-    req.parse = parseProjectGrapheme(req);
     await paramSchema.validateAsync(req.params);
+    await bodySchema.validateAsync(req.body);
+    req.parse = parseProjectGrapheme(req);
     await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
+    console.log('err: ', err);
     next(validError(err));
   }
 };
