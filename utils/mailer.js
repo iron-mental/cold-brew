@@ -8,10 +8,11 @@ const transporter = nodemailer.createTransport(mailer);
 
 const sendVerifyEmail = async (email) => {
   try {
-    const processUri = process.env.MAILER_processUri.concat(email);
+    const processUri = process.env.DOMAIN + process.env.MAILER_processUri + email;
     const message = {
       from: process.env.MAILER_auth_user,
       to: email,
+      secure: Boolean(process.env.MAILER_Secure),
       subject: `Teminal :study 계정인증 이메일`,
       attachments: [
         {
@@ -48,7 +49,6 @@ const sendVerifyEmail = async (email) => {
       </div>
       </font></b></div>`,
     };
-
     await transporter.sendMail(message);
   } catch (err) {
     throw customError(500, err);
