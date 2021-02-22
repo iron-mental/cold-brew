@@ -32,7 +32,21 @@ const confirmAlert = async (alert_id) => {
   }
 };
 
+const updateStudyTitle = async (study_id, title) => {
+  const conn = await pool.getConnection();
+  try {
+    const updateSql = `UPDATE alert SET study_title = ? WHERE study_id = ?`;
+    const [updateRows] = await conn.query(updateSql, [title, study_id]);
+    return updateRows;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   getAlert,
   confirmAlert,
+  updateStudyTitle,
 };
