@@ -265,18 +265,6 @@ const updatePushToken = async (req, res, next) => {
   }
 };
 
-const getAlert = async (req, res, next) => {
-  const paramSchema = Joi.object({
-    id: Joi.number().required(),
-  });
-  try {
-    await paramSchema.validateAsync(req.params);
-    next();
-  } catch (err) {
-    next(validError(err));
-  }
-};
-
 module.exports = {
   checkNickname,
   checkEmail,
@@ -296,5 +284,4 @@ module.exports = {
   resetPassword,
   updateEmail,
   updatePushToken,
-  getAlert,
 };

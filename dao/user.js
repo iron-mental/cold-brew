@@ -272,24 +272,6 @@ const getAddress = async () => {
   }
 };
 
-const getAlert = async (user_id) => {
-  const conn = await pool.getConnection();
-  try {
-    const alertSql = `
-      SELECT id, study_id, study_title, pushEvent, message, confirm, DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at
-      FROM alert
-      WHERE user_id = ?
-      ORDER BY id DESC
-      LIMIT 50`;
-    const [alertRows] = await conn.query(alertSql, [user_id, false]);
-    return alertRows;
-  } catch (err) {
-    throw databaseError(err);
-  } finally {
-    await conn.release();
-  }
-};
-
 module.exports = {
   signup,
   login,
@@ -304,5 +286,4 @@ module.exports = {
   checkToken,
   updateEmail,
   getAddress,
-  getAlert,
 };
