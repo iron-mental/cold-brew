@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const studyDao = require('../dao/study');
+const alertDao = require('../dao/alert');
 const { push } = require('./push');
 const { PushEventEnum, AuthEnum, RedisEventEnum } = require('../utils/variables/enum');
 const { getUserLocation } = require('../dao/common');
@@ -54,36 +55,42 @@ const getStudy = async ({ id: user_id }, { study_id }) => {
 };
 
 const studyUpdate = async ({ study_id }, updateData, filedata) => {
-  if (updateData.title) {
-    const checkRows = await studyDao.checkTitle(updateData.title);
-    if (checkRows.length > 0) {
-      throw customError(400, '중복된 스터디 이름이 존재합니다');
+  try {
+    if (updateData.title) {
+      const checkRows = await studyDao.checkTitle(updateData.title);
+      if (checkRows.length > 0) {
+        throw customError(400, '중복된 스터디 이름이 존재합니다');
+      }
+      Room.updateOne({ study_id }, { study_title: updateData.title }).exec();
     }
-    Room.updateOne({ study_id }, { study_title: updateData.title }).exec();
+
+    if (filedata) {
+      const { destination, uploadedFile, path: _tmpPath } = filedata;
+      const previousPath = await studyDao.getImage(study_id);
+      const updateRows = await studyDao.studyUpdate(study_id, updateData);
+      if (previousPath.length === 0 || updateRows.affectedRows === 0) {
+        throw customError(404, '조회된 스터디가 없습니다');
+      }
+      const oldImagePath = path.join(destination, path.basename(previousPath[0].image));
+      try {
+        fs.unlink(oldImagePath, (err) => {});
+      } catch (err) {}
+      const newPath = path.join(destination, uploadedFile.basename);
+      fs.rename(_tmpPath, newPath, (err) => {});
+    } else {
+      const updateRows = await studyDao.studyUpdate(study_id, updateData);
+      if (updateRows.affectedRows === 0) {
+        throw customError(404, '조회된 스터디가 없습니다');
+      }
+    }
+
+    if (updateData.title) {
+      await alertDao.updateStudyTitle(study_id, updateData.title);
+    }
+    push(PushEventEnum.study_update, study_id);
+  } catch (err) {
+    console.log(err);
   }
-
-  if (filedata) {
-    const { destination, uploadedFile, path: _tmpPath } = filedata;
-    const previousPath = await studyDao.getImage(study_id);
-    const updateRows = await studyDao.studyUpdate(study_id, updateData);
-    if (previousPath.length === 0 || updateRows.affectedRows === 0) {
-      throw customError(404, '조회된 스터디가 없습니다');
-    }
-
-    const oldImagePath = path.join(destination, path.basename(previousPath[0].image));
-    try {
-      fs.unlink(oldImagePath, (err) => {});
-    } catch (err) {}
-
-    const newPath = path.join(destination, uploadedFile.basename);
-    fs.rename(_tmpPath, newPath, (err) => {});
-  } else {
-    const updateRows = await studyDao.studyUpdate(study_id, updateData);
-    if (updateRows.affectedRows === 0) {
-      throw customError(404, '조회된 스터디가 없습니다');
-    }
-  }
-  push(PushEventEnum.study_update, study_id);
 };
 
 const studyDelete = async ({ id: host_id }, { study_id }) => {
