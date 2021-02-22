@@ -8,11 +8,12 @@ const transporter = nodemailer.createTransport(mailer);
 
 const sendVerifyEmail = async (email) => {
   try {
-    const processUri = process.env.MAILER_processUri.concat(email);
+    const processUri = process.env.DOMAIN + process.env.MAILER_processUri + email;
     const message = {
-      from: process.env.MAILER_auth_user,
+      from: process.env.APP_name + process.env.MAILER_auth_user,
       to: email,
-      subject: `Teminal :study 계정인증 이메일`,
+      secure: Boolean(process.env.MAILER_secure),
+      subject: process.env.APP_name + ' 계정 인증',
       attachments: [
         {
           filename: 'logo.png',
