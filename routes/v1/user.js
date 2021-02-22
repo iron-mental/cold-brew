@@ -11,6 +11,8 @@ const applyValid = require('../../middlewares/validators/apply');
 const applyController = require('../../controllers/apply');
 const projectValid = require('../../middlewares/validators/project');
 const projectController = require('../../controllers/project');
+const alertValid = require('../../middlewares/validators/alert');
+const alertController = require('../../controllers/alert');
 
 const router = express.Router();
 
@@ -37,6 +39,7 @@ router.put('/:id/push_token', idCompare, userValid.updatePushToken, asyncWrap(us
 
 router.get('/:id/emailVerify', idCompare, userValid.emailVerification, asyncWrap(userController.emailVerification)); // 이메일 인증 요청
 router.get('/emailVerify-process/:email', userValid.emailVerificationProcess, asyncWrap(userController.emailVerificationProcess)); // 이메일 인증 요청
+router.post('/reset-password/:email', userValid.resetPassword, asyncWrap(userController.resetPassword)); // 비밀번호 리셋 요청
 
 router.get('/:id/study', idCompare, studyValid.getMyStudy, asyncWrap(studyController.getMyStudy)); // 내 스터디 조회
 
@@ -45,8 +48,7 @@ router.get('/:id/apply', idCompare, applyValid.applyListByUser, asyncWrap(applyC
 router.get('/:id/project', projectValid.getProjectList, asyncWrap(projectController.getProjectList)); // 내 프로젝트 목록 조회
 router.post('/:id/project', idCompare, projectValid.updateProject, asyncWrap(projectController.updateProject)); // 프로젝트 수정
 
-router.get('/:id/alert', idCompare, userValid.getAlert, asyncWrap(userController.getAlert)); // 알람 조회
-
-router.post('/reset-password/:email', userValid.resetPassword, asyncWrap(userController.resetPassword)); // 비밀번호 리셋 요청
+router.get('/:id/alert', idCompare, alertValid.getAlert, asyncWrap(alertController.getAlert)); // 알람 조회
+router.get('/:id/alert/:alert_id', idCompare, alertValid.confirmAlert, asyncWrap(alertController.confirmAlert)); // 알람 확인처리
 
 module.exports = router;

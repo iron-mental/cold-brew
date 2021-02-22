@@ -229,12 +229,6 @@ const getAddress = async () => {
   return parsingAddress(addressRows);
 };
 
-// 알림 조회
-const getAlert = async ({ id: user_id }) => {
-  const alertRows = await userDao.getAlert(user_id);
-  return toBoolean(alertRows, ['confirm']);
-};
-
 // 푸시 테스트
 const pushTest = async ({ id: user_id }) => {
   push(PushEventEnum.push_test, 1, user_id);
@@ -257,6 +251,5 @@ module.exports = {
   updateEmail,
   updatePushToken,
   getAddress,
-  getAlert,
   pushTest,
 };
