@@ -1,6 +1,7 @@
 const noticeService = require('../services/notice');
-const { isHost } = require('../services/common');
+const { isHost, checkAuthority } = require('../services/common');
 const response = require('../utils/response');
+const { AuthEnum } = require('../utils/variables/enum');
 
 const createNotice = async (req, res) => {
   await isHost(req.user, req.params);
@@ -26,6 +27,7 @@ const noticeDelete = async (req, res) => {
 };
 
 const noticeList = async (req, res) => {
+  await checkAuthority(req.user, req.params, AuthEnum.host, AuthEnum.member);
   const noticeList = await noticeService.noticeList(req.params);
   response(res, 200, noticeList);
 };
