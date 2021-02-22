@@ -24,6 +24,7 @@ const confirmAlert = async (alert_id) => {
   try {
     const confirmSql = `UPDATE alert SET confirm = ? WHERE id = ?`;
     const [confirmRows] = await conn.query(confirmSql, [true, alert_id]);
+    return confirmRows;
   } catch (err) {
     throw databaseError(err);
   } finally {
