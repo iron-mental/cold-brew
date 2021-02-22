@@ -10,10 +10,10 @@ const sendVerifyEmail = async (email) => {
   try {
     const processUri = process.env.DOMAIN + process.env.MAILER_processUri + email;
     const message = {
-      from: process.env.MAILER_auth_user,
+      from: process.env.APP_name + process.env.MAILER_auth_user,
       to: email,
-      secure: Boolean(process.env.MAILER_Secure),
-      subject: `Teminal :study 계정인증 이메일`,
+      secure: Boolean(process.env.MAILER_secure),
+      subject: process.env.APP_name + ' 계정 인증',
       attachments: [
         {
           filename: 'logo.png',
@@ -49,6 +49,7 @@ const sendVerifyEmail = async (email) => {
       </div>
       </font></b></div>`,
     };
+
     await transporter.sendMail(message);
   } catch (err) {
     throw customError(500, err);
