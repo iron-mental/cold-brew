@@ -9,6 +9,7 @@
   "dependencies": {
     "@sentry/node": "^5.29.2",
     "@sentry/tracing": "^5.29.2",
+    "@slack/client": "^5.0.2",
     "apn": "^2.2.0",
     "cookie-parser": "~1.4.4",
     "date-fns": "^2.16.1",

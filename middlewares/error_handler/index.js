@@ -1,24 +1,13 @@
-const sentry = require('@sentry/node');
+const { sentryHandler } = require('./sentry');
+const { commonErrorHandler } = require('./common');
 const { authErrorHandler } = require('./auth');
 const { validErrorHandler } = require('./validation');
 const { firebaseErrorHandler } = require('./firebase');
 const { databaseErrorHandler } = require('./database');
 const { customErrorHandler } = require('./custom');
-const { commonErrorHandler } = require('./common');
-
-sentry.init({ dsn: process.env.SENTRY_DSN });
 
 module.exports = (app) => {
-  app.use(
-    sentry.Handlers.errorHandler({
-      shouldHandleError(err) {
-        if (err.status === 404 || err.status > 500) {
-          return true;
-        }
-        return false;
-      },
-    }),
-  );
+  app.use(sentryHandler);
   app.use(commonErrorHandler);
   app.use(authErrorHandler);
   app.use(validErrorHandler);
