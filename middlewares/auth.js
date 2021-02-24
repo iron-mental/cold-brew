@@ -6,7 +6,7 @@ const { CategoryEnum } = require('../utils/variables/enum');
 const passUrl = {
   slice: ['check-nickname', 'check-email', 'login', 'emailVerify-process', 'reset-password', 'reissuance', ...Object.keys(CategoryEnum)],
   full: ['/v1/user', '/v1/chat/http', '/v1/chat/https', '/v1/push/test'],
-  pathName: ['/check-version', '/'],
+  pathName: ['/', '/check-version', '/favicon.ico'],
   web: 'web',
 };
 
