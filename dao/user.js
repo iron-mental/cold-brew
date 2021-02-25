@@ -206,7 +206,7 @@ const emailVerificationProcess = async (email) => {
   }
 };
 
-const checkToken = async (refreshToken) => {
+const checkRefreshToken = async (refreshToken) => {
   const conn = await pool.getConnection();
   try {
     const checkSql = 'SELECT id, email, nickname, access_token FROM user WHERE refresh_token = ?';
@@ -283,7 +283,7 @@ module.exports = {
   withdraw,
   verifiedCheck,
   emailVerificationProcess,
-  checkToken,
+  checkRefreshToken,
   updateEmail,
   getAddress,
 };

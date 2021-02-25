@@ -1,16 +1,17 @@
 const jwt = require('jsonwebtoken');
-const { customError } = require('./errors/custom');
 
 const secretKey = process.env.JWT_secret;
 const options = {
   issuer: process.env.JWT_issuer,
 };
 
-const verify = (token, tokenType) => {
+const verifyRefreshToken = (token) => {
   try {
     return jwt.verify(token, process.env.JWT_secret);
   } catch (err) {
-    throw customError(401, `${tokenType} Token이 만료되었습니다. 다시 로그인 하세요`, 106);
+    return {
+      err: true,
+    };
   }
 };
 
@@ -42,9 +43,15 @@ const socketVerify = (socket, next) => {
   }
 };
 
+const getPayload = (jwt_token) => {
+  const payload = Buffer.from(jwt_token.split('.')[1], 'base64').toString();
+  return JSON.parse(payload);
+};
+
 module.exports = {
-  verify,
+  verifyRefreshToken,
   getAccessToken,
   getRefreshToken,
   socketVerify,
+  getPayload,
 };
