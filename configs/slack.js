@@ -1,7 +1,7 @@
 const { format } = require('date-fns');
 const { IncomingWebhook } = require('@slack/client');
 
-const webhook = new IncomingWebhook(process.env.SLACK_webhook_general);
+const webhook = new IncomingWebhook(process.env.SLACK_webhook_status);
 
 const attachments = {
   on: [
@@ -20,23 +20,15 @@ const attachments = {
   ],
 };
 
-const send = (status) => {
-  console.log('status: ', status);
-  webhook.send({ attachments: attachments[status] }, (err, res) => {
-    if (err) {
-      sentry.captureException(err);
-    }
-  });
+const send = async (status) => {
+  await webhook.send({ attachments: attachments[status] });
 };
 
-if (process.env.pm_id === '0') send('on');
-
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
+  if (process.env.pm_id === '0') {
+    await send('off');
+  }
   process.exit();
 });
 
-process.on('exit', () => {
-  if (process.env.pm_id === '0') {
-    send('off');
-  }
-});
+if (process.env.pm_id === '0') send('on');
