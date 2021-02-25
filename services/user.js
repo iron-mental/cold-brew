@@ -6,7 +6,7 @@ const userDao = require('../dao/user');
 const studyDao = require('../dao/study');
 const { toBoolean, parsingAddress } = require('../utils/query');
 const { sendVerifyEmail } = require('../utils/mailer');
-const { verify, getAccessToken, getRefreshToken } = require('../utils/jwt.js');
+const { verifyRefreshToken, getAccessToken, getRefreshToken, getPayload } = require('../utils/jwt.js');
 const { customError } = require('../utils/errors/custom');
 const { firebaseError } = require('../utils/errors/firebase');
 const { push } = require('./push');
@@ -63,6 +63,8 @@ const login = async ({ email, password, device, push_token }) => {
   const access_token = await getAccessToken({ id, email, nickname });
   const refresh_token = await getRefreshToken({ id });
 
+  userDao.clearPushToken(push_token);
+
   userDao.userUpdate(id, {
     device,
     access_token,
@@ -75,7 +77,11 @@ const login = async ({ email, password, device, push_token }) => {
     push_token,
   });
 
-  return { id, access_token, refresh_token };
+  return {
+    id,
+    access_token,
+    refresh_token,
+  };
 };
 
 // 로그아웃
@@ -176,17 +182,26 @@ const emailVerificationProcess = async ({ email }) => {
 
 // 검증 후 accessToken 발급
 const reissuance = async (expiredAccessToken, { refresh_token }) => {
-  const refreshDecoded = verify(refresh_token, 'refresh');
+  const { id } = getPayload(refresh_token);
+  const refreshDecoded = verifyRefreshToken(refresh_token);
+  if (refreshDecoded.err) {
+    await logout({ id });
+    throw customError(401, `refresh Token이 만료되었습니다. 다시 로그인 하세요`, 106);
+  }
 
-  const [userData] = await userDao.checkToken(refresh_token);
+  const [userData] = await userDao.checkRefreshToken(refresh_token);
   if (!userData) {
+    await logout({ id });
     throw customError(400, 'Refresh Token이 일치하지 않습니다. 다시 로그인 하세요', 101);
   }
   if (userData.access_token !== expiredAccessToken) {
+    await logout({ id });
     throw customError(400, 'Access Token이 일치하지 않습니다. 다시 로그인 하세요', 102);
   }
 
-  const newTokenSet = { access_token: getAccessToken(userData) };
+  const newTokenSet = {
+    access_token: getAccessToken(userData),
+  };
 
   if (refreshDecoded.exp - Math.floor(new Date().getTime() / 1000) < process.env.JWT_refreshCycle) {
     newTokenSet.refresh_token = getRefreshToken(userData);

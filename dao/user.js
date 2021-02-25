@@ -206,7 +206,7 @@ const emailVerificationProcess = async (email) => {
   }
 };
 
-const checkToken = async (refreshToken) => {
+const checkRefreshToken = async (refreshToken) => {
   const conn = await pool.getConnection();
   try {
     const checkSql = 'SELECT id, email, nickname, access_token FROM user WHERE refresh_token = ?';
@@ -272,6 +272,18 @@ const getAddress = async () => {
   }
 };
 
+const clearPushToken = async (push_token) => {
+  const conn = await pool.getConnection();
+  try {
+    const clearSql = `UPDATE user SET push_token = '' WHERE push_token = ?`;
+    await conn.query(clearSql, push_token);
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -283,7 +295,8 @@ module.exports = {
   withdraw,
   verifiedCheck,
   emailVerificationProcess,
-  checkToken,
+  checkRefreshToken,
   updateEmail,
   getAddress,
+  clearPushToken,
 };
