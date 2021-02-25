@@ -5,15 +5,13 @@ const morgan = require('morgan');
 const router = require('./routes');
 const { verify } = require('./middlewares/auth');
 const { stream } = require('./configs/winston');
-require('./configs/slack');
-
 const { parseRequest } = require('./middlewares/validators/common');
+require('./configs/slack');
 
 const app = express();
 
 app.set('trust proxy', true);
-app.use(morgan('combined'));
-// app.use(morgan('combined'), { stream });
+app.use(morgan('combined'), { stream });
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
