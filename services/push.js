@@ -10,18 +10,23 @@ const getTokenRows = async (pushEvent, study_id, user_id) => {
   const target = {
     toHost: [PushEventEnum.apply_new],
     toUser: [PushEventEnum.push_test, PushEventEnum.study_delete, PushEventEnum.apply_reject],
-    chat: [PushEventEnum.chat, PushEventEnum.apply_allow],
     toStudyWithoutHost: [PushEventEnum.study_update, PushEventEnum.notice_new, PushEventEnum.notice_update],
     toStudyWithoutUser: [PushEventEnum.study_delegate],
   };
 
   if (target.toHost.includes(pushEvent)) {
     return await pushDao.getHostToken(study_id);
-  } else if (target.toUser.includes(pushEvent)) {
+  }
+
+  if (target.toUser.includes(pushEvent)) {
     return await pushDao.getUserToken(user_id);
-  } else if (target.toStudyWithoutHost.includes(pushEvent)) {
+  }
+
+  if (target.toStudyWithoutHost.includes(pushEvent)) {
     return await pushDao.getMemberWithoutHostToken(study_id);
-  } else if (target.toStudyWithoutUser.includes(pushEvent)) {
+  }
+
+  if (target.toStudyWithoutUser.includes(pushEvent)) {
     return await pushDao.getMemberWithoutUserToken(study_id, user_id);
   }
 };
