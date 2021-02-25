@@ -5,7 +5,7 @@ const chatSchema = new mongoose.Schema(
     study_id: Number,
     nickname: String,
     message: String,
-    date: String,
+    date: Number,
   },
   {
     versionKey: false,
