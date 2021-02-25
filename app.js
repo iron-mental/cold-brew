@@ -5,6 +5,8 @@ const morgan = require('morgan');
 const router = require('./routes');
 const { verify } = require('./middlewares/auth');
 const { stream } = require('./configs/winston');
+require('./configs/slack');
+
 const { parseRequest } = require('./middlewares/validators/common');
 
 const app = express();
