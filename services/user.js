@@ -63,6 +63,8 @@ const login = async ({ email, password, device, push_token }) => {
   const access_token = await getAccessToken({ id, email, nickname });
   const refresh_token = await getRefreshToken({ id });
 
+  userDao.clearPushToken(push_token);
+
   userDao.userUpdate(id, {
     device,
     access_token,
@@ -75,7 +77,11 @@ const login = async ({ email, password, device, push_token }) => {
     push_token,
   });
 
-  return { id, access_token, refresh_token };
+  return {
+    id,
+    access_token,
+    refresh_token,
+  };
 };
 
 // 로그아웃

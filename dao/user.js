@@ -272,6 +272,18 @@ const getAddress = async () => {
   }
 };
 
+const clearPushToken = async (push_token) => {
+  const conn = await pool.getConnection();
+  try {
+    const clearSql = `UPDATE user SET push_token = '' WHERE push_token = ?`;
+    await conn.query(clearSql, push_token);
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -286,4 +298,5 @@ module.exports = {
   checkRefreshToken,
   updateEmail,
   getAddress,
+  clearPushToken,
 };
