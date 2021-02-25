@@ -32,7 +32,7 @@ const sentryHandler = (err, req, res, next) => {
       },
     );
   }
-  next();
+  next(err);
 };
 
 module.exports = {
