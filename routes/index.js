@@ -11,13 +11,4 @@ router.use('/v1', v1Router);
 router.use('/', commonRouter);
 router.use('/admin', adminRouter);
 
-// 채팅 뷰 제공
-router.get('/chat/https', (req, res, next) => {
-  res.sendFile(__dirname + '/https.html');
-});
-
-router.get('/chat/http', (req, res, next) => {
-  res.sendFile(__dirname + '/http.html');
-});
-
 module.exports = router;

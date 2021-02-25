@@ -2,10 +2,8 @@ const { format } = require('mysql2');
 const { DeviceEnum } = require('./variables/enum');
 
 const rowSplit = (rows, tags) => {
-  // 결과, 키 목록, 임시 저장 모델, 저장된 id
   let [result, keys, tempModel, insertedId] = [{}, {}, {}, {}];
 
-  // 사전 작업
   tags.forEach((tag) => {
     result[tag] = [];
     tempModel[tag] = {};

@@ -17,14 +17,14 @@ const verifyRefreshToken = (token) => {
 
 const getAccessToken = ({ id, email, nickname }) => {
   const payload = { id, email, nickname };
-  options.expiresIn = parseInt(process.env.JWT_accessExpire, 10); // 15분
+  options.expiresIn = parseInt(process.env.JWT_accessExpire, 10);
   options.subject = 'userInfo-access';
   return jwt.sign(payload, secretKey, options);
 };
 
 const getRefreshToken = ({ id }) => {
   const payload = { id };
-  options.expiresIn = process.env.JWT_refreshExpire; // 15일
+  options.expiresIn = process.env.JWT_refreshExpire;
   options.subject = 'userInfo-refresh';
   return jwt.sign(payload, secretKey, options);
 };

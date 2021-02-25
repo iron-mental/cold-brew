@@ -16,7 +16,6 @@ const Chat = require('../models/chat');
 const { RedisEventEnum, PushEventEnum } = require('../utils/variables/enum');
 const { redisTrigger, redisSignup, redisWithdraw } = require('./redis');
 
-// 닉네임 중복체크
 const checkNickname = async ({ nickname }) => {
   const checkRows = await userDao.checkNickname(nickname);
   if (checkRows.length > 0) {
@@ -24,7 +23,6 @@ const checkNickname = async ({ nickname }) => {
   }
 };
 
-// 이메일 중복체크
 const checkEmail = async ({ email }) => {
   const checkRows = await userDao.checkEmail(email);
   if (checkRows.length > 0) {
@@ -32,7 +30,6 @@ const checkEmail = async ({ email }) => {
   }
 };
 
-// 회원가입
 const signup = async ({ email, password, nickname }) => {
   const nicknameCheckRows = await userDao.checkNickname(nickname);
   if (nicknameCheckRows.length > 0) {
@@ -52,7 +49,6 @@ const signup = async ({ email, password, nickname }) => {
   redisSignup(user_id);
 };
 
-// 로그인
 const login = async ({ email, password, device, push_token }) => {
   const loginRows = await userDao.login(email, password);
   if (loginRows.length === 0) {
@@ -84,7 +80,6 @@ const login = async ({ email, password, device, push_token }) => {
   };
 };
 
-// 로그아웃
 const logout = async ({ id }) => {
   const emptyToken = {
     push_token: '',
@@ -97,7 +92,6 @@ const logout = async ({ id }) => {
   }
 };
 
-// 상세 조회
 const userDetail = async ({ id }) => {
   const userDataRows = await userDao.userDetail(id);
   if (userDataRows.length === 0) {
@@ -106,7 +100,6 @@ const userDetail = async ({ id }) => {
   return toBoolean(userDataRows, ['email_verified'])[0];
 };
 
-// 이미지 수정
 const userImageUpdate = async ({ id }, updateData, { destination, uploadedFile, path: _tmpPath }) => {
   const previousPath = await userDao.getImage(id);
   const oldImagePath = path.join(destination, path.basename(previousPath[0].image || 'nullFileName'));
@@ -122,7 +115,6 @@ const userImageUpdate = async ({ id }, updateData, { destination, uploadedFile, 
   fs.rename(_tmpPath, newPath, (err) => {});
 };
 
-// 유저정보 수정
 const userUpdate = async ({ id }, updateData) => {
   const checkRows = await userDao.checkNickname(updateData.nickname, id);
   if (checkRows.length) {
@@ -138,7 +130,6 @@ const userUpdate = async ({ id }, updateData) => {
   }
 };
 
-// 회원탈퇴
 const withdraw = async ({ id }, { email, password }) => {
   const studyList = await studyDao.getMyStudy(id);
   if (studyList.length > 0) {
@@ -155,7 +146,6 @@ const withdraw = async ({ id }, { email, password }) => {
   }
 };
 
-// 인증 이메일 전송
 const emailVerification = async ({ id }) => {
   const verifyRows = await userDao.verifiedCheck({ id });
   if (verifyRows.length === 0) {
@@ -167,7 +157,6 @@ const emailVerification = async ({ id }) => {
   await sendVerifyEmail(verifyRows[0].email);
 };
 
-// 이메일 인증 처리
 const emailVerificationProcess = async ({ email }) => {
   const verifyRows = await userDao.verifiedCheck({ email });
   if (verifyRows.length === 0) {
@@ -180,7 +169,6 @@ const emailVerificationProcess = async ({ email }) => {
   return nickname;
 };
 
-// 검증 후 accessToken 발급
 const reissuance = async (expiredAccessToken, { refresh_token }) => {
   const { id } = getPayload(refresh_token);
   const refreshDecoded = verifyRefreshToken(refresh_token);
@@ -211,7 +199,6 @@ const reissuance = async (expiredAccessToken, { refresh_token }) => {
   return newTokenSet;
 };
 
-// 비밀번호 수정
 const resetPassword = async ({ email }) => {
   await firebase
     .auth()
@@ -221,7 +208,6 @@ const resetPassword = async ({ email }) => {
     });
 };
 
-// 이메일 수정
 const updateEmail = async ({ id }, { email }) => {
   const userDataRows = await userDao.updateEmail(id, email);
   if (userDataRows.length === 0) {
@@ -229,7 +215,6 @@ const updateEmail = async ({ id }, { email }) => {
   }
 };
 
-// 푸시토큰 갱신
 const updatePushToken = async ({ id }, updateData) => {
   const updateRows = await userDao.userUpdate(id, updateData);
   if (updateRows.affectedRows === 0) {
@@ -238,13 +223,11 @@ const updatePushToken = async ({ id }, updateData) => {
   redisTrigger(id, RedisEventEnum.push_token, { updateData });
 };
 
-// 주소 데이터
 const getAddress = async () => {
   const addressRows = await userDao.getAddress();
   return parsingAddress(addressRows);
 };
 
-// 푸시 테스트
 const pushTest = async ({ id: user_id }) => {
   push(PushEventEnum.push_test, 1, user_id);
 };

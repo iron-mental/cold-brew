@@ -42,7 +42,7 @@ const getStudy = async ({ id: user_id }, { study_id }) => {
   studyRows = rowSplit(studyRows, ['participate']);
   studyRows = locationMerge(studyRows);
 
-  const badgeCount = await redisTrigger(user_id, RedisEventEnum.alert_read, { study_id }); // 0으로 변경
+  const badgeCount = await redisTrigger(user_id, RedisEventEnum.alert_read, { study_id });
   const badge = {
     alert: badgeCount.alert.total,
     total: badgeCount.badge,
