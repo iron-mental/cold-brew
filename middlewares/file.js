@@ -46,7 +46,6 @@ const upload = multer({
 const imageUpload = (req, res, next) => {
   upload(req, res, (err) => {
     if (err) {
-      // 익스텐션 에러
       return next(err);
     } else {
       return next();

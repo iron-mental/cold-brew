@@ -8,7 +8,7 @@ const apnProvider = new apn.Provider(options);
 const apnSender = (apns_token, note) => {
   apnProvider.send(note, apns_token).then((result) => {
     if (result.failed.length > 0) {
-      console.log('## APNs 에러: ', result.failed); // BadDeviceToken
+      console.log('## APNs 에러: ', result.failed);
     } else {
       console.log('## APNs: ', result);
     }

@@ -15,42 +15,41 @@ const applyController = require('../../controllers/apply');
 // Chat
 router.get('/:study_id/chat', studyValid.getChatting, asyncWrap(studyController.getChatting));
 
-// Study
-router.get('/search', studyValid.search, asyncWrap(studyController.search)); // 검색
-router.get('/ranking', asyncWrap(studyController.ranking)); // 핫 등록 키워드
-router.get('/category', asyncWrap(studyController.category)); // 카테고리
+router.get('/search', studyValid.search, asyncWrap(studyController.search));
+router.get('/ranking', asyncWrap(studyController.ranking));
+router.get('/category', asyncWrap(studyController.category));
 
-router.post('/', imageUpload, studyValid.createStudy, asyncWrap(studyController.createStudy)); // 스터디 추가
-router.get('/:study_id', studyValid.getStudy, asyncWrap(studyController.getStudy)); // 스터디 상세조회
-router.put('/:study_id', imageUpload, studyValid.studyUpdate, asyncWrap(studyController.studyUpdate)); // 스터디 수정
-router.delete('/:study_id', studyValid.studyDelete, asyncWrap(studyController.studyDelete)); // 스터디 수정
+router.post('/', imageUpload, studyValid.createStudy, asyncWrap(studyController.createStudy));
+router.get('/:study_id', studyValid.getStudy, asyncWrap(studyController.getStudy));
+router.put('/:study_id', imageUpload, studyValid.studyUpdate, asyncWrap(studyController.studyUpdate));
+router.delete('/:study_id', studyValid.studyDelete, asyncWrap(studyController.studyDelete));
 
-router.put('/:study_id/delegate', studyValid.delegate, asyncWrap(studyController.delegate)); // 방장 위임
-router.post('/:study_id/leave', studyValid.leaveStudy, asyncWrap(studyController.leaveStudy)); // 스터디 탈퇴
+router.put('/:study_id/delegate', studyValid.delegate, asyncWrap(studyController.delegate));
+router.post('/:study_id/leave', studyValid.leaveStudy, asyncWrap(studyController.leaveStudy));
 
-// StudyList
-router.get('/', studyValid.getStudyList, asyncWrap(studyController.getStudyList)); // 스터디 목록 조회
-router.get('/paging/list', studyValid.studyPaging, asyncWrap(studyController.studyPaging)); // 스터디 목록 조회 paging
+// StudyList;
+router.get('/', studyValid.getStudyList, asyncWrap(studyController.getStudyList));
+router.get('/paging/list', studyValid.studyPaging, asyncWrap(studyController.studyPaging));
 
-// Notice
-router.post('/:study_id/notice', noticeValid.createNotice, asyncWrap(noticeController.createNotice)); // 공지 생성
-router.get('/:study_id/notice/:notice_id', noticeValid.noticeDetail, asyncWrap(noticeController.noticeDetail)); // 공지 조회
-router.put('/:study_id/notice/:notice_id', noticeValid.noticeUpdate, asyncWrap(noticeController.noticeUpdate)); // 공지 수정
-router.delete('/:study_id/notice/:notice_id', noticeValid.noticeDelete, asyncWrap(noticeController.noticeDelete)); // 공지 삭제
+// Notice;
+router.post('/:study_id/notice', noticeValid.createNotice, asyncWrap(noticeController.createNotice));
+router.get('/:study_id/notice/:notice_id', noticeValid.noticeDetail, asyncWrap(noticeController.noticeDetail));
+router.put('/:study_id/notice/:notice_id', noticeValid.noticeUpdate, asyncWrap(noticeController.noticeUpdate));
+router.delete('/:study_id/notice/:notice_id', noticeValid.noticeDelete, asyncWrap(noticeController.noticeDelete));
 
-// NoticeList
-router.get('/:study_id/notice', noticeValid.noticeList, asyncWrap(noticeController.noticeList)); // 공지사항 목록 조회
-router.get('/:study_id/notice/paging/list', noticeValid.noticePaging, asyncWrap(noticeController.noticePaging)); // 공지사항 목록 조회
+// NoticeList;
+router.get('/:study_id/notice', noticeValid.noticeList, asyncWrap(noticeController.noticeList));
+router.get('/:study_id/notice/paging/list', noticeValid.noticePaging, asyncWrap(noticeController.noticePaging));
 
-// Apply (applier)
-router.post('/:study_id/apply', applyValid.createApply, asyncWrap(applyController.createApply)); // 스터디 신청
-router.get('/:study_id/applyUser/:user_id', idCompare, applyValid.getApplyByUser, asyncWrap(applyController.getApplyByUser)); // 신청 조회
-router.put('/:study_id/apply/:apply_id', applyValid.applyUpdate, asyncWrap(applyController.applyUpdate)); // 신청 수정
-router.delete('/:study_id/apply/:apply_id', applyValid.applyDelete, asyncWrap(applyController.applyDelete)); // 신청 삭제
+// Apply(applier);
+router.post('/:study_id/apply', applyValid.createApply, asyncWrap(applyController.createApply));
+router.get('/:study_id/applyUser/:user_id', idCompare, applyValid.getApplyByUser, asyncWrap(applyController.getApplyByUser));
+router.put('/:study_id/apply/:apply_id', applyValid.applyUpdate, asyncWrap(applyController.applyUpdate));
+router.delete('/:study_id/apply/:apply_id', applyValid.applyDelete, asyncWrap(applyController.applyDelete));
 
-// Apply (host)
-router.get('/:study_id/apply/:apply_id', applyValid.getApplyById, asyncWrap(applyController.getApplyById)); // 신청 조회
-router.get('/:study_id/apply', applyValid.applyListByHost, asyncWrap(applyController.applyListByHost)); // 스터디 신청 목록 조회
-router.post('/:study_id/apply/:apply_id', applyValid.applyProcess, asyncWrap(applyController.applyProcess)); // 스터디 신청 처리
+// Apply(host);
+router.get('/:study_id/apply/:apply_id', applyValid.getApplyById, asyncWrap(applyController.getApplyById));
+router.get('/:study_id/apply', applyValid.applyListByHost, asyncWrap(applyController.applyListByHost));
+router.post('/:study_id/apply/:apply_id', applyValid.applyProcess, asyncWrap(applyController.applyProcess));
 
 module.exports = router;

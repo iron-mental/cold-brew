@@ -9,7 +9,6 @@ const router = express.Router();
 router.use('/user', userRouter);
 router.use('/study', studyRouter);
 
-// 채팅 뷰 제공
 router.get('/chat/https', (req, res, next) => {
   res.sendFile(__dirname + '/https.html');
 });
