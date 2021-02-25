@@ -3,7 +3,7 @@ const { format } = require('date-fns');
 const { IncomingWebhook } = require('@slack/client');
 
 sentry.init({ dsn: process.env.SENTRY_DSN });
-const webhook = new IncomingWebhook(process.env.SLACK_webhook);
+const webhook = new IncomingWebhook(process.env.SLACK_webhook_sentry);
 
 const sentryHandler = (err, req, res, next) => {
   if (err.status === 404 || err.status > 500) {
