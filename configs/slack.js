@@ -21,9 +21,11 @@ const send = async (status) => {
   await webhook.send({ attachments: attachments[status] });
 };
 
-if (process.env.pm_id === '0') {
-  send('on');
-}
+(() => {
+  if (process.env.pm_id === '0') {
+    send('on');
+  }
+})();
 
 process.on('SIGINT', async () => {
   if (process.env.pm_id === '0') {
