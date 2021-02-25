@@ -52,6 +52,7 @@ const chat = async (study_id, chat) => {
 };
 
 const push = async (pushEvent, study_id, user_id) => {
+  study_id = Number(study_id);
   const studyRows = Boolean(pushEvent === PushEventEnum.study_delete)
     ? await pushDao.getStudyTitle(study_id)
     : await studyDao.getStudy(study_id);
@@ -74,12 +75,9 @@ const push = async (pushEvent, study_id, user_id) => {
 
   const { apnsPayload, fcmPayload } = getPushPayload(pushEvent, study_id);
   return send(tokenRows, apnsPayload, fcmPayload);
-
-  // return send(tokenRows, pushEvent, study_id);
 };
 
 const send = async (tokenRows, apnsPayload, fcmPayload) => {
-  // const send = async (tokenRows, pushEvent, study_id) => {
   for (let row of tokenRows) {
     if (row.device === DeviceEnum.ios) {
       apnsPayload.badge = row.badge;
