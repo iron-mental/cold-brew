@@ -11,7 +11,7 @@ require('./configs/slack');
 const app = express();
 
 app.set('trust proxy', true);
-app.use(morgan('combined'), { stream });
+app.use(morgan('combined', { stream }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
