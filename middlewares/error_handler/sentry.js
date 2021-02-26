@@ -21,7 +21,7 @@ const sentryHandler = (err, req, res, next) => {
                   short: false,
                 },
               ],
-              ts: `${format(new Date(), 'yyyy-MM-dd HH:mm:ss', { timezone: 'GMT-9' })}`,
+              ts: new Date().getTime() / 1000,
             },
           ],
         },
