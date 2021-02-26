@@ -7,12 +7,14 @@ const attachments = {
     {
       color: '#0000ff',
       text: 'Server On',
+      ts: new Date().getTime() / 1000,
     },
   ],
   off: [
     {
       color: '#ff0000',
       text: 'Server Off',
+      ts: new Date().getTime() / 1000,
     },
   ],
 };
