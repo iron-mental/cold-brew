@@ -1,5 +1,6 @@
 const fs = require('fs');
 const winston = require('winston');
+require('winston-daily-rotate-file');
 
 const logDir = __dirname + '/../logs';
 
@@ -7,14 +8,16 @@ if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
 
-const infoTransport = new winston.transports.File({
-  filename: 'info.log',
+const infoTransport = new winston.transports.DailyRotateFile({
+  filename: 'info_%DATE%.log',
+  datePattern: 'YYYY-MM-DD-HH',
   dirname: logDir,
   level: 'info',
 });
 
-const errorTransport = new winston.transports.File({
-  filename: 'error.log',
+const errorTransport = new winston.transports.DailyRotateFile({
+  filename: 'error_%DATE%.log',
+  datePattern: 'YYYY-MM-DD-HH',
   dirname: logDir,
   level: 'error',
 });
