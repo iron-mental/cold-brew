@@ -16,20 +16,27 @@ const categoryValid = (value, helpers) => {
 };
 
 const uriMethod = (value, helpers) => {
-  const target = uriList[helpers.state.path.slice(-1)[0]];
-  if (target !== value.slice(0, target.length)) {
+  const sns = helpers.state.path.slice(-1)[0];
+  const url = urlList[sns];
+  let target = value;
+
+  if (!urlList.static_urls.includes(sns) && value.indexOf('www.') === 8) {
+    target = value.replace('www.', '');
+  }
+  if (url !== target.slice(0, url.length)) {
     return helpers.error('uri.invalidUri');
   }
   return value;
 };
 
-const uriList = {
+const urlList = {
+  sns_web: 'https://',
   sns_appstore: 'https://apps.apple.com/',
   sns_playstore: 'https://play.google.com/',
-  sns_notion: 'https://www.notion.so/',
+  sns_notion: 'https://notion.so/',
   sns_evernote: 'https://evernote.com/',
   sns_linkedin: 'https://linkedin.com/',
-  sns_web: 'https://',
+  static_urls: ['sns_appstore', 'sns_playstore'],
 };
 
 const checkVersion = async (req, res, next) => {
@@ -52,24 +59,19 @@ const parseGrapheme = (req) => {
     params: {},
     query: {},
   };
-  let tmp = '';
 
   targets.forEach((target) => {
-    if (Object.keys(req[target]).length) {
-      for (let prop in req[target]) {
-        tmp = '';
-        if (typeof req[target][prop] === 'boolean') {
-          tmp = req[target][prop];
-        } else {
-          splitter.splitGraphemes(req[target][prop]).forEach((char) => {
-            char.length > 1 ? (tmp += 'A') : (tmp += char);
-          });
-        }
-        grapheme[target][prop] = tmp;
+    Object.entries(req[target]).forEach(([key, value]) => {
+      grapheme[target][key] = '';
+      if (typeof value === 'string') {
+        splitter.splitGraphemes(value).forEach((char) => {
+          char.length > 1 ? (grapheme[target][key] += 'A') : (grapheme[target][key] += char);
+        });
+      } else {
+        grapheme[target][key] = value;
       }
-    }
+    });
   });
-
   return grapheme;
 };
 
@@ -101,18 +103,17 @@ const parseProjectGrapheme = (req) => {
   parse.body.project_list = req.body.project_list.map((project) => {
     tmp = {};
     Object.entries(project).forEach(([key, value]) => {
-      if (value === null) {
-        tmp[key] = null;
-      } else {
+      if (typeof value === 'string') {
         tmp[key] = '';
         splitter.splitGraphemes(value).forEach((char) => {
           char.length > 1 ? (tmp[key] += 'A') : (tmp[key] += char);
         });
+      } else {
+        tmp[key] = value;
       }
     });
     return tmp;
   });
-
   return parse;
 };
 
