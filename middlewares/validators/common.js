@@ -52,24 +52,19 @@ const parseGrapheme = (req) => {
     params: {},
     query: {},
   };
-  let tmp = '';
 
   targets.forEach((target) => {
-    if (Object.keys(req[target]).length) {
-      for (let prop in req[target]) {
-        tmp = '';
-        if (typeof req[target][prop] === 'boolean') {
-          tmp = req[target][prop];
-        } else {
-          splitter.splitGraphemes(req[target][prop]).forEach((char) => {
-            char.length > 1 ? (tmp += 'A') : (tmp += char);
-          });
-        }
-        grapheme[target][prop] = tmp;
+    Object.entries(req[target]).forEach(([key, value]) => {
+      grapheme[target][key] = '';
+      if (typeof value === 'string') {
+        splitter.splitGraphemes(value).forEach((char) => {
+          char.length > 1 ? (grapheme[target][key] += 'A') : (grapheme[target][key] += char);
+        });
+      } else {
+        grapheme[target][key] = value;
       }
-    }
+    });
   });
-
   return grapheme;
 };
 
@@ -101,18 +96,17 @@ const parseProjectGrapheme = (req) => {
   parse.body.project_list = req.body.project_list.map((project) => {
     tmp = {};
     Object.entries(project).forEach(([key, value]) => {
-      if (typeof value === 'number' || value === null) {
-        tmp[key] = null;
-      } else {
+      if (typeof value === 'string') {
         tmp[key] = '';
         splitter.splitGraphemes(value).forEach((char) => {
           char.length > 1 ? (tmp[key] += 'A') : (tmp[key] += char);
         });
+      } else {
+        tmp[key] = value;
       }
     });
     return tmp;
   });
-
   return parse;
 };
 
