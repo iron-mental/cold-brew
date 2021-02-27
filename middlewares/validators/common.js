@@ -101,7 +101,7 @@ const parseProjectGrapheme = (req) => {
   parse.body.project_list = req.body.project_list.map((project) => {
     tmp = {};
     Object.entries(project).forEach(([key, value]) => {
-      if (value === null) {
+      if (typeof value === 'number' || value === null) {
         tmp[key] = null;
       } else {
         tmp[key] = '';
