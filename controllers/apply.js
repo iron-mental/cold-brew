@@ -47,7 +47,8 @@ const applyListByUser = async (req, res) => {
 const applyProcess = async (req, res) => {
   await isHost(req.user, req.params);
   await applyService.applyProcess(req.params, req.body);
-  response(res, 200, '처리가 완료되었습니다');
+  const message = `${req.body.allow ? '수락' : '거절'}이 완료되었습니다`;
+  response(res, 200, message);
 };
 
 module.exports = {
