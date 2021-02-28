@@ -10,14 +10,14 @@ if (!fs.existsSync(logDir)) {
 
 const infoTransport = new winston.transports.DailyRotateFile({
   filename: 'info_%DATE%.log',
-  datePattern: 'YYYY-MM-DD-HH',
+  datePattern: 'YYYY-MM-DD',
   dirname: logDir,
   level: 'info',
 });
 
 const errorTransport = new winston.transports.DailyRotateFile({
   filename: 'error_%DATE%.log',
-  datePattern: 'YYYY-MM-DD-HH',
+  datePattern: 'YYYY-MM-DD',
   dirname: logDir,
   level: 'error',
 });
