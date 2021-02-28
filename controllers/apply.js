@@ -11,11 +11,6 @@ const createApply = async (req, res) => {
   response(res, 201, '가입신청이 완료되었습니다');
 };
 
-const getApplyByUser = async (req, res) => {
-  const applyData = await applyService.getApplyByUser(req.params);
-  response(res, 200, applyData);
-};
-
 const applyUpdate = async (req, res) => {
   await applyService.applyUpdate(req.user, req.params, req.body);
   response(res, 200, '가입신청이 수정되었습니다');
@@ -25,6 +20,11 @@ const applyDelete = async (req, res) => {
   await checkAuthority(req.user, req.params, AuthEnum.applier);
   await applyService.applyDelete(req.user, req.params);
   response(res, 200, '가입신청이 취소되었습니다');
+};
+
+const getApplyByUser = async (req, res) => {
+  const applyData = await applyService.getApplyByUser(req.params);
+  response(res, 200, applyData);
 };
 
 const getApplyById = async (req, res) => {
