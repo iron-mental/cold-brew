@@ -33,8 +33,8 @@ const checkEmail = async (req, res, next) => {
 const signup = async (req, res, next) => {
   const bodySchema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().required().min(6).max(20),
     nickname: Joi.string().required().min(2).max(8),
+    password: Joi.string().required().min(6).max(20),
   });
   try {
     req.parse = parseGrapheme(req);
@@ -143,7 +143,7 @@ const userSnsUpdate = async (req, res, next) => {
   const bodySchema = Joi.object({
     sns_github: Joi.string().allow('').max(500),
     sns_linkedin: Joi.string().allow('').custom(commonValid.uriMethod).max(500),
-    sns_web: Joi.string().allow('').custom(commonValid.uriMethod).max(500),
+    sns_web: Joi.string().allow('').max(500),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);

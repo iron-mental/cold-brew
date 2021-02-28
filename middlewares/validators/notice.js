@@ -8,9 +8,9 @@ const createNotice = async (req, res, next) => {
     study_id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
+    pinned: Joi.boolean().strict().required(),
     title: Joi.string().required().max(30),
     contents: Joi.string().required().max(200),
-    pinned: Joi.boolean().strict().required(),
   });
   try {
     req.parse = parseGrapheme(req);
