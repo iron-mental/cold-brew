@@ -11,6 +11,8 @@ const noticeValid = require('../../middlewares/validators/notice');
 const noticeController = require('../../controllers/notice');
 const applyValid = require('../../middlewares/validators/apply');
 const applyController = require('../../controllers/apply');
+const reportValid = require('../../middlewares/validators/report');
+const reportController = require('../../controllers/report');
 
 // Chat
 router.get('/:study_id/chat', studyValid.getChatting, asyncWrap(studyController.getChatting));
@@ -51,5 +53,8 @@ router.delete('/:study_id/apply/:apply_id', applyValid.applyDelete, asyncWrap(ap
 router.get('/:study_id/apply/:apply_id', applyValid.getApplyById, asyncWrap(applyController.getApplyById));
 router.get('/:study_id/apply', applyValid.applyListByHost, asyncWrap(applyController.applyListByHost));
 router.post('/:study_id/apply/:apply_id', applyValid.applyProcess, asyncWrap(applyController.applyProcess));
+
+// Report;
+router.post('/:study_id/report', reportValid.createReport, asyncWrap(reportController.createReport));
 
 module.exports = router;
