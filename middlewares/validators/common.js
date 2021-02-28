@@ -10,7 +10,7 @@ const categoryValid = (value, helpers) => {
   if (!CategoryEnum[value]) {
     return helpers.error('category.invalidCategory');
   }
-  return category;
+  return value;
 };
 
 const urlList = {
