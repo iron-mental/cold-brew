@@ -7,26 +7,10 @@ const { CategoryEnum, DeviceEnum } = require('../../utils/variables/enum');
 const splitter = new GraphemeSplitter();
 
 const categoryValid = (value, helpers) => {
-  const category = CategoryEnum[value];
-
-  if (!category) {
+  if (!CategoryEnum[value]) {
     return helpers.error('category.invalidCategory');
   }
   return category;
-};
-
-const uriMethod = (value, helpers) => {
-  const sns = helpers.state.path.slice(-1)[0];
-  const url = urlList[sns];
-  let target = value;
-
-  if (!urlList.static_urls.includes(sns) && value.indexOf('www.') === 8) {
-    target = value.replace('www.', '');
-  }
-  if (url !== target.slice(0, url.length)) {
-    return helpers.error('uri.invalidUri');
-  }
-  return value;
 };
 
 const urlList = {
@@ -37,6 +21,25 @@ const urlList = {
   sns_evernote: 'https://evernote.com/',
   sns_linkedin: 'https://linkedin.com/',
   static_urls: ['sns_appstore', 'sns_playstore'],
+};
+
+const uriMethod = (value, helpers) => {
+  const sns = helpers.state.path.slice(-1)[0];
+  const url = urlList[sns];
+  let target = value;
+
+  if (value.indexOf('https://') === -1) {
+    target = 'https://' + target;
+  }
+
+  if (!urlList.static_urls.includes(sns) && target.indexOf('www.') === 8) {
+    target = value.replace('www.', '');
+  }
+
+  if (url !== target.slice(0, url.length)) {
+    return helpers.error('uri.invalidUri');
+  }
+  return target;
 };
 
 const checkVersion = async (req, res, next) => {
