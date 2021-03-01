@@ -56,10 +56,7 @@ const stream = {
 const getErrorObject = (req, err) => {
   return {
     req: {
-      url: req.url,
-      query: req.query,
-      params: req.params,
-
+      url: decodeURI(req.url),
       body: req.body,
     },
     error: {
