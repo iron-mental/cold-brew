@@ -76,11 +76,10 @@
 
 ## 프로젝트 아키텍쳐
 ![alt sampleImage](https://d2908q01vomqb2.cloudfront.net/fc074d501302eb2b93e2554793fcaf50b3bf7291/2018/04/25/overall-ref-arch-1024x581.png)
-</br>
+</br></br>
 
 ### 사용한 기술 스택
-[스택쉐어](https://stackshare.io/terminal-study/terminal-study)
-</br>
+[Stackshare](https://stackshare.io/terminal-study/terminal-study)
 
 **Common**
 - Node.js
