@@ -10,27 +10,11 @@
 프로그래밍 언어, iOS, Android, Bigdata, ML 등 다양한 카테고리가 있으며 자신이 원하는 카테고리의 스터디 목록을 조회하거나 스터디의 정보를 검색해 가입하고 내부 게시판을 통해 스터디의 일정을 조율하고 그룹 채팅을 통해 스터디에 참여할 수 있습니다.
 
 ## 설치
-- iOS: [Appstore](앱 스토어 링크)
-- Android: [Playstore](앱 스토어 링크)
-- [Landing page](https://www.terminal-study.tk/)
+- [iOS](https://play.google.com/store/)
+- [Web](https://www.terminal-study.tk/)
+- [Android](https://www.apple.com/app-store/)
 
-## 개발 환경
-[Stackshare](https://stackshare.io/terminal-study/terminal-study)
-- 서버 구축
-  * AWS EC2, RDS, Route53, Nginx
-- 개발
-  * Javascript, Node.js, Express.js, Firebase, Socket.io
-- DB
-  * Mysql - main
-  * MongoDB - chat
-  * Redis - cache
-- Tool
-  * Github
-  * Slack
-  * Notion
-  * Postman
-
-### 프로젝트 개요
+## 프로젝트 개요
 
 **프로젝트 기간**  :  2020.08.11 ~ 2020.03.08
 
@@ -49,7 +33,7 @@
     - Firebase Authentication, Node Mailer를 이용한 이메일 인증 및 계정 비밀번호 관리 구현
     - Sentry를 활용하여 에러로그 수집 및 Slack으로 Message 전송 구현
   - Front-End
-    - Next.js를 활용하여 랜딩 페이지 개발
+    - Next.js를 활용하여 개발
     - Andt Design Component를 사용하여 레이아웃 개발
   - 배포
     - Server : AWS EC2
@@ -69,7 +53,7 @@
 </br>
 
 
-### 프로젝트 관리
+## 프로젝트 관리
 
 - Notion을 이용하여 프로젝트 전반적인 기획 및 관리
 
@@ -89,8 +73,38 @@
 
 </br>
 
+## 사용한 기술 스택
+[Stackshare](https://stackshare.io/terminal-study/terminal-study)
+- Common
+  * Node.js
+  * Javascript
+- Back-End
+  * Express.js
+  * JWT
+  * Multer
+  * MySQL
+  * Mongoose
+  * Firebase
+  * APNs
+  * Socket.io
+  * Pm2 (Cluster)
+- Front-End
+  * Next.js
+  * Antd Design Component
+- Server
+  * AWS EC2, Route53
+  * Nginx
+- DB
+  * Mysql(RDS)
+  * Mongo(Atlas)
+  * Redis
+- Development Tool
+  * Git & Github
+  * Notion
+  * Slack
+  * Postman
 
-### 사용한 기술 스택
+## 사용한 기술 스택
 
 **Common**
 - JavaScript
@@ -121,7 +135,6 @@
 - Github
 - Postman
 - Notion
-
 </br>
 
 
