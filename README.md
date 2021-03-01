@@ -8,11 +8,13 @@
 "Terminal :study" 는 **개발자들을 위한 스터디모임** 어플리케이션입니다. 간소화 된 양식을 통해 자신을 어필할 수 있는 프로필을 작성할 수 있으며, 스터디에 참여해 활동할 수 있습니다.
 
 프로그래밍 언어, iOS, Android, Bigdata, ML 등 다양한 카테고리가 있으며 자신이 원하는 카테고리의 스터디 목록을 조회하거나 스터디의 정보를 검색해 가입하고 내부 게시판을 통해 스터디의 일정을 조율하고 그룹 채팅을 통해 스터디에 참여할 수 있습니다.
+</br>
 
 ## 설치
 - [iOS](https://play.google.com/store/)
 - [Web](https://www.terminal-study.tk/)
 - [Android](https://www.apple.com/app-store/)
+</br>
 
 ## 프로젝트 개요
 
@@ -70,16 +72,17 @@
 - Postman을 이용한 API 테스트 및 문서 공유
 
 - Sentry로 에러로그 수집
+</br>
 
+### 프로젝트 아키텍쳐
+
+``` 이미지 첨부할것 ```
 </br>
 
 ## 사용한 기술 스택
-
-[Stackshare](https://stackshare.io/terminal-study/terminal-study)
+[Stack-Share](https://stackshare.io/terminal-study/terminal-study)
 </br>
 
-
-## 사용한 기술 스택
 **Common**
 - Node.js
 - JavaScript
@@ -118,12 +121,7 @@
 </br>
 
 
-### 프로젝트 아키텍쳐
-
-``` 이미지 첨부할것 ```
-
-
-### Directory Structure
+## Directory Structure
 ```
 cold-brew
 ├─bin
