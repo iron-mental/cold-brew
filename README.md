@@ -1,4 +1,4 @@
-![alt sampleImage](https://camo.githubusercontent.com/720ed473d178f9380291709d2223860ade4f3c7bc368e3fea1ad057b8dc9c6f5/68747470733a2f2f6e6f64656a732e6f72672f7374617469632f696d616765732f6c6f676f2d6c696768742e737667)
+<!-- ![alt sampleImage](https://camo.githubusercontent.com/720ed473d178f9380291709d2223860ade4f3c7bc368e3fea1ad057b8dc9c6f5/68747470733a2f2f6e6f64656a732e6f72672f7374617469632f696d616765732f6c6f676f2d6c696768742e737667) -->
 
 # Terminal :study
 > **개발 분야 스터디모집 어플리케이션 프로젝트**
@@ -8,7 +8,7 @@
 "Terminal :study" 는 **개발자들을 위한 스터디모임** 어플리케이션입니다. 간소화 된 양식을 통해 자신을 어필할 수 있는 프로필을 작성할 수 있으며, 스터디에 참여해 활동할 수 있습니다.
 
 프로그래밍 언어, iOS, Android, Bigdata, ML 등 다양한 카테고리가 있으며 자신이 원하는 카테고리의 스터디 목록을 조회하거나 스터디의 정보를 검색해 가입하고 내부 게시판을 통해 스터디의 일정을 조율하고 그룹 채팅을 통해 스터디에 참여할 수 있습니다.
-</br>
+</br></br>
 
 ## 설치
 - [iOS](https://play.google.com/store/)
@@ -74,12 +74,12 @@
 - Sentry로 에러로그 수집
 </br>
 
-### 프로젝트 아키텍쳐
+## 프로젝트 아키텍쳐
 
 ``` 이미지 첨부할것 ```
 </br>
 
-## 사용한 기술 스택
+### 사용한 기술 스택
 [Stack-Share](https://stackshare.io/terminal-study/terminal-study)
 </br>
 
@@ -121,7 +121,7 @@
 </br>
 
 
-## Directory Structure
+### Directory Structure
 ```
 cold-brew
 ├─bin
