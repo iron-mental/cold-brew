@@ -1,5 +1,6 @@
 const fs = require('fs');
-const winston = require('winston');
+const { format: _format } = require('date-fns');
+const { createLogger, format, transports } = require('winston');
 require('winston-daily-rotate-file');
 
 const logDir = __dirname + '/../logs';
@@ -8,23 +9,43 @@ if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
 
-const infoTransport = new winston.transports.DailyRotateFile({
-  level: 'info',
+const dailyRotateFileTransport = new transports.DailyRotateFile({
+  level: 'http',
   dirname: logDir,
-  datePattern: 'YYYY-MM-DD-HH',
-  filename: 'info_%DATE%.log',
+  filename: `info_%DATE%.log`,
+  datePattern: 'YYYY-MM-DD',
+  zippedArchive: true,
+  maxSize: '20m',
+  maxFiles: '14d',
 });
 
-const errorTransport = new winston.transports.DailyRotateFile({
+const errorTransport = new transports.DailyRotateFile({
   level: 'error',
   dirname: logDir + '/error',
-  datePattern: 'YYYY-MM-DD-HH',
   filename: 'error_%DATE%.log',
+  datePattern: 'YYYY-MM-DD',
 });
 
-const logger = winston.createLogger({
-  transports: [infoTransport, errorTransport],
+const logger = createLogger({
+  level: 'info',
+  transports: [
+    new transports.Console({
+      level: 'info',
+      format: format.combine(
+        format.colorize(),
+        format.printf((info) => ` ${info.level}: ${info.message}`),
+      ),
+    }),
+    errorTransport,
+    dailyRotateFileTransport,
+  ],
 });
+
+(() => {
+  if (process.env.pm_id === '0') {
+    logger.info(`Server Start: ${_format(new Date(), 'yyyy-MM-dd HH:mm:ss', { timezone: 'GMT-9' })}`);
+  }
+})();
 
 const stream = {
   write: (message) => {
@@ -32,4 +53,28 @@ const stream = {
   },
 };
 
-module.exports = { logger, stream };
+const getErrorObject = (req, err) => {
+  return {
+    req: {
+      url: req.url,
+      query: req.query,
+      params: req.params,
+
+      body: req.body,
+    },
+    error: {
+      status: err.status,
+      message: err.message,
+      stack: err.stack,
+    },
+    user: {
+      id: req.user ? req.user.id : null,
+    },
+  };
+};
+
+module.exports = {
+  logger,
+  stream,
+  getErrorObject,
+};
