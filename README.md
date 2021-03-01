@@ -74,67 +74,47 @@
 </br>
 
 ## 사용한 기술 스택
+
 [Stackshare](https://stackshare.io/terminal-study/terminal-study)
-- Common
-  * Node.js
-  * Javascript
-- Back-End
-  * Express.js
-  * JWT
-  * Multer
-  * MySQL
-  * Mongoose
-  * Firebase
-  * APNs
-  * Socket.io
-  * Pm2 (Cluster)
-- Front-End
-  * Next.js
-  * Antd Design Component
-- Server
-  * AWS EC2, Route53
-  * Nginx
-- DB
-  * Mysql(RDS)
-  * Mongo(Atlas)
-  * Redis
-- Development Tool
-  * Git & Github
-  * Notion
-  * Slack
-  * Postman
+</br>
+
 
 ## 사용한 기술 스택
-
 **Common**
-- JavaScript
 - Node.js
+- JavaScript
 
 **Back-End**
 - Express.js
 - JWT
 - Multer
-- MySQL
-- Mongoose
-- Redis
 - Winston
 - Firebase
 - APNs
+- MySQL
+- Redis
+- Mongoose
+- Socket.io
+- Pm2
 
 **Front-End**
 - Next.js
-- Antd Design
+- Antd Design Component
+
+**Server**
+- AWS EC2, Route53
+- Nginx - Reverse Proxy
+
+**DataBase**
+- MySQL - RDS
+- MongoDB - Atlas
+- Redis
 
 **Development Tool**
-- Git
-- AWS (EC2, RDS-MySQL, Route53)
-- Atlas (MongoDB)
-- Nginx (Reverse Proxy)
-- Pm2 (Cluster)
-- Slack
-- Github
-- Postman
+- Git & Github
 - Notion
+- Slack
+- Postman
 </br>
 
 
