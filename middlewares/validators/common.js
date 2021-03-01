@@ -55,6 +55,17 @@ const checkVersion = async (req, res, next) => {
   }
 };
 
+const parseRequest = (req, res, next) => {
+  for (let prop in req.body) {
+    req.body[prop] = typeof req.body[prop] === 'string' ? req.body[prop].trim() : req.body[prop];
+  }
+
+  for (let prop in req.query) {
+    req.query[prop] = typeof req.query[prop] === 'string' ? req.query[prop].trim() : req.query[prop];
+  }
+  return next();
+};
+
 const parseGrapheme = (req) => {
   const targets = ['body', 'params', 'query'];
   const grapheme = {
@@ -76,21 +87,6 @@ const parseGrapheme = (req) => {
     });
   });
   return grapheme;
-};
-
-const parseRequest = (req, res, next) => {
-  for (let prop in req.params) {
-    req.params[prop] = typeof req.params[prop] === 'String' ? req.params[prop].trim() : req.params[prop];
-  }
-
-  for (let prop in req.body) {
-    req.body[prop] = typeof req.body[prop] === 'String' ? req.body[prop].trim() : req.body[prop];
-  }
-
-  for (let prop in req.query) {
-    req.query[prop] = typeof req.query[prop] === 'String' ? req.query[prop].trim() : req.query[prop];
-  }
-  return next();
 };
 
 const parseProjectGrapheme = (req) => {
