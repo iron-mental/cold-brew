@@ -12,10 +12,7 @@
 ## 설치
 - iOS: [Appstore](앱 스토어 링크)
 - Android: [Playstore](앱 스토어 링크)
-- Web: [Link](렌더 페이지 링크)
-
-## 사용 예제
-- 스크린샷 + 캡션
+- [Landing page](https://www.terminal-study.tk/)
 
 ## 개발 환경
 [Stackshare](https://stackshare.io/terminal-study/terminal-study)
@@ -32,10 +29,136 @@
   * Slack
   * Notion
   * Postman
+ 
+ 
+<h1> TMP_start </h1>
 
-## 구조
-- 전체 프로젝트 구성도(draw.io) 뷰잉
-- MVC, n-tier 이미지 뷰잉 + 구현 설명
+### 프로젝트 개요
 
-## 사용 기술
-- 채팅(웹 소켓), 푸시(FCM, APNs, 등) 기술
+**프로젝트 기간**  :  2020.08.11 ~ 2020.03.08
+
+**서비스 종류** : Mobile Application
+
+**프로젝트 참여 인원** : Back-End 1명 / iOS 2명 / Android 2명
+
+- *강철*  (Back-End)
+  - Back-End : Rest-API 개발, 서버 기능 구현
+    - 전체적인 서버 구조 및 기능 구현, REST API 구현
+    - Javascript & Express로 REST API를 활용하여 유저, 스터디 등 전반적인 CRUD 기능 구현
+    - Firebase FCM, Apple APNs를 이용한 푸시알림 전송 모듈 구축
+    - JWT 토큰 인증 과정을 Express Middleware로 하는 인증체계 구축
+    - Socket.io를 이용한 스터디 멤버 간 의사소통이 가능한 실시간 채팅 기능 구축 
+    - Redis를 이용하여 Socket.io 클러스터링 및 Push Badge Count 관리
+    - Firebase Authentication, Node Mailer를 이용한 이메일 인증 및 계정 비밀번호 관리 구현
+    - Sentry를 활용하여 에러로그 수집 및 Slack으로 Message 전송 구현
+  - Front-End
+    - Next.js를 활용하여 랜딩 페이지 개발
+    - Andt Design Component를 사용하여 레이아웃 개발
+  - 배포
+    - Server : AWS EC2
+    - DB : AWS RDS(MySQL), MongoDB(Atlas), Redis(EC2 내부)
+    - Nginx: Reverse Proxy를 이용하여 요청에 맞게 REST API / Landing Page로 분기
+</br>
+
+**Terminal: study 주요 기능**
+
+- 이메일 인증 기반 회원가입 / 로그인 / 로그아웃 / 개인정보 수정 / 회원탈퇴
+- 스터디 생성/ 수정/ 위임/ 삭제/ 채팅/ 신고
+- 스터디 목록 조회 (거리순/ 최신순/ 검색)
+- 참여한 스터디 목록 조회
+- 스터디 가입 신청/ 취소 및 수락/ 거절
+- 공지사항 작성/ 수정/ 삭제
+
+</br>
+
+
+### 프로젝트 관리
+
+- Notion을 이용하여 프로젝트 전반적인 기획 및 관리
+
+  - team rule, 주 단위 task, api 문서 등
+
+- Slack을 이용하여 멤버 간 소통 및 서버에서 발생한 에러 확인
+
+- MySQL Workbench를 이용하여 데이터베이스 설계
+
+- 매주 회의를 진행하여 스프린트 단위의 개발 진행관리
+
+- ESLint, Prettier를 이용하여 코드 스타일 관리
+
+- Postman을 이용한 API 테스트 및 문서 공유
+
+- Sentry로 에러로그 수집
+
+</br>
+
+
+### 사용한 기술 스택
+
+**Common**
+- JavaScript
+- Node.js
+
+**Back-End**
+- Express.js
+- JWT
+- Multer
+- MySQL
+- Mongoose
+- Redis
+- Winston
+- Firebase
+- APNs
+
+**Front-End**
+- Next.js
+- Antd Design
+
+**Development Tool**
+
+- Git
+- AWS (EC2, RDS-MySQL, Route53)
+- Atlas (MongoDB)
+- Nginx (Reverse Proxy)
+- Pm2 (Cluster)
+
+- Slack
+- Github
+- Postman
+- Notion
+
+</br>
+
+
+### 프로젝트 아키텍쳐
+
+``` 이미지 첨부할것 ```
+
+
+### Directory Structure
+```
+cold-brew
+├─bin
+├─configs
+├─controllers
+├─dao
+├─events
+├─logs
+│  └─error
+├─middlewares
+│  ├─error_handler
+│  └─validators
+├─models
+├─routes
+│  └─v1
+├─services
+├─test
+│  ├─search
+│  └─user
+└─utils
+    ├─errors
+    └─variables
+```
+</br>
+
+<h1> TMP_end </h1>
