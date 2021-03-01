@@ -112,13 +112,11 @@
 - Antd Design
 
 **Development Tool**
-
 - Git
 - AWS (EC2, RDS-MySQL, Route53)
 - Atlas (MongoDB)
 - Nginx (Reverse Proxy)
 - Pm2 (Cluster)
-
 - Slack
 - Github
 - Postman
