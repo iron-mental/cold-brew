@@ -79,7 +79,7 @@
 </br>
 
 ### 사용한 기술 스택
-[Stack-Share](https://stackshare.io/terminal-study/terminal-study)
+[스택쉐어](https://stackshare.io/terminal-study/terminal-study)
 </br>
 
 **Common**
