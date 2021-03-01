@@ -59,13 +59,13 @@
 
 - Notion을 이용하여 프로젝트 전반적인 기획 및 관리
 
-  - team rule, 주 단위 task, api 문서 등
+  - team rule, task 관리, api 문서 등
 
 - Slack을 이용하여 멤버 간 소통 및 서버에서 발생한 에러 확인
 
 - MySQL Workbench를 이용하여 데이터베이스 설계
 
-- 매주 회의를 진행하여 스프린트 단위의 개발 진행관리
+- 주 단위 회의를 진행하여 스프린트 단위의 개발 진행관리
 
 - ESLint, Prettier를 이용하여 코드 스타일 관리
 
