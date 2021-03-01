@@ -13,7 +13,6 @@ const infoTransport = new winston.transports.DailyRotateFile({
   dirname: logDir,
   datePattern: 'YYYY-MM-DD-HH',
   filename: 'info_%DATE%.log',
-  zippedArchive: true,
 });
 
 const errorTransport = new winston.transports.DailyRotateFile({
@@ -21,7 +20,6 @@ const errorTransport = new winston.transports.DailyRotateFile({
   dirname: logDir + '/error',
   datePattern: 'YYYY-MM-DD-HH',
   filename: 'error_%DATE%.log',
-  zippedArchive: true,
 });
 
 const logger = winston.createLogger({
