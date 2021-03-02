@@ -26,19 +26,19 @@ router.post('/login', userValid.login, asyncWrap(userController.login));
 router.post('/logout', idCompare, userValid.logout, asyncWrap(userController.logout));
 router.post('/reissuance', userValid.reissuance, asyncWrap(userController.reissuance));
 
-router.get('/:id', userValid.userDetail, asyncWrap(userController.userDetail));
+router.get('/:id', userValid.getUser, asyncWrap(userController.getUser));
 router.delete('/:id', idCompare, userValid.withdraw, asyncWrap(userController.withdraw));
 
-router.put('/:id/info', idCompare, userValid.userInfoUpdate, asyncWrap(userController.userUpdate));
-router.put('/:id/image', idCompare, imageUpload, userValid.userImageUpdate, asyncWrap(userController.userImageUpdate));
-router.put('/:id/career', idCompare, userValid.userCareerUpdate, asyncWrap(userController.userUpdate));
-router.put('/:id/sns', idCompare, userValid.userSnsUpdate, asyncWrap(userController.userUpdate));
-router.put('/:id/location', idCompare, userValid.userLocationUpdate, asyncWrap(userController.userUpdate));
+router.put('/:id/info', idCompare, userValid.userInfoUpdate, asyncWrap(userController.updateUser));
+router.put('/:id/image', idCompare, imageUpload, userValid.updateUserImage, asyncWrap(userController.updateUserImage));
+router.put('/:id/career', idCompare, userValid.userCareerUpdate, asyncWrap(userController.updateUser));
+router.put('/:id/sns', idCompare, userValid.userSnsUpdate, asyncWrap(userController.updateUser));
+router.put('/:id/location', idCompare, userValid.userLocationUpdate, asyncWrap(userController.updateUser));
 router.put('/:id/email', idCompare, userValid.updateEmail, asyncWrap(userController.updateEmail));
 router.put('/:id/push_token', idCompare, userValid.updatePushToken, asyncWrap(userController.updatePushToken));
 
 router.get('/:id/emailVerify', idCompare, userValid.emailVerification, asyncWrap(userController.emailVerification));
-router.get('/emailVerify-process/:email', userValid.emailVerificationProcess, asyncWrap(userController.emailVerificationProcess));
+router.get('/emailVerify-process/:email', userValid.emailVerificationHandler, asyncWrap(userController.emailVerificationHandler));
 router.post('/reset-password/:email', userValid.resetPassword, asyncWrap(userController.resetPassword));
 
 router.get('/:id/study', idCompare, studyValid.getMyStudy, asyncWrap(studyController.getMyStudy));

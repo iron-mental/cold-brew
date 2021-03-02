@@ -61,7 +61,7 @@ const login = async ({ email, password, device, push_token }) => {
 
   userDao.clearPushToken(push_token);
 
-  userDao.userUpdate(id, {
+  userDao.updateUser(id, {
     device,
     access_token,
     refresh_token,
@@ -86,36 +86,21 @@ const logout = async ({ id }) => {
     access_token: '',
     refresh_token: '',
   };
-  const logoutRows = await userDao.userUpdate(id, emptyToken);
+  const logoutRows = await userDao.updateUser(id, emptyToken);
   if (logoutRows.length === 0) {
     throw customError(400, '로그아웃 실패');
   }
 };
 
-const userDetail = async ({ id }) => {
-  const userDataRows = await userDao.userDetail(id);
+const getUser = async ({ id }) => {
+  const userDataRows = await userDao.getUser(id);
   if (userDataRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
   return toBoolean(userDataRows, ['email_verified'])[0];
 };
 
-const userImageUpdate = async ({ id }, updateData, { destination, uploadedFile, path: _tmpPath }) => {
-  const previousPath = await userDao.getImage(id);
-  const oldImagePath = path.join(destination, path.basename(previousPath[0].image || 'nullFileName'));
-  try {
-    fs.unlink(oldImagePath, (err) => {});
-  } catch (err) {}
-
-  const updateRows = await userDao.userUpdate(id, updateData);
-  if (updateRows.affectedRows === 0) {
-    throw customError(404, '조회된 사용자가 없습니다');
-  }
-  const newPath = path.join(destination, uploadedFile.basename);
-  fs.rename(_tmpPath, newPath, (err) => {});
-};
-
-const userUpdate = async ({ id }, updateData) => {
+const updateUser = async ({ id }, updateData) => {
   const checkRows = await userDao.checkNickname(updateData.nickname, id);
   if (checkRows.length) {
     throw customError(400, '중복된 닉네임이 존재합니다');
@@ -124,10 +109,40 @@ const userUpdate = async ({ id }, updateData) => {
   User.updateOne({ user_id: id }, { nickname: updateData.nickname }).exec();
   Chat.updateMany({ user_id: id }, { nickname: updateData.nickname }).exec();
 
-  const updateRows = await userDao.userUpdate(id, updateData);
+  const updateRows = await userDao.updateUser(id, updateData);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
+};
+
+const updateUserImage = async ({ id }, updateData, { destination, uploadedFile, path: _tmpPath }) => {
+  const previousPath = await userDao.getImage(id);
+  const oldImagePath = path.join(destination, path.basename(previousPath[0].image || 'nullFileName'));
+  try {
+    fs.unlink(oldImagePath, (err) => {});
+  } catch (err) {}
+
+  const updateRows = await userDao.updateUser(id, updateData);
+  if (updateRows.affectedRows === 0) {
+    throw customError(404, '조회된 사용자가 없습니다');
+  }
+  const newPath = path.join(destination, uploadedFile.basename);
+  fs.rename(_tmpPath, newPath, (err) => {});
+};
+
+const updateEmail = async ({ id }, { email }) => {
+  const userDataRows = await userDao.updateEmail(id, email);
+  if (userDataRows.length === 0) {
+    throw customError(404, '조회된 사용자가 없습니다');
+  }
+};
+
+const updatePushToken = async ({ id }, updateData) => {
+  const updateRows = await userDao.updateUser(id, updateData);
+  if (updateRows.affectedRows === 0) {
+    throw customError(404, '조회된 사용자가 없습니다');
+  }
+  redisTrigger(id, RedisEventEnum.push_token, { updateData });
 };
 
 const withdraw = async ({ id }, { email, password }) => {
@@ -157,7 +172,7 @@ const emailVerification = async ({ id }) => {
   await sendVerifyEmail(verifyRows[0].email);
 };
 
-const emailVerificationProcess = async ({ email }) => {
+const emailVerificationHandler = async ({ email }) => {
   const verifyRows = await userDao.verifiedCheck({ email });
   if (verifyRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다', 201);
@@ -165,7 +180,7 @@ const emailVerificationProcess = async ({ email }) => {
     throw customError(400, `${verifyRows[0].email} 님은 이미 인증이 완료된 사용자입니다`, 202);
   }
 
-  const [{ nickname }] = await userDao.emailVerificationProcess(email);
+  const [{ nickname }] = await userDao.emailVerificationHandler(email);
   return nickname;
 };
 
@@ -195,7 +210,7 @@ const reissuance = async (expiredAccessToken, { refresh_token }) => {
     newTokenSet.refresh_token = getRefreshToken(userData);
   }
 
-  await userDao.userUpdate(userData.id, newTokenSet);
+  await userDao.updateUser(userData.id, newTokenSet);
   return newTokenSet;
 };
 
@@ -208,21 +223,6 @@ const resetPassword = async ({ email }) => {
     });
 };
 
-const updateEmail = async ({ id }, { email }) => {
-  const userDataRows = await userDao.updateEmail(id, email);
-  if (userDataRows.length === 0) {
-    throw customError(404, '조회된 사용자가 없습니다');
-  }
-};
-
-const updatePushToken = async ({ id }, updateData) => {
-  const updateRows = await userDao.userUpdate(id, updateData);
-  if (updateRows.affectedRows === 0) {
-    throw customError(404, '조회된 사용자가 없습니다');
-  }
-  redisTrigger(id, RedisEventEnum.push_token, { updateData });
-};
-
 const getAddress = async () => {
   const addressRows = await userDao.getAddress();
   return parsingAddress(addressRows);
@@ -233,21 +233,21 @@ const pushTest = async ({ id: user_id }) => {
 };
 
 module.exports = {
+  checkNickname,
+  checkEmail,
   signup,
   login,
   logout,
-  userDetail,
-  userImageUpdate,
-  userUpdate,
-  checkNickname,
-  checkEmail,
-  withdraw,
-  emailVerification,
-  emailVerificationProcess,
-  reissuance,
-  resetPassword,
+  getUser,
+  updateUser,
+  updateUserImage,
   updateEmail,
   updatePushToken,
+  withdraw,
+  emailVerification,
+  emailVerificationHandler,
+  reissuance,
+  resetPassword,
   getAddress,
   pushTest,
 };
