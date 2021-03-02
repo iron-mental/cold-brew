@@ -42,7 +42,6 @@
     - DB : AWS RDS(MySQL), MongoDB(Atlas), Redis(EC2 내부)
     - Nginx: Reverse Proxy를 이용하여 요청에 맞게 REST API / Landing Page로 분기
 </br>
-
 **Terminal: study 주요 기능**
 
 - 이메일 인증 기반 회원가입 / 로그인 / 로그아웃 / 개인정보 수정 / 회원탈퇴
@@ -81,21 +80,16 @@
 ### 사용한 기술 스택
 [Stackshare](https://stackshare.io/terminal-study/terminal-study)
 
-**Common**
+**Back-End**
 - Node.js
 - JavaScript
-
-**Back-End**
 - Express.js
 - JWT
 - Multer
-- Winston
-- Firebase
-- APNs
-- MySQL
-- Redis
-- Mongoose
+- FCM, APNs
 - Socket.io
+- Mongoose
+- Winston
 - Pm2
 
 **Front-End**
@@ -104,12 +98,10 @@
 
 **Server**
 - AWS EC2, Route53
-- Nginx - Reverse Proxy
-
-**DataBase**
+- Redis
 - MySQL - RDS
 - MongoDB - Atlas
-- Redis
+- Nginx - Reverse Proxy
 
 **Development Tool**
 - Git & Github
