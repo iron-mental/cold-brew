@@ -24,7 +24,7 @@
 
 **프로젝트 참여 인원** : Back-End 1명 / iOS 2명 / Android 2명
 
-- *강철*  (Back-End)
+- 개발내용
   - Back-End : Rest-API 개발, 서버 기능 구현
     - 전체적인 서버 구조 및 기능 구현, REST API 구현
     - Javascript & Express로 REST API를 활용하여 유저, 스터디 등 전반적인 CRUD 기능 구현
@@ -35,8 +35,7 @@
     - Firebase Authentication, Node Mailer를 이용한 이메일 인증 및 계정 비밀번호 관리 구현
     - Sentry를 활용하여 에러로그 수집 및 Slack으로 Message 전송 구현
   - Front-End
-    - Next.js를 활용하여 개발
-    - Andt Design Component를 사용하여 레이아웃 개발
+    - Next.js && Andt Design Component를 사용하여 랜딩 페이지 개발
   - 배포
     - Server : AWS EC2
     - DB : AWS RDS(MySQL), MongoDB(Atlas), Redis(EC2 내부)
