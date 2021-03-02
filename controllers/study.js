@@ -14,15 +14,15 @@ const getStudy = async (req, res) => {
   response(res, 200, studyData);
 };
 
-const studyUpdate = async (req, res) => {
+const updateStudy = async (req, res) => {
   await isHost(req.user, req.params);
-  await studyService.studyUpdate(req.params, req.body, req.file);
+  await studyService.updateStudy(req.params, req.body, req.file);
   response(res, 200, '스터디가 수정되었습니다');
 };
 
-const studyDelete = async (req, res) => {
+const deleteStudy = async (req, res) => {
   await isHost(req.user, req.params);
-  await studyService.studyDelete(req.user, req.params);
+  await studyService.deleteStudy(req.user, req.params);
   response(res, 200, '스터디가 삭제되었습니다');
 };
 
@@ -77,8 +77,8 @@ const getChatting = async (req, res) => {
 module.exports = {
   createStudy,
   getStudy,
-  studyUpdate,
-  studyDelete,
+  updateStudy,
+  deleteStudy,
   getMyStudy,
   getStudyList,
   studyPaging,
