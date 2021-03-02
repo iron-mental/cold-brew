@@ -37,7 +37,7 @@ const getNotice = async (study_id, notice_id) => {
   }
 };
 
-const noticeUpdate = async (study_id, notice_id, updateData) => {
+const updateNotice = async (study_id, notice_id, updateData) => {
   const conn = await pool.getConnection();
   try {
     const updateSQL = 'UPDATE notice SET ? WHERE study_id = ? AND id = ?';
@@ -50,7 +50,7 @@ const noticeUpdate = async (study_id, notice_id, updateData) => {
   }
 };
 
-const noticeDelete = async (study_id, notice_id) => {
+const deleteNotice = async (study_id, notice_id) => {
   const conn = await pool.getConnection();
   try {
     const deleteSQL = 'DELETE FROM notice WHERE study_id = ? AND id = ?';
@@ -106,8 +106,8 @@ const noticePaging = async (noticeKeys) => {
 module.exports = {
   createNotice,
   getNotice,
-  noticeUpdate,
-  noticeDelete,
+  updateNotice,
+  deleteNotice,
   getNoticeList,
   noticePaging,
 };

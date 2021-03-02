@@ -22,7 +22,7 @@ const createNotice = async (req, res, next) => {
   }
 };
 
-const noticeDetail = async (req, res, next) => {
+const getNotice = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
     notice_id: Joi.number().required(),
@@ -35,7 +35,7 @@ const noticeDetail = async (req, res, next) => {
   }
 };
 
-const noticeUpdate = async (req, res, next) => {
+const updateNotice = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
     notice_id: Joi.number().required(),
@@ -55,7 +55,7 @@ const noticeUpdate = async (req, res, next) => {
   }
 };
 
-const noticeDelete = async (req, res, next) => {
+const deleteNotice = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
     notice_id: Joi.number().required(),
@@ -68,7 +68,7 @@ const noticeDelete = async (req, res, next) => {
   }
 };
 
-const noticeList = async (req, res, next) => {
+const getNoticeList = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
   });
@@ -94,9 +94,9 @@ const noticePaging = async (req, res, next) => {
 
 module.exports = {
   createNotice,
-  noticeDetail,
-  noticeUpdate,
-  noticeDelete,
-  noticeList,
+  getNotice,
+  updateNotice,
+  deleteNotice,
+  getNoticeList,
   noticePaging,
 };
