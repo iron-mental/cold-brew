@@ -55,10 +55,9 @@ const stream = {
 
 const getErrorObject = (req, err) => {
   return {
-    req: {
-      url: decodeURI(req.url),
-      body: req.body,
-    },
+    timestamp: _format(new Date(), 'yyyy-MM-dd HH:mm:ss', { timezone: 'GMT-9' }),
+    url: decodeURI(req.url),
+    body: req.body,
     error: {
       status: err.status,
       message: err.message,
