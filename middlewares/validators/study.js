@@ -45,7 +45,7 @@ const getStudy = async (req, res, next) => {
   }
 };
 
-const studyUpdate = async (req, res, next) => {
+const updateStudy = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
   });
@@ -77,7 +77,7 @@ const studyUpdate = async (req, res, next) => {
   }
 };
 
-const studyDelete = async (req, res, next) => {
+const deleteStudy = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().min(1).required(),
   });
@@ -187,8 +187,8 @@ const getChatting = async (req, res, next) => {
 module.exports = {
   createStudy,
   getStudy,
-  studyUpdate,
-  studyDelete,
+  updateStudy,
+  deleteStudy,
   getMyStudy,
   getStudyList,
   studyPaging,

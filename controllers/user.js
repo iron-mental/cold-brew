@@ -27,18 +27,18 @@ const logout = async (req, res) => {
   response(res, 200, '로그아웃이 완료되었습니다');
 };
 
-const userDetail = async (req, res) => {
-  const userData = await userService.userDetail(req.params);
+const getUser = async (req, res) => {
+  const userData = await userService.getUser(req.params);
   response(res, 200, userData);
 };
 
-const userImageUpdate = async (req, res) => {
-  await userService.userImageUpdate(req.params, req.body, req.file);
+const updateUserImage = async (req, res) => {
+  await userService.updateUserImage(req.params, req.body, req.file);
   response(res, 200, '회원정보가 수정되었습니다');
 };
 
-const userUpdate = async (req, res) => {
-  await userService.userUpdate(req.params, req.body);
+const updateUser = async (req, res) => {
+  await userService.updateUser(req.params, req.body);
   response(res, 200, '회원정보가 수정되었습니다');
 };
 
@@ -52,8 +52,8 @@ const emailVerification = async (req, res) => {
   response(res, 200, '인증 이메일이 발송되었습니다');
 };
 
-const emailVerificationProcess = async (req, res) => {
-  const nickname = await userService.emailVerificationProcess(req.params);
+const emailVerificationHandler = async (req, res) => {
+  const nickname = await userService.emailVerificationHandler(req.params);
   return res.status(200).send(makeAlert(`${nickname}님의 이메일인증이 완료되었습니다`));
 };
 
@@ -92,14 +92,14 @@ module.exports = {
   signup,
   login,
   logout,
-  userDetail,
-  userImageUpdate,
-  userUpdate,
+  getUser,
+  updateUserImage,
+  updateUser,
   checkNickname,
   checkEmail,
   withdraw,
   emailVerification,
-  emailVerificationProcess,
+  emailVerificationHandler,
   reissuance,
   resetPassword,
   updateEmail,

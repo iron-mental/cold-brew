@@ -54,7 +54,7 @@ const getStudy = async ({ id: user_id }, { study_id }) => {
   };
 };
 
-const studyUpdate = async ({ study_id }, updateData, filedata) => {
+const updateStudy = async ({ study_id }, updateData, filedata) => {
   if (updateData.title) {
     const checkRows = await studyDao.checkTitle(updateData.title);
     if (checkRows.length > 0) {
@@ -66,7 +66,7 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
   if (filedata) {
     const { destination, uploadedFile, path: _tmpPath } = filedata;
     const previousPath = await studyDao.getImage(study_id);
-    const updateRows = await studyDao.studyUpdate(study_id, updateData);
+    const updateRows = await studyDao.updateStudy(study_id, updateData);
     if (previousPath.length === 0 || updateRows.affectedRows === 0) {
       throw customError(404, '조회된 스터디가 없습니다');
     }
@@ -77,7 +77,7 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
     const newPath = path.join(destination, uploadedFile.basename);
     fs.rename(_tmpPath, newPath, (err) => {});
   } else {
-    const updateRows = await studyDao.studyUpdate(study_id, updateData);
+    const updateRows = await studyDao.updateStudy(study_id, updateData);
     if (updateRows.affectedRows === 0) {
       throw customError(404, '조회된 스터디가 없습니다');
     }
@@ -89,8 +89,8 @@ const studyUpdate = async ({ study_id }, updateData, filedata) => {
   push(PushEventEnum.study_update, study_id);
 };
 
-const studyDelete = async ({ id: host_id }, { study_id }) => {
-  const [userRows, studyRows] = await studyDao.studyDelete(study_id);
+const deleteStudy = async ({ id: host_id }, { study_id }) => {
+  const [userRows, studyRows] = await studyDao.deleteStudy(study_id);
   if (studyRows.affectedRows === 0) {
     throw customError(400, '스터디 삭제 실패');
   }
@@ -156,7 +156,7 @@ const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
     if (participateRows.length > 1) {
       throw customError(400, '탈퇴할 수 없습니다. 스터디 장을 위임한 뒤 탈퇴하세요', 101);
     }
-    await studyDelete({ id }, { study_id });
+    await deleteStudy({ id }, { study_id });
   }
 
   if (authority === AuthEnum.member) {
@@ -214,10 +214,10 @@ const getChatting = async ({ study_id }, { date }) => {
 module.exports = {
   createStudy,
   getStudy,
-  studyUpdate,
-  studyDelete,
   getMyStudy,
   getStudyList,
+  updateStudy,
+  deleteStudy,
   studyPaging,
   leaveStudy,
   delegate,

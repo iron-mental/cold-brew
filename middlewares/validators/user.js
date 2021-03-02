@@ -72,7 +72,7 @@ const logout = async (req, res, next) => {
   }
 };
 
-const userDetail = async (req, res, next) => {
+const getUser = async (req, res, next) => {
   const paramSchema = Joi.object({
     id: Joi.number().required(),
   });
@@ -102,7 +102,7 @@ const userInfoUpdate = async (req, res, next) => {
   }
 };
 
-const userImageUpdate = async (req, res, next) => {
+const updateUserImage = async (req, res, next) => {
   const paramSchema = Joi.object({
     id: Joi.number().required(),
   });
@@ -204,7 +204,7 @@ const emailVerification = async (req, res, next) => {
   }
 };
 
-const emailVerificationProcess = async (req, res, next) => {
+const emailVerificationHandler = async (req, res, next) => {
   const paramSchema = Joi.object({
     email: Joi.string().email().required(),
   });
@@ -271,15 +271,15 @@ module.exports = {
   signup,
   login,
   logout,
-  userDetail,
+  getUser,
   userInfoUpdate,
-  userImageUpdate,
+  updateUserImage,
   userCareerUpdate,
   userSnsUpdate,
   userLocationUpdate,
   withdraw,
   emailVerification,
-  emailVerificationProcess,
+  emailVerificationHandler,
   reissuance,
   resetPassword,
   updateEmail,

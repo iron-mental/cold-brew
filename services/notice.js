@@ -16,7 +16,7 @@ const createNotice = async ({ study_id }, createData) => {
   return newNotice.insertId;
 };
 
-const noticeDetail = async ({ study_id, notice_id }) => {
+const getNotice = async ({ study_id, notice_id }) => {
   let noticeRows = await noticeDao.getNotice(study_id, notice_id);
   if (noticeRows.length === 0) {
     throw customError(404, '조회된 공지사항이 없습니다');
@@ -25,8 +25,8 @@ const noticeDetail = async ({ study_id, notice_id }) => {
   return noticeRows[0];
 };
 
-const noticeUpdate = async ({ study_id, notice_id }, updateData) => {
-  const updateRows = await noticeDao.noticeUpdate(study_id, notice_id, updateData);
+const updateNotice = async ({ study_id, notice_id }, updateData) => {
+  const updateRows = await noticeDao.updateNotice(study_id, notice_id, updateData);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 공지사항이 없습니다');
   }
@@ -34,14 +34,14 @@ const noticeUpdate = async ({ study_id, notice_id }, updateData) => {
   push(PushEventEnum.notice_update, study_id);
 };
 
-const noticeDelete = async ({ study_id, notice_id }) => {
-  const deleteRows = await noticeDao.noticeDelete(study_id, notice_id);
+const deleteNotice = async ({ study_id, notice_id }) => {
+  const deleteRows = await noticeDao.deleteNotice(study_id, notice_id);
   if (deleteRows.affectedRows === 0) {
     throw customError(404, '조회된 공지사항이 없습니다');
   }
 };
 
-const noticeList = async ({ study_id }) => {
+const getNoticeList = async ({ study_id }) => {
   let noticeRows = await noticeDao.getNoticeList(study_id);
   noticeRows = toBoolean(noticeRows, ['pinned']);
   return cutId(noticeRows);
@@ -54,9 +54,9 @@ const noticePaging = async (noticeKeys) => {
 
 module.exports = {
   createNotice,
-  noticeDetail,
-  noticeUpdate,
-  noticeDelete,
-  noticeList,
+  getNotice,
+  getNoticeList,
+  updateNotice,
+  deleteNotice,
   noticePaging,
 };

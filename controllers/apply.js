@@ -11,14 +11,14 @@ const createApply = async (req, res) => {
   response(res, 201, '가입신청이 완료되었습니다');
 };
 
-const applyUpdate = async (req, res) => {
-  await applyService.applyUpdate(req.user, req.params, req.body);
+const updateAlert = async (req, res) => {
+  await applyService.updateAlert(req.user, req.params, req.body);
   response(res, 200, '가입신청이 수정되었습니다');
 };
 
-const applyDelete = async (req, res) => {
+const deleteApply = async (req, res) => {
   await checkAuthority(req.user, req.params, AuthEnum.applier);
-  await applyService.applyDelete(req.user, req.params);
+  await applyService.deleteApply(req.user, req.params);
   response(res, 200, '가입신청이 취소되었습니다');
 };
 
@@ -44,9 +44,9 @@ const applyListByUser = async (req, res) => {
   response(res, 200, applyList);
 };
 
-const applyProcess = async (req, res) => {
+const applyHandler = async (req, res) => {
   await isHost(req.user, req.params);
-  await applyService.applyProcess(req.params, req.body);
+  await applyService.applyHandler(req.params, req.body);
   const message = `${req.body.allow ? '수락' : '거절'}이 완료되었습니다`;
   response(res, 200, message);
 };
@@ -54,10 +54,10 @@ const applyProcess = async (req, res) => {
 module.exports = {
   createApply,
   getApplyByUser,
-  applyUpdate,
-  applyDelete,
+  updateAlert,
+  deleteApply,
   getApplyById,
   applyListByHost,
   applyListByUser,
-  applyProcess,
+  applyHandler,
 };

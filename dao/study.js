@@ -76,7 +76,7 @@ const getImage = async (study_id) => {
   }
 };
 
-const studyUpdate = async (study_id, updateData) => {
+const updateStudy = async (study_id, updateData) => {
   const conn = await pool.getConnection();
   try {
     const updateSql = 'UPDATE study SET ? WHERE ?';
@@ -89,7 +89,7 @@ const studyUpdate = async (study_id, updateData) => {
   }
 };
 
-const studyDelete = async (study_id) => {
+const deleteStudy = async (study_id) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
@@ -392,8 +392,8 @@ module.exports = {
   createStudy,
   getStudy,
   getImage,
-  studyUpdate,
-  studyDelete,
+  updateStudy,
+  deleteStudy,
   getMyStudy,
   getStudyListByNew,
   getStudyListByLength,

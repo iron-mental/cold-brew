@@ -87,7 +87,7 @@ const login = async (email, password) => {
   }
 };
 
-const userDetail = async (id) => {
+const getUser = async (id) => {
   const conn = await pool.getConnection();
   try {
     const userSql = `
@@ -118,7 +118,7 @@ const getImage = async (id) => {
   }
 };
 
-const userUpdate = async (id, updateData) => {
+const updateUser = async (id, updateData) => {
   const conn = await pool.getConnection();
   try {
     const updateSql = 'UPDATE user SET ? WHERE ? ';
@@ -173,7 +173,7 @@ const verifiedCheck = async (userData) => {
   }
 };
 
-const emailVerificationProcess = async (email) => {
+const emailVerificationHandler = async (email) => {
   const conn = await pool.getConnection();
   try {
     const uidSql = 'SELECT uid FROM user WHERE ?';
@@ -287,14 +287,14 @@ const clearPushToken = async (push_token) => {
 module.exports = {
   signup,
   login,
-  userDetail,
+  getUser,
   getImage,
-  userUpdate,
+  updateUser,
   checkNickname,
   checkEmail,
   withdraw,
   verifiedCheck,
-  emailVerificationProcess,
+  emailVerificationHandler,
   checkRefreshToken,
   updateEmail,
   getAddress,

@@ -9,27 +9,27 @@ const createNotice = async (req, res) => {
   response(res, 201, { notice_id });
 };
 
-const noticeDetail = async (req, res) => {
-  const noticeData = await noticeService.noticeDetail(req.params);
+const getNotice = async (req, res) => {
+  const noticeData = await noticeService.getNotice(req.params);
   response(res, 200, noticeData);
 };
 
-const noticeUpdate = async (req, res) => {
+const updateNotice = async (req, res) => {
   await isHost(req.user, req.params);
-  await noticeService.noticeUpdate(req.params, req.body);
+  await noticeService.updateNotice(req.params, req.body);
   response(res, 200, '공지사항이 수정되었습니다');
 };
 
-const noticeDelete = async (req, res) => {
+const deleteNotice = async (req, res) => {
   await isHost(req.user, req.params);
-  await noticeService.noticeDelete(req.params);
+  await noticeService.deleteNotice(req.params);
   response(res, 200, '공지사항이 삭제되었습니다');
 };
 
-const noticeList = async (req, res) => {
+const getNoticeList = async (req, res) => {
   await checkAuthority(req.user, req.params, AuthEnum.host, AuthEnum.member);
-  const noticeList = await noticeService.noticeList(req.params);
-  response(res, 200, noticeList);
+  const getNoticeList = await noticeService.getNoticeList(req.params);
+  response(res, 200, getNoticeList);
 };
 
 const noticePaging = async (req, res) => {
@@ -44,9 +44,9 @@ const noticePaging = async (req, res) => {
 
 module.exports = {
   createNotice,
-  noticeDetail,
-  noticeUpdate,
-  noticeDelete,
-  noticeList,
+  getNotice,
+  updateNotice,
+  deleteNotice,
+  getNoticeList,
   noticePaging,
 };
