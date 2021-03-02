@@ -80,7 +80,7 @@ const applyCheck = async (user_id, study_id, apply_id) => {
   }
 };
 
-const applyUpdate = async (user_id, study_id, apply_id, updateData) => {
+const updateAlert = async (user_id, study_id, apply_id, updateData) => {
   const conn = await pool.getConnection();
   try {
     const updateSql = `
@@ -99,7 +99,7 @@ const applyUpdate = async (user_id, study_id, apply_id, updateData) => {
   }
 };
 
-const applyDelete = async (user_id, apply_id) => {
+const deleteApply = async (user_id, apply_id) => {
   const conn = await pool.getConnection();
   try {
     const deleteSql = 'DELETE FROM apply WHERE id = ? AND user_id = ?';
@@ -192,8 +192,8 @@ module.exports = {
   createApply,
   getApplyByUser,
   getApplyById,
-  applyUpdate,
-  applyDelete,
+  updateAlert,
+  deleteApply,
   applyListByHost,
   applyListByUser,
   setAllow,

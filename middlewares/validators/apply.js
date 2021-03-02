@@ -46,7 +46,7 @@ const getApplyById = async (req, res, next) => {
   }
 };
 
-const applyUpdate = async (req, res, next) => {
+const updateAlert = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
     apply_id: Joi.number().required(),
@@ -64,7 +64,7 @@ const applyUpdate = async (req, res, next) => {
   }
 };
 
-const applyDelete = async (req, res, next) => {
+const deleteApply = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
     apply_id: Joi.number().required(),
@@ -100,7 +100,7 @@ const applyListByUser = async (req, res, next) => {
   }
 };
 
-const applyProcess = async (req, res, next) => {
+const applyHandler = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
     apply_id: Joi.number().required(),
@@ -121,9 +121,9 @@ module.exports = {
   createApply,
   getApplyByUser,
   getApplyById,
-  applyUpdate,
-  applyDelete,
+  updateAlert,
+  deleteApply,
   applyListByHost,
   applyListByUser,
-  applyProcess,
+  applyHandler,
 };

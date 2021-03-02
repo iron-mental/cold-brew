@@ -27,20 +27,20 @@ const getApplyByUser = async ({ study_id, user_id }) => {
   return applyData[0];
 };
 
-const applyUpdate = async ({ id: user_id }, { apply_id, study_id }, updateData) => {
+const updateAlert = async ({ id: user_id }, { apply_id, study_id }, updateData) => {
   const checkRows = await applyDao.applyCheck(user_id, study_id, apply_id);
   if (checkRows[0] && checkRows[0].apply_status !== ApplyEnum.apply) {
     throw customError(403, '이미 처리된 가입신청입니다');
   }
 
-  const updateRows = await applyDao.applyUpdate(user_id, study_id, apply_id, updateData);
+  const updateRows = await applyDao.updateAlert(user_id, study_id, apply_id, updateData);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 가입신청이 없습니다');
   }
 };
 
-const applyDelete = async ({ id: user_id }, { apply_id }) => {
-  const deleteRows = await applyDao.applyDelete(user_id, apply_id);
+const deleteApply = async ({ id: user_id }, { apply_id }) => {
+  const deleteRows = await applyDao.deleteApply(user_id, apply_id);
   if (deleteRows.affectedRows === 0) {
     throw customError(404, '조회된 신청내역이 없습니다');
   }
@@ -65,7 +65,7 @@ const applyListByUser = async ({ id: user_id }) => {
   return applyList;
 };
 
-const applyProcess = async ({ study_id, apply_id }, { allow }) => {
+const applyHandler = async ({ study_id, apply_id }, { allow }) => {
   const userRows = await applyDao.getApplyById(study_id, apply_id);
   if (userRows.length === 0) {
     throw customError(404, '조회된 신청내역이 없습니다');
@@ -96,10 +96,10 @@ const applyProcess = async ({ study_id, apply_id }, { allow }) => {
 module.exports = {
   createApply,
   getApplyByUser,
-  applyUpdate,
-  applyDelete,
+  updateAlert,
+  deleteApply,
   getApplyById,
   applyListByHost,
   applyListByUser,
-  applyProcess,
+  applyHandler,
 };
