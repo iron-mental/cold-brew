@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const { validError } = require('../../utils/errors/validation');
-const { parseGrapheme } = require('./common');
+const { parseGrapheme, setHttps } = require('./common');
 const commonValid = require('./common');
 
 const createStudy = async (req, res, next) => {
@@ -25,8 +25,9 @@ const createStudy = async (req, res, next) => {
   });
 
   try {
+    req.body = setHttps(req.body);
     req.parse = parseGrapheme(req);
-    await bodySchema.validateAsync(req.parse.body);
+    req = await bodySchema.validateAsync(req.parse.body);
     next();
   } catch (err) {
     next(validError(err));
@@ -68,6 +69,7 @@ const updateStudy = async (req, res, next) => {
     image: Joi.allow(),
   }).min(1);
   try {
+    req.body = setHttps(req.body);
     req.parse = parseGrapheme(req);
     await paramSchema.validateAsync(req.params);
     await bodySchema.validateAsync(req.parse.body);

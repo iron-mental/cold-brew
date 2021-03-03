@@ -146,6 +146,7 @@ const userSnsUpdate = async (req, res, next) => {
     sns_web: Joi.string().allow('').max(500),
   }).min(1);
   try {
+    req.body = setHttps(req.body);
     await paramSchema.validateAsync(req.params);
     await bodySchema.validateAsync(req.body);
     next();

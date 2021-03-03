@@ -28,10 +28,6 @@ const uriMethod = (value, helpers) => {
   const url = urlList[sns];
   let target = value;
 
-  if (value.indexOf('https://') === -1) {
-    target = 'https://' + target;
-  }
-
   if (!urlList.static_urls.includes(sns) && target.indexOf('www.') === 8) {
     target = value.replace('www.', '');
   }
@@ -116,6 +112,15 @@ const parseProjectGrapheme = (req) => {
   return parse;
 };
 
+const setHttps = (body) => {
+  for (let prop in body) {
+    if (prop.slice(0, 4) === 'sns_' && body[prop] !== '' && body[prop].indexOf('https://') !== 0) {
+      body[prop] = 'https://' + body[prop];
+    }
+  }
+  return body;
+};
+
 module.exports = {
   categoryValid,
   uriMethod,
@@ -123,4 +128,5 @@ module.exports = {
   checkVersion,
   parseGrapheme,
   parseProjectGrapheme,
+  setHttps,
 };
