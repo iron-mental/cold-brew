@@ -8,8 +8,8 @@ const checkNickname = async (req, res) => {
 };
 
 const checkEmail = async (req, res) => {
-  await userService.checkEmail(req.params);
-  response(res, 200, '사용 가능한 이메일입니다');
+  const result = await userService.checkEmail(req.params);
+  response(res, 200, result);
 };
 
 const signup = async (req, res) => {
