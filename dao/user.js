@@ -32,7 +32,7 @@ const checkEmail = async (email) => {
     const checkSql = `
       SELECT email
       FROM user
-      WHERE email = ?`;
+      WHERE Binary email = ?`;
     const [checkRows] = await conn.query(checkSql, [email]);
     return checkRows;
   } catch (err) {
