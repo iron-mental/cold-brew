@@ -10,7 +10,7 @@ const getAlert = async (user_id) => {
       WHERE user_id = ?
       ORDER BY id DESC
       LIMIT 50`;
-    const [alertRows] = await conn.query(alertSql, user_id);
+    const [alertRows] = await conn.query(alertSql, [user_id]);
     return alertRows;
   } catch (err) {
     throw databaseError(err);
@@ -22,7 +22,10 @@ const getAlert = async (user_id) => {
 const confirmAlert = async (alert_id) => {
   const conn = await pool.getConnection();
   try {
-    const confirmSql = `UPDATE alert SET confirm = ? WHERE id = ?`;
+    const confirmSql = `
+      UPDATE alert 
+      SET confirm = ? 
+      WHERE id = ?`;
     const [confirmRows] = await conn.query(confirmSql, [true, alert_id]);
     return confirmRows;
   } catch (err) {
@@ -35,7 +38,10 @@ const confirmAlert = async (alert_id) => {
 const updateStudyTitle = async (study_id, title) => {
   const conn = await pool.getConnection();
   try {
-    const updateSql = `UPDATE alert SET study_title = ? WHERE study_id = ?`;
+    const updateSql = `
+      UPDATE alert 
+      SET study_title = ? 
+      WHERE study_id = ?`;
     const [updateRows] = await conn.query(updateSql, [title, study_id]);
     return updateRows;
   } catch (err) {

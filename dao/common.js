@@ -8,7 +8,9 @@ const isHost = async (user_id, study_id) => {
       SELECT EXISTS (
         SELECT user_id
         FROM participate
-        WHERE leader = true and user_id = ? and study_id = ? ) isHost
+        WHERE leader = true
+          AND user_id = ?
+          AND study_id = ? ) AS isHost
     `;
     const [listRows] = await conn.query(studyListSql, [user_id, study_id]);
     return listRows;
@@ -25,7 +27,8 @@ const checkMember = async (user_id, study_id) => {
     const studyListSql = `
       SELECT user_id, leader
       FROM participate
-      WHERE user_id = ? and study_id = ?
+      WHERE user_id = ?
+        AND study_id = ?
     `;
     const [listRows] = await conn.query(studyListSql, [user_id, study_id]);
     return listRows;
@@ -42,7 +45,8 @@ const checkApply = async (user_id, study_id) => {
     const studyListSql = `
       SELECT user_id, apply_status
       FROM apply
-      WHERE user_id = ? and study_id = ?
+      WHERE user_id = ?
+        AND study_id = ?
       ORDER BY id DESC
       LIMIT 1
     `;
@@ -58,8 +62,11 @@ const checkApply = async (user_id, study_id) => {
 const getUserLocation = async (user_id) => {
   const conn = await pool.getConnection();
   try {
-    const checkSql = 'SELECT latitude, longitude, sigungu FROM user WHERE id = ?';
-    const [checkRows] = await conn.query(checkSql, user_id);
+    const checkSql = `
+      SELECT latitude, longitude, sigungu 
+      FROM user
+      WHERE id = ?`;
+    const [checkRows] = await conn.query(checkSql, [user_id]);
     return checkRows;
   } catch (err) {
     throw databaseError(err);
@@ -77,8 +84,9 @@ const checkVersion = async (version, device) => {
       WHERE id > (
         SELECT id 
         FROM version 
-        WHERE version = ? AND device = ?
-      ) AND device = ?`;
+        WHERE version = ?
+          AND device = ? )
+        AND device = ?`;
     const [checkRows] = await conn.query(checkSql, [version, device, device]);
     return checkRows;
   } catch (err) {

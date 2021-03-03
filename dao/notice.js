@@ -5,7 +5,7 @@ const createNotice = async (createData) => {
   const conn = await pool.getConnection();
   try {
     const createSQL = 'INSERT INTO notice SET ?';
-    const [createRows] = await conn.query(createSQL, createData);
+    const [createRows] = await conn.query(createSQL, [createData]);
     return createRows;
   } catch (err) {
     throw databaseError(err);
@@ -26,8 +26,9 @@ const getNotice = async (study_id, notice_id) => {
         ON n.study_id = p.study_id
         LEFT JOIN user u
         ON u.id = p.user_id
-      WHERE
-        n.study_id = ? AND n.id = ? AND leader = ?;`;
+      WHERE n.study_id = ?
+        AND n.id = ?
+        AND leader = ?;`;
     const [detailRows] = await conn.query(detailSQL, [study_id, notice_id, true]);
     return detailRows;
   } catch (err) {
@@ -40,7 +41,11 @@ const getNotice = async (study_id, notice_id) => {
 const updateNotice = async (study_id, notice_id, updateData) => {
   const conn = await pool.getConnection();
   try {
-    const updateSQL = 'UPDATE notice SET ? WHERE study_id = ? AND id = ?';
+    const updateSQL = `
+      UPDATE notice
+      SET ?
+      WHERE study_id = ?
+        AND id = ?`;
     const [updateRows] = await conn.query(updateSQL, [updateData, study_id, notice_id]);
     return updateRows;
   } catch (err) {
@@ -53,7 +58,10 @@ const updateNotice = async (study_id, notice_id, updateData) => {
 const deleteNotice = async (study_id, notice_id) => {
   const conn = await pool.getConnection();
   try {
-    const deleteSQL = 'DELETE FROM notice WHERE study_id = ? AND id = ?';
+    const deleteSQL = `
+      DELETE FROM notice
+      WHERE study_id = ? 
+      AND id = ?`;
     const [deleteRows] = await conn.query(deleteSQL, [study_id, notice_id]);
     return deleteRows;
   } catch (err) {
@@ -73,7 +81,7 @@ const getNoticeList = async (study_id) => {
       FROM notice
       WHERE ?
       ORDER BY  pinned DESC, id DESC`;
-    const [listRows] = await conn.query(deleteSQL, { study_id });
+    const [listRows] = await conn.query(deleteSQL, [study_id]);
     return listRows;
   } catch (err) {
     throw databaseError(err);

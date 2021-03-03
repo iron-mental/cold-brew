@@ -4,8 +4,10 @@ const { databaseError } = require('../utils/errors/database');
 const createProject = async (data) => {
   const conn = await pool.getConnection();
   try {
-    const createSql = `INSERT INTO project SET ?`;
-    const [createRows] = await conn.query(createSql, data);
+    const createSql = `
+      INSERT INTO project
+      SET ?`;
+    const [createRows] = await conn.query(createSql, [data]);
     return createRows;
   } catch (err) {
     throw databaseError(err);
@@ -17,7 +19,10 @@ const createProject = async (data) => {
 const updateProject = async (project) => {
   const conn = await pool.getConnection();
   try {
-    const updateSQL = `UPDATE project SET ? WHERE id = ?`;
+    const updateSQL = `
+      UPDATE project 
+      SET ? 
+      WHERE id = ?`;
     const [updateRows] = await conn.query(updateSQL, [project, project.id]);
     return updateRows;
   } catch (err) {
@@ -36,7 +41,7 @@ const getProjectList = async (id) => {
         DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") create_at
       FROM project
       WHERE user_id = ?`;
-    const [projectData] = await conn.query(projectSql, id);
+    const [projectData] = await conn.query(projectSql, [id]);
     return projectData;
   } catch (err) {
     throw databaseError(err);
@@ -48,8 +53,11 @@ const getProjectList = async (id) => {
 const deleteProject = async (user_id, project_id) => {
   const conn = await pool.getConnection();
   try {
-    const deleteSQL = 'DELETE FROM project WHERE user_id = ? AND id = ?';
-    const [deleteRows] = await conn.query(deleteSQL, [user_id, project_id]);
+    const deleteSQL = `
+      DELETE FROM project 
+      WHERE id = ? 
+        AND user_id = ?`;
+    const [deleteRows] = await conn.query(deleteSQL, [project_id, user_id]);
     return deleteRows;
   } catch (err) {
     throw databaseError(err);
