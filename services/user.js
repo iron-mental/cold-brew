@@ -129,9 +129,14 @@ const updateUserImage = async ({ id }, updateData, { destination, uploadedFile, 
 };
 
 const updateEmail = async ({ id }, { email }) => {
-  const userDataRows = await userDao.updateEmail(id, email);
-  if (userDataRows.length === 0) {
+  const userRows = await userDao.getUser(id);
+  if (userRows.length === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
+  }
+
+  const [{ email: storedEmail }] = userRows;
+  if (email !== storedEmail) {
+    await userDao.updateEmail(id, email);
   }
 };
 
