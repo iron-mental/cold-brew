@@ -50,18 +50,16 @@ const signup = async ({ email, password, nickname }) => {
 };
 
 const login = async ({ email, password, device, push_token }) => {
-  const loginRows = await userDao.login(email, password);
-  if (loginRows.length === 0) {
+  const [{ id, storedEmail, nickname }] = await userDao.login(email, password);
+  if (email !== storedEmail) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
 
-  const { id, nickname } = loginRows[0];
   const access_token = await getAccessToken({ id, email, nickname });
   const refresh_token = await getRefreshToken({ id });
 
-  userDao.clearPushToken(push_token);
-
-  userDao.updateUser(id, {
+  await userDao.clearPushToken(push_token);
+  await userDao.updateUser(id, {
     device,
     access_token,
     refresh_token,

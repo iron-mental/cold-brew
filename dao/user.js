@@ -88,9 +88,10 @@ const login = async (email, password) => {
       throw firebaseError(err);
     });
   const conn = await pool.getConnection();
+
   try {
     const userSql = `
-      SELECT id, nickname
+      SELECT id, email storedEmail, nickname
       FROM user
       WHERE uid = ?`;
     const [rows] = await conn.query(userSql, [uid]);
