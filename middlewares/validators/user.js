@@ -2,7 +2,7 @@ const Joi = require('joi');
 
 const { validError } = require('../../utils/errors/validation');
 const { DeviceEnum } = require('../../utils/variables/enum');
-const { parseGrapheme } = require('./common');
+const { parseGrapheme, setHttps } = require('./common');
 const commonValid = require('./common');
 
 const checkNickname = async (req, res, next) => {
