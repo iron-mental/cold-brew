@@ -233,7 +233,7 @@ const getAddress = async () => {
 };
 
 const pushTest = async ({ id: user_id }) => {
-  push(PushEventEnum.push_test, 1, user_id);
+  push(PushEventEnum.push_test, 619, user_id);
 };
 
 module.exports = {
