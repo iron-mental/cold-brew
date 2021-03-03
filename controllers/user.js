@@ -95,6 +95,8 @@ module.exports = {
   getUser,
   updateUserImage,
   updateUser,
+  updateEmail,
+  updatePushToken,
   checkNickname,
   checkEmail,
   withdraw,
@@ -102,8 +104,6 @@ module.exports = {
   emailVerificationHandler,
   reissuance,
   resetPassword,
-  updateEmail,
-  updatePushToken,
   getAddress,
   pushTest,
 };

@@ -105,12 +105,14 @@ const updateUser = async ({ id }, updateData) => {
     throw customError(400, '중복된 닉네임이 존재합니다');
   }
 
-  User.updateOne({ user_id: id }, { nickname: updateData.nickname }).exec();
-  Chat.updateMany({ user_id: id }, { nickname: updateData.nickname }).exec();
-
   const updateRows = await userDao.updateUser(id, updateData);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
+  }
+
+  if (updateData.nickname) {
+    User.updateOne({ user_id: id }, { nickname: updateData.nickname }).exec();
+    Chat.updateMany({ user_id: id }, { nickname: updateData.nickname }).exec();
   }
 };
 
