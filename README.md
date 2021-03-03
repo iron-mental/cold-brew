@@ -5,7 +5,8 @@
 
 ![Node Version](https://img.shields.io/badge/node-v12.19.1-green) ![express Version](https://img.shields.io/badge/express-v4.16.1-blue) ![Socket.io Version](https://img.shields.io/badge/Socket.io-v3.0.3-9cf)
 
-"Terminal :study" 는 **개발자들을 위한 스터디모임** 어플리케이션입니다. 간소화 된 양식을 통해 자신을 어필할 수 있는 프로필을 작성할 수 있으며, 스터디에 참여해 활동할 수 있습니다.
+ **Terminal :study** 는 **개발자들을 위한 스터디모임** 모바일 어플리케이션 프로젝트입니다.</br>
+ 간소화 된 양식을 통해 자신을 어필할 수 있는 프로필을 작성할 수 있으며, 스터디에 참여해 활동할 수 있습니다.
 
 프로그래밍 언어, iOS, Android, Bigdata, ML 등 다양한 카테고리가 있으며 자신이 원하는 카테고리의 스터디 목록을 조회하거나 스터디의 정보를 검색해 가입하고 내부 게시판을 통해 스터디의 일정을 조율하고 그룹 채팅을 통해 스터디에 참여할 수 있습니다.
 </br></br>
