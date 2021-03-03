@@ -60,7 +60,7 @@ const emailCompare = (req, res, next) => {
 };
 
 const checkAdmin = (req, res, next) => {
-  if (req.user.id !== 1) {
+  if (req.user.id !== 156) {
     throw authError({ message: 'permission error' });
   }
   next();
