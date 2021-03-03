@@ -11,6 +11,7 @@ class FirebaseError extends Error {
 const FirebaseErrorEnum = Object.freeze({
   'auth/user-not-found': 'auth/user-not-found',
   'auth/email-already-exists': 'auth/email-already-exists',
+  'auth/email-already-in-use': 'auth/email-already-in-use',
   'auth/wrong-password': 'auth/wrong-password',
   'auth/too-many-requests': 'auth/too-many-requests',
 });
@@ -23,6 +24,7 @@ firebaseError = (err) => {
       return new FirebaseError(err);
 
     case 'auth/email-already-exists':
+    case 'auth/email-already-in-use':
       err.status = 400;
       err.message = '중복된 이메일이 존재합니다 ';
       return new FirebaseError(err);
