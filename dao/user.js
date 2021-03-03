@@ -15,7 +15,7 @@ const checkNickname = async (nickname, user_id) => {
     const checkSql = `
       SELECT nickname
       FROM user
-      WHERE nickname = ?
+      WHERE BINARY nickname = ?
         AND NOT id = ?`;
     const [checkRows] = await conn.query(checkSql, [nickname, user_id]);
     return checkRows;
@@ -32,7 +32,7 @@ const checkEmail = async (email) => {
     const checkSql = `
       SELECT email
       FROM user
-      WHERE Binary email = ?`;
+      WHERE BINARY email = ?`;
     const [checkRows] = await conn.query(checkSql, [email]);
     return checkRows;
   } catch (err) {
@@ -88,9 +88,10 @@ const login = async (email, password) => {
       throw firebaseError(err);
     });
   const conn = await pool.getConnection();
+
   try {
     const userSql = `
-      SELECT id, nickname
+      SELECT id, email storedEmail, nickname
       FROM user
       WHERE uid = ?`;
     const [rows] = await conn.query(userSql, [uid]);
@@ -160,7 +161,7 @@ const withdraw = async (id, email, password) => {
     const withdrawSql = `
       DELETE FROM user
       WHERE id = ?
-        AND email = ?`;
+        AND BINARY email = ?`;
     const [withdrawRows] = await conn.query(withdrawSql, [id, email]);
 
     if (!withdrawRows.affectedRows) {
@@ -208,7 +209,7 @@ const emailVerificationHandler = async (email) => {
     const uidSql = `
       SELECT uid
       FROM user
-      WHERE email =?`;
+      WHERE BINARY email =?`;
     const [uidRows] = await conn.query(uidSql, [email]);
     const result = admin
       .auth()
@@ -219,7 +220,7 @@ const emailVerificationHandler = async (email) => {
         const updateSql = `
           UPDATE user
           SET email_verified = ?
-          WHERE email = ?`;
+          WHERE BINARY email = ?`;
         await conn.query(updateSql, [true, email]);
 
         const userSql = `
