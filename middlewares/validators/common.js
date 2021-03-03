@@ -129,5 +129,5 @@ module.exports = {
   checkVersion,
   parseGrapheme,
   parseProjectGrapheme,
-  inputHttps: setHttps,
+  setHttps,
 };
