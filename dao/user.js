@@ -226,7 +226,7 @@ const emailVerificationHandler = async (email) => {
         const userSql = `
           SELECT nickname
           FROM user
-          WHERE ?`;
+          WHERE BINARY email = ?`;
         const [userRows] = await conn.query(userSql, [email]);
         return userRows;
       })
