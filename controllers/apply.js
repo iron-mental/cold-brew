@@ -11,8 +11,8 @@ const createApply = async (req, res) => {
   response(res, 201, '가입신청이 완료되었습니다');
 };
 
-const updateAlert = async (req, res) => {
-  await applyService.updateAlert(req.user, req.params, req.body);
+const updateApply = async (req, res) => {
+  await applyService.updateApply(req.user, req.params, req.body);
   response(res, 200, '가입신청이 수정되었습니다');
 };
 
@@ -54,7 +54,7 @@ const applyHandler = async (req, res) => {
 module.exports = {
   createApply,
   getApplyByUser,
-  updateAlert,
+  updateApply,
   deleteApply,
   getApplyById,
   applyListByHost,

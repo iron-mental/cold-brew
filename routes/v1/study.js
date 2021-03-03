@@ -46,7 +46,7 @@ router.get('/:study_id/notice/paging/list', noticeValid.noticePaging, asyncWrap(
 // Apply(applier);
 router.post('/:study_id/apply', applyValid.createApply, asyncWrap(applyController.createApply));
 router.get('/:study_id/applyUser/:user_id', idCompare, applyValid.getApplyByUser, asyncWrap(applyController.getApplyByUser));
-router.put('/:study_id/apply/:apply_id', applyValid.updateAlert, asyncWrap(applyController.updateAlert));
+router.put('/:study_id/apply/:apply_id', applyValid.updateApply, asyncWrap(applyController.updateApply));
 router.delete('/:study_id/apply/:apply_id', applyValid.deleteApply, asyncWrap(applyController.deleteApply));
 
 // Apply(host);

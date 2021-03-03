@@ -46,7 +46,7 @@ const getApplyById = async (req, res, next) => {
   }
 };
 
-const updateAlert = async (req, res, next) => {
+const updateApply = async (req, res, next) => {
   const paramSchema = Joi.object({
     study_id: Joi.number().required(),
     apply_id: Joi.number().required(),
@@ -121,7 +121,7 @@ module.exports = {
   createApply,
   getApplyByUser,
   getApplyById,
-  updateAlert,
+  updateApply,
   deleteApply,
   applyListByHost,
   applyListByUser,

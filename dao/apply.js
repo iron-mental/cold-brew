@@ -80,7 +80,7 @@ const applyCheck = async (user_id, study_id, apply_id) => {
   }
 };
 
-const updateAlert = async (user_id, study_id, apply_id, updateData) => {
+const updateApply = async (user_id, study_id, apply_id, updateData) => {
   const conn = await pool.getConnection();
   try {
     const updateSql = `
@@ -192,7 +192,7 @@ module.exports = {
   createApply,
   getApplyByUser,
   getApplyById,
-  updateAlert,
+  updateApply,
   deleteApply,
   applyListByHost,
   applyListByUser,
