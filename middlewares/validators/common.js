@@ -96,6 +96,7 @@ const parseProjectGrapheme = (req) => {
   let tmp = {};
 
   parse.body.project_list = req.body.project_list.map((project) => {
+    project = setHttps(project);
     tmp = {};
     Object.entries(project).forEach(([key, value]) => {
       if (typeof value === 'string') {
