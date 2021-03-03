@@ -30,7 +30,7 @@ const getOffMemberToken = async (study_id, nickname) => {
         LEFT JOIN user u
         ON p.user_id = u.id
       WHERE p.study_id = ?
-        AND nickname != ?
+        AND BINARY nickname != ?
         AND p.chat_status = ?
       ORDER BY u.device`;
     const [offMemberRows] = await conn.query(getMemberSql, [study_id, nickname, false]);
