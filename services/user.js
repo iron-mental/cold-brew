@@ -26,8 +26,9 @@ const checkNickname = async ({ nickname }) => {
 const checkEmail = async ({ email }) => {
   const checkRows = await userDao.checkEmail(email);
   if (checkRows.length > 0) {
-    throw customError(400, '중복된 이메일이 존재합니다');
+    return { duplicate: true };
   }
+  return { duplicate: false };
 };
 
 const signup = async ({ email, password, nickname }) => {
