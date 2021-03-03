@@ -17,7 +17,7 @@ const createNotice = async (createData) => {
 const getNotice = async (study_id, notice_id) => {
   const conn = await pool.getConnection();
   try {
-    const detailSQL = `
+    const noticeSQL = `
       SELECT
         n.id, n.study_id, n.title, n.contents, n.pinned, p.user_id leader_id, u.image leader_image, u.nickname leader_nickname,
         DATE_FORMAT(n.updated_at, "%Y-%c-%d %H:%i:%s") updated_at
@@ -29,7 +29,7 @@ const getNotice = async (study_id, notice_id) => {
       WHERE n.study_id = ?
         AND n.id = ?
         AND leader = ?;`;
-    const [detailRows] = await conn.query(detailSQL, [study_id, notice_id, true]);
+    const [detailRows] = await conn.query(noticeSQL, [study_id, notice_id, true]);
     return detailRows;
   } catch (err) {
     throw databaseError(err);
@@ -79,7 +79,7 @@ const getNoticeList = async (study_id) => {
         DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at,
         DATE_FORMAT(updated_at, "%Y-%c-%d %H:%i:%s") updated_at
       FROM notice
-      WHERE ?
+      WHERE study_id = ?
       ORDER BY  pinned DESC, id DESC`;
     const [listRows] = await conn.query(deleteSQL, [study_id]);
     return listRows;
