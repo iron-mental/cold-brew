@@ -79,6 +79,7 @@ const applyHandler = async ({ study_id, apply_id }, { allow }) => {
     }
     redisTrigger(user_id, RedisEventEnum.participate, { study_id });
     broadcast.participate(study_id, nickname);
+    push(PushEventEnum.apply_allow, study_id, user_id);
   } else {
     const rejectRows = await applyDao.setReject(apply_id);
     if (rejectRows.affectedRows === 0) {
