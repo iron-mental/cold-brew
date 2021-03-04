@@ -8,9 +8,6 @@ const { customError } = require('../utils/errors/custom');
 const { ApplyEnum } = require('../utils/variables/enum');
 const { redisTrigger } = require('./redis');
 
-const User = require('../models/user');
-const Room = require('../models/room');
-
 const createApply = async ({ user_id, study_id, message }) => {
   const createdRows = await applyDao.createApply({ user_id, study_id, message });
   if (createdRows.affectedRows === 0) {
@@ -80,8 +77,6 @@ const applyHandler = async ({ study_id, apply_id }, { allow }) => {
     if (allowRows.affectedRows === 0) {
       throw customError(400, '수락 실패');
     }
-    Room.updateOne({ study_id }, { $addToSet: { members: user_id } }).exec();
-    User.updateOne({ user_id }, { $addToSet: { rooms: study_id } }).exec();
     redisTrigger(user_id, RedisEventEnum.participate, { study_id });
     broadcast.participate(study_id, nickname);
   } else {
