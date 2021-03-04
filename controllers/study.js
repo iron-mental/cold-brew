@@ -70,7 +70,7 @@ const category = async (req, res) => {
 
 const getChatting = async (req, res) => {
   await checkAuthority(req.user, req.params, AuthEnum.host, AuthEnum.member);
-  const chatting = await studyService.getChatting(req.params, req.query);
+  const chatting = await studyService.getChatting(req.user, req.params, req.query);
   response(res, 200, chatting);
 };
 

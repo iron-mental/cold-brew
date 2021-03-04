@@ -194,7 +194,8 @@ const category = async ({ id }) => {
   });
 };
 
-const getChatting = async ({ study_id }, { date }) => {
+const getChatting = async ({ id: user_id }, { study_id }, { date }) => {
+  await redisTrigger(user_id, RedisEventEnum.chat_read, { study_id });
   return await Chat.find({ study_id, date: { $gt: date } }, { _id: 0 });
 };
 
