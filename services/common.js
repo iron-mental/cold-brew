@@ -36,6 +36,7 @@ const checkVersion = async ({ version, device }) => {
   const result = {
     latest_version: null,
     force: VersionUpdateEnum.should,
+    maintenance: Boolean(process.env.MAINTENANCE === 'true'),
   };
 
   const versionRows = await commonDao.checkVersion(version, device);
