@@ -9,22 +9,15 @@ const apnSender = (apns_token, note) => {
   apnProvider.send(note, apns_token).then((result) => {
     if (result.failed.length > 0) {
       console.log('## APNs 에러: ', result.failed);
-    } else {
-      console.log('## APNs: ', result);
     }
   });
 };
 
 const fcmSender = (payload) => {
   try {
-    admin
-      .messaging()
-      .sendMulticast(payload)
-      .catch((err) => {
-        console.log('## FCM 에러: ', err);
-      });
+    admin.messaging().sendMulticast(payload);
   } catch (err) {
-    console.log('## FCM 에러: ', err);
+    console.log('## FCM 에러 : ', err);
   }
 };
 
