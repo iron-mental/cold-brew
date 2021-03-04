@@ -3,9 +3,9 @@ const path = require('path');
 
 const studyDao = require('../dao/study');
 const alertDao = require('../dao/alert');
+const commonDao = require('../dao/common');
 const { push } = require('./push');
 const { PushEventEnum, AuthEnum, RedisEventEnum } = require('../utils/variables/enum');
-const { getUserLocation } = require('../dao/common');
 const { rowSplit, toBoolean, locationMerge, cutId, lengthSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
 const broadcast = require('../events/broadcast');
@@ -34,7 +34,7 @@ const getStudy = async ({ id: user_id }, { study_id }) => {
   studyRows = rowSplit(studyRows, ['participate']);
   studyRows = locationMerge(studyRows);
 
-  const badgeCount = await redisTrigger(user_id, RedisEventEnum.alert_read, { study_id });
+  const badgeCount = await getUser(user_id);
   const badge = {
     alert: badgeCount.alert.total,
     total: badgeCount.badge,
@@ -111,7 +111,7 @@ const getMyStudy = async ({ id }) => {
 const getStudyList = async ({ id: user_id }, { category, sort }) => {
   let studyListRows = '';
   if (sort === 'length') {
-    const userData = await getUserLocation(user_id);
+    const userData = await commonDao.getUserLocation(user_id);
     studyListRows = await studyDao.getStudyListByLength(userData[0], user_id, category);
     studyListRows = lengthSorting(userData[0].sigungu, studyListRows);
   } else if (sort === 'new') {
@@ -130,7 +130,7 @@ const studyPaging = async ({ id: user_id }, query) => {
   studyKeys.length = process.env.paging_size;
 
   if (query.option === 'distance') {
-    const userData = await getUserLocation(user_id);
+    const userData = await commonDao.getUserLocation(user_id);
     studyListRows = await studyDao.studyPagingByLength(userData[0], user_id, studyKeys);
   } else {
     studyListRows = await studyDao.studyPaging(user_id, studyKeys);
@@ -194,7 +194,8 @@ const category = async ({ id }) => {
   });
 };
 
-const getChatting = async ({ study_id }, { date }) => {
+const getChatting = async ({ id: user_id }, { study_id }, { date }) => {
+  await redisTrigger(user_id, RedisEventEnum.chat_read, { study_id });
   return await Chat.find({ study_id, date: { $gt: date } }, { _id: 0 });
 };
 
