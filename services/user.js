@@ -11,7 +11,6 @@ const { customError } = require('../utils/errors/custom');
 const { firebaseError } = require('../utils/errors/firebase');
 const { push } = require('./push');
 
-const User = require('../models/user');
 const Chat = require('../models/chat');
 const { RedisEventEnum, PushEventEnum } = require('../utils/variables/enum');
 const { redisTrigger, redisSignup, redisWithdraw } = require('./redis');
@@ -46,7 +45,6 @@ const signup = async ({ email, password, nickname }) => {
   }
   user_id = createRows.insertId;
 
-  User.create({ user_id, nickname });
   redisSignup(user_id);
 };
 
@@ -111,7 +109,6 @@ const updateUser = async ({ id }, updateData) => {
   }
 
   if (updateData.nickname) {
-    User.updateOne({ user_id: id }, { nickname: updateData.nickname }).exec();
     Chat.updateMany({ user_id: id }, { nickname: updateData.nickname }).exec();
   }
 };
@@ -159,7 +156,6 @@ const withdraw = async ({ id }, { email, password }) => {
 
   try {
     await userDao.withdraw(id, email, password);
-    User.deleteOne({ user_id: id }).exec();
     Chat.updateMany({ user_id: id }, { nickname: '(알수없음)' }).exec();
     redisWithdraw(id);
   } catch (err) {

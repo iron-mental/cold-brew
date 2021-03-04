@@ -11,8 +11,6 @@ const { customError } = require('../utils/errors/custom');
 const broadcast = require('../events/broadcast');
 const { redisTrigger, getUser } = require('./redis');
 
-const User = require('../models/user');
-const Room = require('../models/room');
 const Chat = require('../models/chat');
 const Search = require('../models/search');
 
@@ -23,12 +21,6 @@ const createStudy = async ({ id: user_id }, createData) => {
   }
   const createRows = await studyDao.createStudy(user_id, createData);
 
-  Room.create({
-    study_id: createRows.insertId,
-    study_title: createData.title,
-    members: [user_id],
-  });
-  User.updateOne({ user_id }, { $push: { rooms: createRows.insertId } }, { upsert: true }).exec();
   redisTrigger(user_id, RedisEventEnum.participate, { study_id: createRows.insertId });
   return createRows.insertId;
 };
@@ -60,7 +52,6 @@ const updateStudy = async ({ study_id }, updateData, filedata) => {
     if (checkRows.length > 0) {
       throw customError(400, '중복된 스터디 이름이 존재합니다');
     }
-    Room.updateOne({ study_id }, { study_title: updateData.title }).exec();
   }
 
   if (filedata) {
@@ -94,14 +85,12 @@ const deleteStudy = async ({ id: host_id }, { study_id }) => {
   if (studyRows.affectedRows === 0) {
     throw customError(400, '스터디 삭제 실패');
   }
-  Room.deleteOne({ study_id }).exec();
   Chat.deleteMany({ study_id }).exec();
 
   userRows.forEach(({ user_id }) => {
     if (host_id !== user_id) {
       push(PushEventEnum.study_delete, study_id, user_id);
     }
-    User.updateOne({ user_id }, { $pull: { rooms: study_id } }).exec();
     redisTrigger(user_id, RedisEventEnum.leave, { study_id });
   });
 };
@@ -165,8 +154,6 @@ const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
       throw customError(400, '스터디 탈퇴 실패');
     }
 
-    Room.updateOne({ study_id }, { $pull: { off_members: id, members: id } });
-    User.updateOne({ user_id: id }, { $pull: { rooms: study_id } }).exec();
     redisTrigger(id, RedisEventEnum.leave, { study_id });
     broadcast.leave(study_id, nickname);
   }
