@@ -19,7 +19,7 @@ module.exports = (app) => {
   app.use((err, req, res, next) => {
     return res.status(500).json({
       result: false,
-      message: err,
+      message: err.message,
     });
   });
 };
