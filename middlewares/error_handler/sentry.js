@@ -8,7 +8,7 @@ const webhook = new IncomingWebhook(process.env.SLACK_webhook_sentry);
 const sentryHandler = (err, req, res, next) => {
   if (err.status === 404 || err.status >= 500 || !err.status) {
     sentry.Handlers.errorHandler();
-    if (err.status >= 500) {
+    if (err.status >= 500 || !err.status) {
       webhook.send(
         {
           attachments: [
