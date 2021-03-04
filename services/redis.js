@@ -1,11 +1,11 @@
 const redis = require('redis');
-const redisUserModel = require('../models/redis');
+const getRedisUser = require('../models/redis');
 const { RedisEventEnum } = require('../utils/variables/enum');
 
 const client = redis.createClient();
 
 const redisSignup = async (user_id) => {
-  await setData(user_id, redisUserModel);
+  await setData(user_id, getRedisUser());
 };
 
 const redisWithdraw = async (user_id) => {
@@ -37,7 +37,7 @@ const redisTrigger = async (user_id, redisEvent, data) => {
       break;
 
     case RedisEventEnum.reset:
-      userData = JSON.parse(JSON.stringify(redisUserModel));
+      userData = JSON.parse(JSON.stringify(getRedisUser()));
       for (let study of data) {
         userData.chat[study.id] = 0;
         userData.alert[study.id] = 0;
