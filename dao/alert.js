@@ -22,13 +22,24 @@ const getAlert = async (user_id) => {
 const confirmAlert = async (alert_id) => {
   const conn = await pool.getConnection();
   try {
+    await conn.beginTransaction();
+
     const confirmSql = `
       UPDATE alert 
       SET confirm = ? 
       WHERE id = ?`;
     const [confirmRows] = await conn.query(confirmSql, [true, alert_id]);
-    return confirmRows;
+
+    const studySql = `
+      SELECT study_id
+      FROM alert
+      WHERE id = ?`;
+    const [studyRows] = await conn.query(studySql, [alert_id]);
+
+    await conn.commit();
+    return [confirmRows, studyRows];
   } catch (err) {
+    await conn.rollback();
     throw databaseError(err);
   } finally {
     await conn.release();
