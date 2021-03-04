@@ -7,7 +7,7 @@ const getAlert = async (req, res) => {
 };
 
 const confirmAlert = async (req, res) => {
-  await alertService.confirmAlert(req.params);
+  await alertService.confirmAlert(req.user, req.params);
   response(res, 200, '알림 읽음처리 완료');
 };
 

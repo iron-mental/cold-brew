@@ -9,7 +9,7 @@ const getAlert = async ({ id: user_id }) => {
   return toBoolean(alertRows, ['confirm']);
 };
 
-const confirmAlert = async ({ alert_id }) => {
+const confirmAlert = async ({ user_id }, { alert_id }) => {
   const [confirmRows, studyRows] = await alertDao.confirmAlert(alert_id);
   if (confirmRows.affectedRows === 0) {
     throw customError(404, '알림을 찾을 수 없습니다');
