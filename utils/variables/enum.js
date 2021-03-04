@@ -80,7 +80,6 @@ const DBTableEnum = Object.freeze({
 });
 
 const RedisEventEnum = Object.freeze({
-  signup: 'signup',
   push_token: 'push_token',
   participate: 'participate',
   alert: 'alert',
