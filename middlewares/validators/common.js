@@ -115,8 +115,10 @@ const parseProjectGrapheme = (req) => {
 
 const setHttps = (body) => {
   for (let prop in body) {
-    if (prop.slice(0, 4) === 'sns_' && body[prop] !== '' && body[prop].indexOf('https://') !== 0) {
-      body[prop] = 'https://' + body[prop];
+    if (prop.slice(0, 4) === 'sns_' && prop !== 'sns_github') {
+      if (body[prop] !== '' && !body[prop].includes('https://')) {
+        body[prop] = 'https://' + body[prop];
+      }
     }
   }
   return body;
