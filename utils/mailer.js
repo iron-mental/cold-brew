@@ -2,7 +2,7 @@ require('dotenv').config();
 const nodemailer = require('nodemailer');
 
 const { mailer } = require('../configs/config');
-const customError = require('./errors/custom');
+const { customError } = require('./errors/custom');
 
 const transporter = nodemailer.createTransport(mailer);
 
@@ -29,7 +29,7 @@ const sendVerifyEmail = async (email) => {
       
       <b>
       <font size="8px" color="#2876F2">
-      Terminal :study<br>
+      ${process.env.APP_name}<br>
       </font>
       <br>
 
