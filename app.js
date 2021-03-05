@@ -6,12 +6,14 @@ const router = require('./routes');
 const { verify } = require('./middlewares/auth');
 const { stream } = require('./configs/winston');
 const { parseRequest } = require('./middlewares/validators/common');
+
 require('./configs/slack');
+require('./configs/morgan');
 
 const app = express();
 
 app.set('trust proxy', true);
-app.use(morgan('combined', { stream }));
+app.use(morgan('customFormat', { stream }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
