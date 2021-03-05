@@ -12,4 +12,12 @@ router.get('/', (req, res, next) => {
   res.redirect(301, process.env.WEB);
 });
 
+router.get('/terms', (req, res, next) => {
+  res.redirect(301, process.env.TERMS);
+});
+
+router.get('/privacy', (req, res, next) => {
+  res.redirect(301, process.env.PRIVACY);
+});
+
 module.exports = router;
