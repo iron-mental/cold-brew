@@ -4,23 +4,25 @@ const { authError } = require('../utils/errors/auth');
 const { CategoryEnum } = require('../utils/variables/enum');
 
 const passUrl = {
-  slice: ['check-nickname', 'check-email', 'login', 'emailVerify-process', 'reset-password', 'reissuance', ...Object.keys(CategoryEnum)],
-  full: ['/v1/user', '/v1/chat/http', '/v1/chat/https', '/v1/push/test'],
   pathName: ['/', '/check-version', '/favicon.ico'],
-  web: 'web',
+  third: ['check-nickname', 'check-email', 'login', 'emailVerify-process', 'reset-password', 'reissuance', ...Object.keys(CategoryEnum)],
+  full: ['/v1/user', '/v1/push/test', '/v1/chat/http', '/v1/chat/https'],
+  first: ['web', 'terms', 'privacy'],
 };
 
 const checkPassUrl = (req) => {
+  const parseUrl = req.url.split('/');
+
   if (passUrl.pathName.includes(req._parsedUrl.pathname)) {
     return true;
   }
-  if (passUrl.slice.indexOf(req.url.split('/')[3]) > -1) {
+  if (passUrl.third.indexOf(parseUrl[3]) > -1) {
     return true;
   }
   if (passUrl.full.indexOf(req.url) > -1) {
     return true;
   }
-  if (passUrl.web === req.url.split('/')[1]) {
+  if (passUrl.first.indexOf(parseUrl[1])) {
     return true;
   }
   return false;
