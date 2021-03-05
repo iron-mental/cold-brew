@@ -4,7 +4,7 @@ const { IncomingWebhook } = require('@slack/client');
 Sentry.init({ dsn: process.env.SENTRY_DSN });
 const webhook = new IncomingWebhook(process.env.SLACK_webhook_sentry);
 
-const sendSlack = (err, req, res, next) => {
+const sendSlack = (err) => {
   webhook.send({
     attachments: [
       {
@@ -20,7 +20,6 @@ const sendSlack = (err, req, res, next) => {
       },
     ],
   });
-  next(err);
 };
 
 const sentryHandler = (app, uncaught) => {
@@ -28,12 +27,12 @@ const sentryHandler = (app, uncaught) => {
     Sentry.Handlers.errorHandler({
       shouldHandleError(err) {
         if (uncaught === false && err.status >= 500) {
-          app.use(sendSlack);
+          sendSlack(err);
           return true;
         }
 
         if (uncaught === true && err.status === undefined) {
-          app.use(sendSlack);
+          sendSlack(err);
           return true;
         }
         return false;
