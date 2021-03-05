@@ -29,7 +29,7 @@ const sendVerifyEmail = async (email) => {
       
       <b>
       <font size="8px" color="#2876F2">
-      Terminal :study<br>
+      ${process.env.APP_name}<br>
       </font>
       <br>
 
