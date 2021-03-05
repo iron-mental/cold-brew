@@ -60,7 +60,8 @@ const getStudy = async (study_id) => {
           ON s.id = p.study_id
           LEFT JOIN user u
           ON u.id = p.user_id
-      WHERE s.id = ?`;
+      WHERE s.id = ?
+      ORDER BY leader DESC`;
     const [studyRows] = await conn.query(studySql, [study_id]);
     await conn.commit();
     return studyRows;
