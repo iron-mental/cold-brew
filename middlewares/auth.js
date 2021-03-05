@@ -12,7 +12,6 @@ const passUrl = {
 
 const checkPassUrl = (req) => {
   const parseUrl = req.url.split('/');
-
   if (passUrl.pathName.includes(req._parsedUrl.pathname)) {
     return true;
   }
@@ -22,7 +21,7 @@ const checkPassUrl = (req) => {
   if (passUrl.full.indexOf(req.url) > -1) {
     return true;
   }
-  if (passUrl.first.indexOf(parseUrl[1])) {
+  if (passUrl.first.indexOf(parseUrl[1]) > -1) {
     return true;
   }
   return false;
@@ -47,7 +46,7 @@ const verify = async (req, res, next) => {
 
 const idCompare = (req, res, next) => {
   const id = req.params.id || req.params.user_id || req.body.id;
-  if (req.user.id !== parseInt(id, 10)) {
+  if (req.user.id !== Number(id)) {
     next(authError({ message: 'permission error' }));
   }
   next();
