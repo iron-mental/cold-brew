@@ -113,19 +113,26 @@ const updateUser = async ({ id }, updateData) => {
   }
 };
 
-const updateUserImage = async ({ id }, updateData, { destination, uploadedFile, path: _tmpPath }) => {
-  const previousPath = await userDao.getImage(id);
-  const oldImagePath = path.join(destination, path.basename(previousPath[0].image || 'nullFileName'));
-  try {
-    fs.unlink(oldImagePath, (err) => {});
-  } catch (err) {}
+const updateUserImage = async ({ id }, updateData, fileData) => {
+  if (!fileData) {
+    updateData.image = '';
+  }
 
   const updateRows = await userDao.updateUser(id, updateData);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-  const newPath = path.join(destination, uploadedFile.basename);
-  fs.rename(_tmpPath, newPath, (err) => {});
+
+  const destination = path.join(process.env.PATH_public, '/images/user');
+  const previousPath = await userDao.getImage(id);
+  const oldImagePath = path.join(destination, path.basename(previousPath[0].image) || 'nullFileName');
+  fs.unlink(oldImagePath, (err) => {});
+
+  if (fileData) {
+    const { uploadedFile, path: _tmpPath } = fileData;
+    const newPath = path.join(destination, uploadedFile.basename);
+    fs.rename(_tmpPath, newPath, (err) => {});
+  }
 };
 
 const updateEmail = async ({ id }, { email }) => {
