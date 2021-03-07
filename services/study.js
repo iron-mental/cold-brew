@@ -14,6 +14,8 @@ const { redisTrigger, getUser } = require('./redis');
 const Chat = require('../models/chat');
 const Search = require('../models/search');
 
+const destination = path.join(process.env.PATH_public, '/images/study');
+
 const createStudy = async ({ id: user_id }, createData) => {
   const checkRows = await studyDao.checkTitle(createData.title);
   if (checkRows.length > 0) {
@@ -49,7 +51,7 @@ const getStudy = async ({ id: user_id }, { study_id }) => {
   };
 };
 
-const updateStudy = async ({ study_id }, updateData, filedata) => {
+const updateStudy = async ({ study_id }, updateData, fileData) => {
   if (updateData.title) {
     const checkRows = await studyDao.checkTitle(updateData.title);
     if (checkRows.length > 0) {
@@ -60,24 +62,24 @@ const updateStudy = async ({ study_id }, updateData, filedata) => {
     }
   }
 
-  if (filedata) {
-    const { destination, uploadedFile, path: _tmpPath } = filedata;
-    const previousPath = await studyDao.getImage(study_id);
-    const updateRows = await studyDao.updateStudy(study_id, updateData);
-    if (previousPath.length === 0 || updateRows.affectedRows === 0) {
-      throw customError(404, '조회된 스터디가 없습니다');
-    }
-    const oldImagePath = path.join(destination, path.basename(previousPath[0].image));
-    try {
-      fs.unlink(oldImagePath, (err) => {});
-    } catch (err) {}
+  const previousPath = await studyDao.getImage(study_id);
+  const updateRows = await studyDao.updateStudy(study_id, updateData);
+  if (updateRows.affectedRows === 0) {
+    throw customError(404, '조회된 스터디가 없습니다');
+  }
+
+  if (fileData) {
+    const removeImagePath = path.join(destination, path.basename(previousPath[0].image));
+    fs.unlink(removeImagePath, (err) => {});
+
+    const { uploadedFile, path: _tmpPath } = fileData;
     const newPath = path.join(destination, uploadedFile.basename);
     fs.rename(_tmpPath, newPath, (err) => {});
-  } else {
-    const updateRows = await studyDao.updateStudy(study_id, updateData);
-    if (updateRows.affectedRows === 0) {
-      throw customError(404, '조회된 스터디가 없습니다');
-    }
+  }
+
+  if (updateData.image === '') {
+    const removeImagePath = path.join(destination, path.basename(previousPath[0].image));
+    fs.unlink(removeImagePath, (err) => {});
   }
 
   if (updateData.title) {
