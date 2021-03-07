@@ -65,6 +65,7 @@ const getErrorObject = (req, err) => {
     },
     user: {
       id: req.user ? req.user.id : null,
+      'user-agent': req.headers['user-agent'],
     },
   };
 };
