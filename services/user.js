@@ -114,13 +114,14 @@ const updateUser = async ({ id }, updateData) => {
 };
 
 const updateUserImage = async ({ id }, updateData, fileData) => {
+  const previousPath = await userDao.getImage(id);
+
   const updateRows = await userDao.updateUser(id, updateData);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
 
   const destination = path.join(process.env.PATH_public, '/images/user');
-  const previousPath = await userDao.getImage(id);
   const oldImagePath = path.join(destination, path.basename(previousPath[0].image) || 'nullFileName');
   fs.unlink(oldImagePath, (err) => {});
 
