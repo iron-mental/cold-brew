@@ -7,7 +7,8 @@ const updateChatStatus = async (status, study_id, user_id) => {
     const connectionSql = `
       UPDATE participate
       SET chat_status = ?
-      WHERE study_id = ? AND user_id = ?`;
+      WHERE study_id = ?
+        AND user_id = ?`;
     const [connectionRows] = await conn.query(connectionSql, [status, study_id, user_id]);
     return connectionRows;
   } catch (err) {

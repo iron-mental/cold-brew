@@ -107,7 +107,7 @@ const updateUserImage = async (req, res, next) => {
     id: Joi.number().required(),
   });
   const bodySchema = Joi.object({
-    image: Joi.string(),
+    image: Joi.string().allow(''),
   }).min(1);
   try {
     await paramSchema.validateAsync(req.params);

@@ -127,7 +127,7 @@ const getImage = async (id) => {
     const imageSQL = `
       SELECT image
       FROM user
-      WHERE ?`;
+      WHERE id = ?`;
     const [imageRows] = await conn.query(imageSQL, [id]);
     return imageRows;
   } catch (err) {
@@ -187,14 +187,15 @@ const withdraw = async (id, email, password) => {
   }
 };
 
-const verifiedCheck = async (userData) => {
+const verifiedCheck = async ({ id }) => {
+  console.log('id: ', id);
   const conn = await pool.getConnection();
   try {
     const checkSql = `
       SELECT email, email_verified
       FROM user
-      WHERE ?`;
-    const [checkRows] = await conn.query(checkSql, [userData]);
+      WHERE id = ?`;
+    const [checkRows] = await conn.query(checkSql, [id]);
     return checkRows;
   } catch (err) {
     throw databaseError(err);

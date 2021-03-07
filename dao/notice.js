@@ -26,10 +26,10 @@ const getNotice = async (study_id, notice_id) => {
         ON n.study_id = p.study_id
         LEFT JOIN user u
         ON u.id = p.user_id
-      WHERE n.study_id = ?
-        AND n.id = ?
+      WHERE n.id = ?
+        AND n.study_id = ?
         AND leader = ?;`;
-    const [detailRows] = await conn.query(noticeSQL, [study_id, notice_id, true]);
+    const [detailRows] = await conn.query(noticeSQL, [notice_id, study_id, true]);
     return detailRows;
   } catch (err) {
     throw databaseError(err);
@@ -44,9 +44,9 @@ const updateNotice = async (study_id, notice_id, updateData) => {
     const updateSQL = `
       UPDATE notice
       SET ?
-      WHERE study_id = ?
-        AND id = ?`;
-    const [updateRows] = await conn.query(updateSQL, [updateData, study_id, notice_id]);
+      WHERE id = ?
+        AND study_id = ?`;
+    const [updateRows] = await conn.query(updateSQL, [updateData, notice_id, study_id]);
     return updateRows;
   } catch (err) {
     throw databaseError(err);
@@ -60,9 +60,9 @@ const deleteNotice = async (study_id, notice_id) => {
   try {
     const deleteSQL = `
       DELETE FROM notice
-      WHERE study_id = ? 
-      AND id = ?`;
-    const [deleteRows] = await conn.query(deleteSQL, [study_id, notice_id]);
+      WHERE id = ? 
+      AND study_id = ?`;
+    const [deleteRows] = await conn.query(deleteSQL, [notice_id, study_id]);
     return deleteRows;
   } catch (err) {
     throw databaseError(err);

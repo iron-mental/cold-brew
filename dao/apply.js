@@ -52,8 +52,9 @@ const getApplyById = async (study_id, apply_id) => {
           LEFT JOIN project p
           ON u.id = p.user_id
       WHERE
-        a.study_id = ? AND a.id = ?`;
-    const [applyRows] = await conn.query(applySql, [study_id, apply_id]);
+        a.id = ?
+          AND a.study_id = ?`;
+    const [applyRows] = await conn.query(applySql, [apply_id, study_id]);
     return applyRows;
   } catch (err) {
     throw databaseError(err);

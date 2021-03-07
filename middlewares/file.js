@@ -3,7 +3,7 @@ require('dotenv').config();
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
-const uuidv4 = require('uuid').v4;
+const uuidV4 = require('uuid').v4;
 
 let imagePath = '';
 
@@ -11,13 +11,13 @@ const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
       imagePath = path.join('/images', req.baseUrl.split('/').splice(-1)[0]);
-      const dir = path.join(__dirname, '../../public', imagePath);
+      const dir = path.join(process.env.PATH_public, imagePath);
 
       !fs.existsSync(dir) && fs.mkdirSync(dir);
       cb(null, dir);
     },
     filename: (req, file, cb) => {
-      const basename = uuidv4();
+      const basename = uuidV4();
       const ext = path.extname(file.originalname);
       file.uploadedFile = {
         basename: basename.concat(ext),
@@ -44,13 +44,15 @@ const upload = multer({
 }).single('image');
 
 const imageUpload = (req, res, next) => {
-  upload(req, res, (err) => {
-    if (err) {
-      return next(err);
-    } else {
-      return next();
-    }
-  });
+  try {
+    upload(req, res, (err) => {
+      if (err) {
+        return next(err);
+      } else {
+        return next();
+      }
+    });
+  } catch (err) {}
 };
 
 module.exports = {
