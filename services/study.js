@@ -19,10 +19,7 @@ const destination = path.join(process.env.PATH_public, '/images/study');
 const createStudy = async ({ id: user_id }, createData) => {
   const checkRows = await studyDao.checkTitle(createData.title);
   if (checkRows.length > 0) {
-    throw customError(400, {
-      code: 101,
-      message: '중복된 스터디 이름이 존재합니다',
-    });
+    throw customError(400, '중복된 스터디 이름이 존재합니다', 101);
   }
   const createRows = await studyDao.createStudy(user_id, createData);
 
@@ -55,10 +52,7 @@ const updateStudy = async ({ study_id }, updateData, fileData) => {
   if (updateData.title) {
     const checkRows = await studyDao.checkTitle(updateData.title);
     if (checkRows.length > 0) {
-      throw customError(400, {
-        code: 101,
-        message: '중복된 스터디 이름이 존재합니다',
-      });
+      throw customError(400, '중복된 스터디 이름이 존재합니다', 101);
     }
   }
 
