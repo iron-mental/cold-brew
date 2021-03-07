@@ -114,10 +114,6 @@ const updateUser = async ({ id }, updateData) => {
 };
 
 const updateUserImage = async ({ id }, updateData, fileData) => {
-  if (!fileData) {
-    updateData.image = '';
-  }
-
   const updateRows = await userDao.updateUser(id, updateData);
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
