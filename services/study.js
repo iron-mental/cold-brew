@@ -89,11 +89,15 @@ const updateStudy = async ({ study_id }, updateData, fileData) => {
 };
 
 const deleteStudy = async ({ id: host_id }, { study_id }) => {
+  const imagePath = await studyDao.getImage(study_id);
   const [userRows, studyRows] = await studyDao.deleteStudy(study_id);
   if (studyRows.affectedRows === 0) {
     throw customError(400, '스터디 삭제 실패');
   }
   Chat.deleteMany({ study_id }).exec();
+
+  const removeImagePath = path.join(destination, path.basename(imagePath[0].image));
+  fs.unlink(removeImagePath, (err) => {});
 
   userRows.forEach(({ user_id }) => {
     if (host_id !== user_id) {
