@@ -15,6 +15,8 @@ const Chat = require('../models/chat');
 const { RedisEventEnum, PushEventEnum } = require('../utils/variables/enum');
 const { redisTrigger, redisSignup, redisWithdraw } = require('./redis');
 
+const destination = path.join(process.env.PATH_public, '/images/user');
+
 const checkNickname = async ({ nickname }) => {
   const checkRows = await userDao.checkNickname(nickname);
   if (checkRows.length > 0) {
@@ -121,7 +123,6 @@ const updateUserImage = async ({ id }, updateData, fileData) => {
     throw customError(404, '조회된 사용자가 없습니다');
   }
 
-  const destination = path.join(process.env.PATH_public, '/images/user');
   const removeImagePath = path.join(destination, path.basename(previousPath[0].image));
   fs.unlink(removeImagePath, (err) => {});
 
@@ -153,18 +154,17 @@ const updatePushToken = async ({ id }, updateData) => {
 };
 
 const withdraw = async ({ id }, { email, password }) => {
+  const previousPath = await userDao.getImage(id);
   const studyList = await studyDao.getMyStudy(id);
   if (studyList.length > 0) {
     throw customError(400, '가입한 스터디를 탈퇴하고 다시 시도하세요');
   }
+  await userDao.withdraw(id, email, password);
 
-  try {
-    await userDao.withdraw(id, email, password);
-    Chat.updateMany({ user_id: id }, { nickname: '(알수없음)' }).exec();
-    redisWithdraw(id);
-  } catch (err) {
-    throw err;
-  }
+  const removeImagePath = path.join(destination, path.basename(previousPath[0].image));
+  fs.unlink(removeImagePath, (err) => {});
+  Chat.updateMany({ user_id: id }, { nickname: '(알수없음)' }).exec();
+  redisWithdraw(id);
 };
 
 const emailVerification = async ({ id }) => {
