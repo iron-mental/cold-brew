@@ -122,8 +122,8 @@ const updateUserImage = async ({ id }, updateData, fileData) => {
   }
 
   const destination = path.join(process.env.PATH_public, '/images/user');
-  const oldImagePath = path.join(destination, path.basename(previousPath[0].image) || 'nullFileName');
-  fs.unlink(oldImagePath, (err) => {});
+  const removeImagePath = path.join(destination, path.basename(previousPath[0].image));
+  fs.unlink(removeImagePath, (err) => {});
 
   if (fileData) {
     const { uploadedFile, path: _tmpPath } = fileData;
