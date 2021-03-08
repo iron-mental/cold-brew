@@ -12,12 +12,16 @@ class Note {
 }
 
 class Payload {
-  constructor(alert, payload) {
+  constructor(alert, data) {
     this.notification = {
       title: '터미널 title',
       body: alert,
     };
-    this.payload = payload;
+    this.data = {
+      title: '터미널 title',
+      body: alert,
+      ...data,
+    };
   }
 }
 
@@ -28,21 +32,23 @@ getChatPayload = (chat) => {
 
   return {
     apnsPayload: new apn.Notification(note),
-    fcmPayload: new Payload(alert, JSON.stringify(chat)),
+    fcmPayload: new Payload(alert, chat),
   };
 };
 
 getPushPayload = (pushEvent, study_id) => {
   const alert = MessageEnum[pushEvent];
-  const payload = {
+  const data = {
     pushEvent,
-    study_id,
+    study_id: study_id + '',
+    alert_id: '',
+    badge: '',
   };
-  const note = new Note(alert, payload);
+  const note = new Note(alert, data);
 
   return {
     apnsPayload: new apn.Notification(note),
-    fcmPayload: new Payload(alert, payload),
+    fcmPayload: new Payload(alert, data),
   };
 };
 
