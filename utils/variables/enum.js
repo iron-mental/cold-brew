@@ -54,18 +54,18 @@ const PushEventEnum = Object.freeze({
 });
 
 const MessageEnum = Object.freeze({
-  study_update: '스터디 내용이 수정되었습니다 - test(방장제외 멤버)',
-  study_delegate: '스터디 방장이 위임되었습니다 - test(방장제외 멤버)',
-  study_delete: '스터디가 삭제되었습니다 - test(방장제외 멤버)',
+  study_update: '스터디 내용이 수정되었습니다',
+  study_delegate: '스터디 방장이 위임되었습니다',
+  study_delete: '스터디가 삭제되었습니다',
 
-  apply_new: '새로운 가입신청이 왔습니다 - test(방장)',
-  apply_allow: '가입신청이 수락되었습니다 - test(당사자)',
-  apply_reject: '가입신청이 거절되었습니다 - test(당사자)',
+  apply_new: '새로운 가입신청이 있습니다',
+  apply_allow: '가입신청이 수락되었습니다',
+  apply_reject: '가입신청이 거절되었습니다',
 
-  notice_new: '공지사항이 생겼습니다 - test(방장제외 멤버)',
-  notice_update: '공지사항이 수정되었습니다 - test(방장제외 멤버)',
+  notice_new: '새로운 공지사항이 있습니다',
+  notice_update: '공지사항이 수정되었습니다',
 
-  push_test: '푸시알림 테스트 - test(유저)',
+  push_test: '푸시알림 테스트',
 });
 
 const DBTableEnum = Object.freeze({
