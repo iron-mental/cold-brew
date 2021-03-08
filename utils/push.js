@@ -2,6 +2,7 @@ const apn = require('apn');
 const admin = require('firebase-admin');
 
 const { apn: options } = require('../configs/config');
+const { customError } = require('./errors/custom');
 
 const apnProvider = new apn.Provider(options);
 
@@ -15,9 +16,10 @@ const apnSender = (apns_token, note) => {
 
 const fcmSender = (payload) => {
   try {
-    admin.messaging().sendMulticast(payload);
+    admin.messaging().send(payload);
   } catch (err) {
-    console.log('## FCM 에러 : ', err);
+    console.log('## FCM 에러: ', err);
+    throw customError(500, err);
   }
 };
 
