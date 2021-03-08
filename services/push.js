@@ -1,7 +1,6 @@
 const pushDao = require('../dao/push');
 const studyDao = require('../dao/study');
 const { getChatPayload, getPushPayload } = require('../models/push');
-const { customError } = require('../utils/errors/custom');
 const { RedisEventEnum, PushEventEnum, DeviceEnum, MessageEnum } = require('../utils/variables/enum');
 const { redisTrigger } = require('./redis');
 const { apnSender, fcmSender } = require('../utils/push');
@@ -44,8 +43,8 @@ const chat = async (study_id, chat) => {
       apnsPayload.badge = redisData.badge;
       apnSender(row.push_token, apnsPayload);
     } else {
-      fcmPayload.notification.badge = redisData.badge;
-      fcmPayload.tokens = row.push_token;
+      fcmPayload.data.badge = redisData.badge + '';
+      fcmPayload.tokens = [row.push_token];
       fcmSender(fcmPayload);
     }
   }
@@ -81,13 +80,14 @@ const send = async (tokenRows, apnsPayload, fcmPayload) => {
   for (let row of tokenRows) {
     if (row.device === DeviceEnum.ios) {
       apnsPayload.badge = row.badge;
-      apnsPayload.payload.alert_id = row.insertId;
+      apnsPayload.payload.alert_id = row.alert_id;
       apnSender(row.push_token, apnsPayload);
     } else {
-      fcmPayload.payload.alert_id = row.insertId;
-      fcmPayload.notification.badge = row.badge;
-      fcmPayload.tokens = row.push_token;
-      fcmSender({ ...fcmPayload, payload: JSON.stringify(fcmPayload.payload) });
+      fcmPayload.data.alert_id = row.alert_id + '';
+      fcmPayload.data.badge = row.badge + '';
+      fcmPayload.token = row.push_token;
+
+      fcmSender(fcmPayload);
     }
   }
 };
