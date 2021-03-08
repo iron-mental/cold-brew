@@ -1,4 +1,7 @@
 const adminDao = require('../dao/admin');
+const studyDao = require('../dao/study');
+
+const studyService = require('./study');
 
 const { authError } = require('../utils/errors/auth');
 const { customError } = require('../utils/errors/custom');
@@ -30,9 +33,19 @@ const setVersion = async (versionData) => {
   }
 };
 
+const deleteStudy = async ({ study_id }) => {
+  const studyRows = await studyDao.getStudy(study_id);
+  if (studyRows.length === 0) {
+    throw customError(404, '조회된 스터디가 없습니다');
+  }
+  const host_id = studyRows[0].Puser_id;
+  await studyService.deleteStudy({ id: host_id }, { study_id });
+};
+
 module.exports = {
   resetRedis,
   getRedis,
   deleteEmptyStudy,
   setVersion,
+  deleteStudy,
 };
