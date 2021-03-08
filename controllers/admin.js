@@ -21,9 +21,15 @@ const setVersion = async (req, res) => {
   response(res, 200, '버전 설정 완료');
 };
 
+const deleteStudy = async (req, res) => {
+  await adminService.deleteStudy(req.params);
+  response(res, 200, '스터디 삭제 완료');
+};
+
 module.exports = {
   resetRedis,
   getRedis,
   deleteEmptyStudy,
   setVersion,
+  deleteStudy,
 };

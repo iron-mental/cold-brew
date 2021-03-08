@@ -11,6 +11,7 @@ router.get('/redis/reset', checkAdmin, asyncWrap(adminController.resetRedis));
 router.get('/redis/user/:user_id', checkAdmin, adminValid.getRedis, asyncWrap(adminController.getRedis));
 
 router.delete('/study/empty', checkAdmin, asyncWrap(adminController.deleteEmptyStudy));
+router.delete('/study/:study_id', checkAdmin, asyncWrap(adminController.deleteStudy));
 
 router.post('/version', checkAdmin, adminValid.setVersion, asyncWrap(adminController.setVersion));
 
