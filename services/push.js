@@ -8,7 +8,7 @@ const { apnSender, fcmSender } = require('../utils/push');
 const getTokenRows = async (pushEvent, study_id, user_id) => {
   const target = {
     toHost: [PushEventEnum.apply_new],
-    toUser: [PushEventEnum.push_test, PushEventEnum.study_delete, PushEventEnum.apply_reject],
+    toUser: [PushEventEnum.push_test, PushEventEnum.study_delete, PushEventEnum.apply_reject, PushEventEnum.apply_allow],
     toStudyWithoutHost: [PushEventEnum.study_update, PushEventEnum.notice_new, PushEventEnum.notice_update],
     toStudyWithoutUser: [PushEventEnum.study_delegate],
   };
@@ -51,7 +51,6 @@ const chat = async (study_id, chat) => {
 };
 
 const push = async (pushEvent, study_id, user_id) => {
-  study_id = Number(study_id);
   const studyRows = Boolean(pushEvent === PushEventEnum.study_delete)
     ? await pushDao.getStudyTitle(study_id)
     : await studyDao.getStudy(study_id);
@@ -86,7 +85,6 @@ const send = async (tokenRows, apnsPayload, fcmPayload) => {
       fcmPayload.data.alert_id = row.alert_id + '';
       fcmPayload.data.badge = row.badge + '';
       fcmPayload.token = row.push_token;
-
       fcmSender(fcmPayload);
     }
   }
