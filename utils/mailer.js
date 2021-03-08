@@ -16,7 +16,7 @@ const sendVerifyEmail = async (email) => {
       subject: process.env.APP_name + ' 계정 인증',
       attachments: [
         {
-          filename: 'logo.png',
+          filename: 'logo_black.png',
           path: process.env.PATH_logo,
           cid: 'logo',
         },
@@ -24,11 +24,12 @@ const sendVerifyEmail = async (email) => {
       html: `
       <div style="background-color:#18171D; width:540px; border-radius: 1em;" align="center">
       <a href='${process.env.DOMAIN}'>
-      <img src=${'cid:logo'} style="margin-left:5px; margin-right:10px; padding-top:25px; width:40px; height:40px" />
+      <img src=${'cid:logo'} style="margin-left:5px; margin-right:10px; margin-top:35px; width:70px; height:60px;" />
       </a>
+      <br>
       
       <b>
-      <font size="8px" color="#2876F2">
+      <font size="7px" color="#2876F2">
       ${process.env.APP_name}<br>
       </font>
       <br>
@@ -47,7 +48,8 @@ const sendVerifyEmail = async (email) => {
       <div align="right" style="padding-right:20px;">
       Team Iron-mental <br><br>
       </div>
-      </font></b></div>`,
+      </b>
+      </font></br></div>`,
     };
 
     await transporter.sendMail(message);
