@@ -77,6 +77,7 @@ const push = async (pushEvent, study_id, user_id) => {
 
 const send = async (tokenRows, apnsPayload, fcmPayload) => {
   for (let row of tokenRows) {
+    delete apnsPayload.compiled;
     if (row.device === DeviceEnum.ios) {
       apnsPayload.badge = row.badge;
       apnsPayload.payload.alert_id = row.alert_id;
