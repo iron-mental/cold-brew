@@ -1,7 +1,7 @@
 const applyDao = require('../dao/apply');
 
 const { push } = require('./push');
-const broadcast = require('../events/broadcast');
+
 const { PushEventEnum, RedisEventEnum } = require('../utils/variables/enum');
 const { rowSplit, toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
@@ -78,7 +78,6 @@ const applyHandler = async ({ study_id, apply_id }, { allow }) => {
       throw customError(400, '수락 실패');
     }
     redisTrigger(user_id, RedisEventEnum.participate, { study_id });
-    broadcast.participate(study_id, nickname);
     push(PushEventEnum.apply_allow, study_id, user_id);
   } else {
     const rejectRows = await applyDao.setReject(apply_id);

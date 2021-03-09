@@ -8,7 +8,6 @@ const { push } = require('./push');
 const { PushEventEnum, AuthEnum, RedisEventEnum } = require('../utils/variables/enum');
 const { rowSplit, toBoolean, locationMerge, cutId, lengthSorting } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
-const broadcast = require('../events/broadcast');
 const { redisTrigger, getUser } = require('./redis');
 
 const Chat = require('../models/chat');
@@ -161,7 +160,6 @@ const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
     }
 
     redisTrigger(id, RedisEventEnum.leave, { study_id });
-    broadcast.leave(study_id, nickname);
   }
 };
 
