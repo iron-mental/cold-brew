@@ -49,7 +49,7 @@ const withdraw = async (req, res) => {
 
 const emailVerification = async (req, res) => {
   await userService.emailVerification(req.params);
-  response(res, 200, '인증 이메일이 발송되었습니다');
+  response(res, 200, '인증 이메일이 발송되었습니다\n\n메일이 확인되지 않는 경우\n스팸 메일함을 확인해주세요');
 };
 
 const emailVerificationHandler = async (req, res) => {
