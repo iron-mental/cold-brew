@@ -176,6 +176,7 @@ const getChatting = async (req, res, next) => {
   });
   const querySchema = Joi.object({
     date: Joi.string().required(),
+    first: Joi.bool(),
   });
   try {
     await paramSchema.validateAsync(req.params);

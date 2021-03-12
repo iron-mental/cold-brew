@@ -96,10 +96,28 @@ const checkVersion = async (version, device) => {
   }
 };
 
+const getParticipateTime = async (study_id, user_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const timestampSql = `
+      SELECT UNIX_TIMESTAMP(created_at) created_at
+      FROM participate
+      WHERE study_id = ?
+        AND user_id = ?`;
+    const [timestampRows] = await conn.query(timestampSql, [study_id, user_id]);
+    return timestampRows;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   isHost,
   checkMember,
   checkApply,
   getUserLocation,
   checkVersion,
+  getParticipateTime,
 };
