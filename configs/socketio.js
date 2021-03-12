@@ -6,7 +6,6 @@ const socketConfig = (io) => {
 
   terminal.use(socketVerify).on('connection', (socket) => {
     const {
-      id: socket_id,
       decoded: { id: user_id, nickname },
       handshake: {
         query: { study_id },
