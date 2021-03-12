@@ -5,7 +5,7 @@ const { AuthEnum } = require('../utils/variables/enum');
 
 const createNotice = async (req, res) => {
   await isHost(req.user, req.params);
-  const notice_id = await noticeService.createNotice(req.params, req.body);
+  const notice_id = await noticeService.createNotice(req.user, req.params, req.body);
   response(res, 201, { notice_id });
 };
 
@@ -16,7 +16,7 @@ const getNotice = async (req, res) => {
 
 const updateNotice = async (req, res) => {
   await isHost(req.user, req.params);
-  await noticeService.updateNotice(req.params, req.body);
+  await noticeService.updateNotice(req.user, req.params, req.body);
   response(res, 200, '공지사항이 수정되었습니다');
 };
 

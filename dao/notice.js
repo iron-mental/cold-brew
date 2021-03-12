@@ -19,16 +19,13 @@ const getNotice = async (study_id, notice_id) => {
   try {
     const noticeSQL = `
       SELECT
-        n.id, n.study_id, n.title, n.contents, n.pinned, p.user_id leader_id, u.image leader_image, u.nickname leader_nickname,
+        n.id, n.study_id, n.title, n.contents, n.pinned, n.user_id leader_id, u.image leader_image, u.nickname leader_nickname,
         DATE_FORMAT(n.updated_at, "%Y-%c-%d %H:%i:%s") updated_at
       FROM notice n
-        LEFT JOIN participate p
-        ON n.study_id = p.study_id
         LEFT JOIN user u
-        ON u.id = p.user_id
+        ON n.user_id = u.id
       WHERE n.id = ?
-        AND n.study_id = ?
-        AND leader = ?;`;
+        AND n.study_id = ?`;
     const [detailRows] = await conn.query(noticeSQL, [notice_id, study_id, true]);
     return detailRows;
   } catch (err) {
