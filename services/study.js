@@ -183,7 +183,7 @@ const search = async ({ id: user_id }, { word }) => {
 };
 
 const ranking = async () => {
-  return await Search.find({}, { word: true, _id: false }).sort({ count: -1 }).limit(10);
+  return await Search.find({}, { word: true, _id: false }).sort({ count: -1 }).limit(8);
 };
 
 const category = async ({ id }) => {

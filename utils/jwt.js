@@ -33,6 +33,7 @@ const socketVerify = (socket, next) => {
   if (socket.handshake.query.token) {
     jwt.verify(socket.handshake.query.token, process.env.JWT_secret, (err, decoded) => {
       if (err) {
+        console.log('## 소켓 토큰에러: ', err);
         return next(err);
       }
       socket.decoded = decoded;
