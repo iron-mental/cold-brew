@@ -5,9 +5,8 @@ const { customError } = require('../utils/errors/custom');
 const { PushEventEnum } = require('../utils/variables/enum');
 const { push } = require('./push');
 
-const createNotice = async ({ study_id }, createData) => {
-  createData.study_id = study_id;
-  const newNotice = await noticeDao.createNotice(createData);
+const createNotice = async ({ id: user_id }, { study_id }, createData) => {
+  const newNotice = await noticeDao.createNotice({ ...createData, user_id, study_id });
   if (newNotice.affectedRows === 0) {
     throw customError(404, '조회된 스터디가 없습니다');
   }
@@ -25,8 +24,8 @@ const getNotice = async ({ study_id, notice_id }) => {
   return noticeRows[0];
 };
 
-const updateNotice = async ({ study_id, notice_id }, updateData) => {
-  const updateRows = await noticeDao.updateNotice(study_id, notice_id, updateData);
+const updateNotice = async ({ id: user_id }, { study_id, notice_id }, updateData) => {
+  const updateRows = await noticeDao.updateNotice(study_id, notice_id, { ...updateData, user_id });
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 공지사항이 없습니다');
   }
