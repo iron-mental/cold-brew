@@ -51,10 +51,10 @@
     <script>
       $(function () {
         const jwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwiZW1haWwiOiJya2RjamYwMTIyQGdtYWlsLmNvbSIsIm5pY2tuYW1lIjoi64uJ64S0IiwiaWF0IjoxNjA2NTc3NjgyLCJleHAiOjEwNjA2NTc3NjgyLCJpc3MiOiJ0ZXJtaW5hbC1zZXJ2ZXIiLCJzdWIiOiJ1c2VySW5mby1hY2Nlc3MifQ.f7OLZ_WqGgelD_Kz3v3cYKB9yV__USWFP6P3ALScH70`;
-        var socket = io('www.terminal-study.tk/terminal', {
+        var socket = io('https://www.terminal-study.tk/terminal', {
           secure: true,
+          query: { token: jwt, study_id: 685 },
           transports: ['websocket'],
-          query: { token: jwt, study_id: 1 },
         });
 
         $('form').submit(function (e) {
