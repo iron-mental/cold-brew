@@ -1,25 +1,27 @@
 <!-- ![alt sampleImage](https://camo.githubusercontent.com/720ed473d178f9380291709d2223860ade4f3c7bc368e3fea1ad057b8dc9c6f5/68747470733a2f2f6e6f64656a732e6f72672f7374617469632f696d616765732f6c6f676f2d6c696768742e737667) -->
 
 # Terminal :study
-> **개발 분야 스터디모집 어플리케이션 프로젝트**
+> **개발자 스터디모집 어플리케이션 프로젝트**
 
 ![Node Version](https://img.shields.io/badge/node-v12.19.1-green) ![express Version](https://img.shields.io/badge/express-v4.16.1-blue) ![Socket.io Version](https://img.shields.io/badge/Socket.io-v3.0.3-9cf)
 
- **Terminal :study** 는 **개발자들을 위한 스터디모임** 모바일 어플리케이션 프로젝트입니다.</br>
- 간소화 된 양식을 통해 자신을 어필할 수 있는 프로필을 작성할 수 있으며, 스터디에 참여해 활동할 수 있습니다.
+<!-- **Terminal :study** 는 **개발자들을 위한 스터디모임** 모바일 어플리케이션 프로젝트입니다.</br>
 
-프로그래밍 언어, iOS, Android, Bigdata, ML 등 다양한 카테고리가 있으며 자신이 원하는 카테고리의 스터디 목록을 조회하거나 스터디의 정보를 검색해 가입하고 내부 게시판을 통해 스터디의 일정을 조율하고 그룹 채팅을 통해 스터디에 참여할 수 있습니다.
+카테고리를 통해 스터디의 목록을 조회하거나 검색을 통해 가입할 수 있습니다.
+</br>
+내부 게시판을 통해 스터디의 일정을 조율하고 채팅을 통해 스터디에 참여할 수 있습니다.
 </br></br>
+-->
 
 ## 설치
-- [iOS](https://play.google.com/store/)
+- [iOS](https://apps.apple.com/app/id1557178596)
+- [Android](https://play.google.com/store/)
 - [Web](https://www.terminal-study.tk/)
-- [Android](https://www.apple.com/app-store/)
 </br>
 
 ## 프로젝트 개요
 
-**프로젝트 기간**  :  2020.08.11 ~ 2020.03.08
+**프로젝트 기간**  :  2020.08.11 ~
 
 **서비스 종류** : Mobile Application
 
@@ -36,7 +38,7 @@
     - Firebase Authentication, Node Mailer를 이용한 이메일 인증 및 계정 비밀번호 관리 구현
     - Sentry를 활용하여 에러로그 수집 및 Slack으로 Message 전송 구현
   - Front-End
-    - Next.js && Andt Design Component를 사용하여 랜딩 페이지 개발
+    - Next.js & Andt Design Component를 사용하여 랜딩 페이지 개발
   - 배포
     - Server : AWS EC2
     - DB : AWS RDS(MySQL), MongoDB(Atlas), Redis(EC2 내부)
@@ -45,11 +47,12 @@
 **Terminal: study 주요 기능**
 
 - 이메일 인증 기반 회원가입 / 로그인 / 로그아웃 / 개인정보 수정 / 회원탈퇴
-- 스터디 생성/ 수정/ 위임/ 삭제/ 채팅/ 신고
+- 스터디 생성/ 수정/ 위임/ 삭제/ 신고
 - 스터디 목록 조회 (거리순/ 최신순/ 검색)
-- 참여한 스터디 목록 조회
 - 스터디 가입 신청/ 취소 및 수락/ 거절
 - 공지사항 작성/ 수정/ 삭제
+- 참여한 스터디 목록 조회
+- 채팅
 
 </br>
 
@@ -64,7 +67,7 @@
 
 - MySQL Workbench를 이용하여 데이터베이스 설계
 
-- 주 단위 회의를 진행하여 스프린트 단위의 개발 진행관리
+- 주 단위 회의를 통한 개발 진행관리
 
 - ESLint, Prettier를 이용하여 코드 스타일 관리
 
