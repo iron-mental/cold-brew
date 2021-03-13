@@ -4,6 +4,7 @@ const chatSchema = new mongoose.Schema(
   {
     study_id: Number,
     user_id: Number,
+    nickname: String,
     message: String,
     date: Number,
   },
@@ -19,11 +20,11 @@ Chat.getInstance = ({ study_id, message, user_id = 0, nickname = '__SYSTEM__' })
     _id: null,
     study_id,
     user_id,
+    nickname,
     message,
     date: new Date().getTime(),
   })._doc;
 
-  chat.nickname = nickname;
   delete chat._id;
   return chat;
 };
