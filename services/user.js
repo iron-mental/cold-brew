@@ -14,6 +14,7 @@ const { push } = require('./push');
 const Chat = require('../models/chat');
 const { RedisEventEnum, PushEventEnum } = require('../utils/variables/enum');
 const { redisTrigger, redisSignup, redisWithdraw } = require('./redis');
+const broadcast = require('../events/broadcast');
 
 const destination = path.join(process.env.PATH_public, '/images/user');
 
@@ -111,7 +112,10 @@ const updateUser = async ({ id }, updateData) => {
   }
 
   if (updateData.nickname) {
-    Chat.updateMany({ user_id: id }, { nickname: updateData.nickname }).exec();
+    const studyList = studyDao.getMyStudy(id);
+    studyList.forEach((study) => {
+      broadcast.updateUserList(study.id);
+    });
   }
 };
 
