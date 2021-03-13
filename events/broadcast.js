@@ -15,6 +15,10 @@ class Broadcast extends EventEmitter {
   leave = (study_id, nickname) => {
     this.emit('chat', study_id, `${nickname}님이 탈퇴했습니다`);
   };
+
+  updateUserList = (study_id) => {
+    this.emit('update_user_list', study_id);
+  };
 }
 
 module.exports = new Broadcast();
