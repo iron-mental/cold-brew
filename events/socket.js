@@ -9,8 +9,8 @@ const register = (io) => {
   broadcast.on('chat', (study_id, message) => {
     const systemChat = Chat.getInstance({ study_id, message });
     terminal.to(study_id).emit('message', JSON.stringify(systemChat));
-    push.chat(study_id, systemChat);
     Chat.create(systemChat);
+    push.chat(study_id, systemChat);
   });
 };
 
