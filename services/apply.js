@@ -7,6 +7,7 @@ const { rowSplit, toBoolean } = require('../utils/query');
 const { customError } = require('../utils/errors/custom');
 const { ApplyEnum } = require('../utils/variables/enum');
 const { redisTrigger } = require('./redis');
+const broadcast = require('../events/broadcast');
 
 const createApply = async ({ user_id, study_id, message }) => {
   const createdRows = await applyDao.createApply({ user_id, study_id, message });
@@ -75,10 +76,11 @@ const applyHandler = async ({ study_id, apply_id }, { allow }) => {
   if (allow === true) {
     const allowRows = await applyDao.setAllow(study_id, apply_id, user_id);
     if (allowRows.affectedRows === 0) {
-      throw customError(400, '수락 실패');
+      throw customError(400, '가입 수락에 실패했습니다');
     }
     redisTrigger(user_id, RedisEventEnum.participate, { study_id });
     push(PushEventEnum.apply_allow, study_id, user_id);
+    broadcast.updateUserList(study_id);
   } else {
     const rejectRows = await applyDao.setReject(apply_id);
     if (rejectRows.affectedRows === 0) {
