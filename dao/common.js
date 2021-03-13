@@ -96,7 +96,7 @@ const checkVersion = async (version, device) => {
   }
 };
 
-const getParticipateTime = async (study_id, user_id) => {
+const getParticipatedTime = async (study_id, user_id) => {
   const conn = await pool.getConnection();
   try {
     const timestampSql = `
@@ -119,5 +119,5 @@ module.exports = {
   checkApply,
   getUserLocation,
   checkVersion,
-  getParticipateTime,
+  getParticipatedTime,
 };
