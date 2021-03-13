@@ -113,6 +113,24 @@ const getParticipatedTime = async (study_id, user_id) => {
   }
 };
 
+const getParticipateLog = async (study_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const participateSql = `
+      SELECT p.user_id, u.nickname 
+      FROM participate_log p
+        LEFT JOIN user u
+        ON p.user_id = u.id
+      WHERE study_id = ?`;
+    const [participateRows] = await conn.query(participateSql, [study_id]);
+    return participateRows;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 module.exports = {
   isHost,
   checkMember,
@@ -120,4 +138,5 @@ module.exports = {
   getUserLocation,
   checkVersion,
   getParticipatedTime,
+  getParticipateLog,
 };
