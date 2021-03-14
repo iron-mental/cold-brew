@@ -19,7 +19,7 @@ const fcmSender = (payload) => {
     admin.messaging().send(payload);
   } catch (err) {
     console.log('## FCM 에러: ', err);
-    throw customError(500, err);
+    // throw customError(500, err);
   }
 };
 
