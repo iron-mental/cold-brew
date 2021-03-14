@@ -16,7 +16,7 @@ const chatSchema = new mongoose.Schema(
 
 const Chat = mongoose.model('Chat', chatSchema);
 
-Chat.getInstance = ({ study_id, user_id, nickname = '__SYSTEM__', chatData }) => {
+Chat.getInstance = ({ study_id, user_id = 0, nickname = '__SYSTEM__', chatData }) => {
   chatData = JSON.parse(chatData);
   let chat = new Chat({
     uuid: chatData.uuid,

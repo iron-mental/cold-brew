@@ -35,17 +35,18 @@ const checkAuthority = async ({ id: user_id }, { study_id }, ...authority) => {
 const checkVersion = async ({ version, device }) => {
   const result = {
     latest_version: null,
-    force: VersionUpdateEnum.should,
+    // force: VersionUpdateEnum.should,
+    force: VersionUpdateEnum.none,
     maintenance: Boolean(process.env.MAINTENANCE === 'true'),
   };
 
   const versionRows = await commonDao.checkVersion(version, device);
   if (versionRows.length === 0) {
-    result.force = VersionUpdateEnum.none;
+    // result.force = VersionUpdateEnum.none;
   } else {
     versionRows.forEach((row) => {
       if (row.force === 1) {
-        result.force = VersionUpdateEnum.must;
+        // result.force = VersionUpdateEnum.must;
       }
     });
   }

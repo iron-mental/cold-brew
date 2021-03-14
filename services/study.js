@@ -12,6 +12,7 @@ const { redisTrigger, getUser } = require('./redis');
 
 const Chat = require('../models/chat');
 const Search = require('../models/search');
+const broadcast = require('../events/broadcast');
 
 const destination = path.join(process.env.PATH_public, '/images/study');
 
@@ -159,6 +160,7 @@ const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
       throw customError(400, '스터디 탈퇴 실패');
     }
 
+    broadcast.leave(study_id, nickname);
     redisTrigger(id, RedisEventEnum.leave, { study_id });
   }
 };
@@ -200,11 +202,18 @@ const category = async ({ id }) => {
 
 const getChatting = async ({ id: user_id }, { study_id }, { date, first }) => {
   if (first === 'true') {
-    const participateRows = await commonDao.getParticipateTime(study_id, user_id);
+    const participateRows = await commonDao.getParticipatedTime(study_id, user_id);
     date = participateRows[0].created_at * 1000;
   }
+  const chat = await Chat.find({ study_id, date: { $gt: date } }, { _id: 0, nickname: 0 });
+
+  const userList = await commonDao.getParticipateLog(study_id);
   await redisTrigger(user_id, RedisEventEnum.chat_read, { study_id });
-  return await Chat.find({ study_id, date: { $gt: date } }, { _id: 0 });
+
+  return {
+    chat,
+    user_list: userList,
+  };
 };
 
 module.exports = {

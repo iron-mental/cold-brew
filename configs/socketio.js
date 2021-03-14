@@ -3,6 +3,7 @@ const socketService = require('../services/socket');
 
 const socketConfig = (io) => {
   const terminal = io.of(process.env.CHAT_nsp);
+  terminal.setMaxListeners(20);
 
   terminal.use(socketVerify).on('connection', (socket) => {
     const {

@@ -70,9 +70,40 @@ const setVersion = async (versionData) => {
   }
 };
 
+const getParticipate = async () => {
+  const conn = await pool.getConnection();
+  try {
+    const participateSql = `
+      SELECT user_id, study_id
+      FROM participate`;
+    const [participateRows] = await conn.query(participateSql);
+    return participateRows;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
+const setParticipateLog = async (participateRows) => {
+  const conn = await pool.getConnection();
+  try {
+    const setParticipateSql = `
+      INSERT INTO participate_log
+      SET ?`;
+    const [insertRows] = await conn.query(setParticipateSql, participateRows);
+    return insertRows;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
 module.exports = {
   getUserList,
   getUserStudyList,
   deleteEmptyStudy,
   setVersion,
+  getParticipate,
+  setParticipateLog,
 };
