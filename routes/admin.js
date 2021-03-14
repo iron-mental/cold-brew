@@ -13,6 +13,8 @@ router.get('/redis/user/:user_id', checkAdmin, adminValid.getRedis, asyncWrap(ad
 router.delete('/study/empty', checkAdmin, asyncWrap(adminController.deleteEmptyStudy));
 router.delete('/study/:study_id', checkAdmin, asyncWrap(adminController.deleteStudy));
 
+router.get('/participate_log/set', checkAdmin, asyncWrap(adminController.setParticipate_log));
+
 router.post('/version', checkAdmin, adminValid.setVersion, asyncWrap(adminController.setVersion));
 
 module.exports = router;

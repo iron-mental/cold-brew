@@ -21,4 +21,7 @@ class Broadcast extends EventEmitter {
   };
 }
 
-module.exports = new Broadcast();
+const broadcast = new Broadcast();
+broadcast.setMaxListeners(20);
+
+module.exports = broadcast;
