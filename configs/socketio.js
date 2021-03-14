@@ -18,8 +18,8 @@ const socketConfig = (io) => {
       socketService.disconnection(study_id, user_id);
     });
 
-    socket.on('chat', (message) => {
-      socketService.chat(terminal, study_id, nickname, message);
+    socket.on('chat', (chatData) => {
+      socketService.chat(terminal, study_id, user_id, nickname, chatData);
     });
   });
 
