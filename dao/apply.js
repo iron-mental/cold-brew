@@ -170,11 +170,6 @@ const setAllow = async (study_id, apply_id, user_id) => {
       SET ?`;
     await conn.query(participateSql, [{ study_id, user_id }]);
 
-    const participateLogSql = `
-      INSERT INTO participate_log
-      SET ?`;
-    await conn.query(participateLogSql, [{ study_id, user_id }]);
-
     await conn.commit();
     return allowRows;
   } catch (err) {

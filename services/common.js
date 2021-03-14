@@ -55,9 +55,22 @@ const checkVersion = async ({ version, device }) => {
   return result;
 };
 
+const setParticipateLog = async (study_id, user_id) => {
+  const participateLogRows = await commonDao.getParticipateLog(study_id);
+
+  const insertedStatus = participateLogRows.reduce((acc, { user_id: id }) => {
+    return user_id === id ? acc + 1 : acc;
+  }, 0);
+
+  if (insertedStatus === 0) {
+    await commonDao.setParticipateLog(study_id, user_id);
+  }
+};
+
 module.exports = {
   isHost,
   checkAuth,
   checkAuthority,
   checkVersion,
+  setParticipateLog,
 };

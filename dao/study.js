@@ -15,11 +15,6 @@ const createStudy = async (user_id, createData) => {
       SET ?`;
     await conn.query(participateSql, [{ user_id, study_id: createRows.insertId, leader: true }]);
 
-    const participateLogSql = `
-      INSERT INTO participate_log
-      SET ?`;
-    await conn.query(participateLogSql, [{ user_id, study_id: createRows.insertId }]);
-
     await conn.commit();
     return createRows;
   } catch (err) {
