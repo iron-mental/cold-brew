@@ -19,7 +19,7 @@ const createStudy = async (req, res, next) => {
     sigungu: Joi.string().max(20).required(),
     address_name: Joi.string().max(100).required(),
     place_name: Joi.string().allow('').max(30),
-    location_detail: Joi.string().max(30),
+    location_detail: Joi.string().allow('').max(30),
     study_time: Joi.string().required().max(100),
     image: Joi.allow(),
   });
