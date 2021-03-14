@@ -28,7 +28,6 @@ Chat.getInstance = ({ study_id, user_id = 0, nickname = '__SYSTEM__', chatData }
   })._doc;
 
   delete chat._id;
-  console.log('chat: ', chat);
   return chat;
 };
 
