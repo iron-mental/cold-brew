@@ -19,7 +19,7 @@ const socketConfig = (io) => {
     });
 
     socket.on('chat', (message) => {
-      socketService.chat(terminal, study_id, nickname, message);
+      socketService.chat(terminal, study_id, user_id, nickname, message);
     });
   });
 

@@ -31,7 +31,7 @@ firebaseError = (err) => {
 
     case 'auth/wrong-password':
       err.status = 400;
-      err.message = '비밀번호를 잘못 입력하였습니다';
+      err.message = '비밀번호를 잘못 입력하셨습니다';
       return new FirebaseError(err);
 
     case 'auth/too-many-requests':

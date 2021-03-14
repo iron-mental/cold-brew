@@ -131,7 +131,7 @@ const deleteStudy = async (study_id) => {
   }
 };
 
-const getMyStudy = async (id) => {
+const getMyStudy = async (user_id) => {
   const conn = await pool.getConnection();
   try {
     const myStudySql = `
@@ -141,7 +141,7 @@ const getMyStudy = async (id) => {
         ON p.study_id = s.id
       WHERE p.user_id = ?
       ORDER BY id DESC`;
-    const [myStudyRows] = await conn.query(myStudySql, [id]);
+    const [myStudyRows] = await conn.query(myStudySql, [user_id]);
     return myStudyRows;
   } catch (err) {
     throw databaseError(err);

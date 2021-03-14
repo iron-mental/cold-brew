@@ -157,6 +157,7 @@ const applyListByUser = async (user_id) => {
 const setAllow = async (study_id, apply_id, user_id) => {
   const conn = await pool.getConnection();
   try {
+    await conn.beginTransaction();
     const allowSql = `
       UPDATE apply 
       SET apply_status = ? 
@@ -164,14 +165,20 @@ const setAllow = async (study_id, apply_id, user_id) => {
         AND apply_status = ?`;
     const [allowRows] = await conn.query(allowSql, [ApplyEnum.allow, apply_id, ApplyEnum.apply]);
 
-    if (allowRows.changedRows > 0) {
-      const participateSql = `
+    const participateSql = `
       INSERT INTO participate
       SET ?`;
-      await conn.query(participateSql, { study_id, user_id });
-    }
+    await conn.query(participateSql, [{ study_id, user_id }]);
+
+    const participateLogSql = `
+      INSERT INTO participate_log
+      SET ?`;
+    await conn.query(participateLogSql, [{ study_id, user_id }]);
+
+    await conn.commit();
     return allowRows;
   } catch (err) {
+    await conn.rollback();
     throw databaseError(err);
   } finally {
     await conn.release();
