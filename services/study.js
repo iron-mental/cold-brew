@@ -12,6 +12,7 @@ const { redisTrigger, getUser } = require('./redis');
 
 const Chat = require('../models/chat');
 const Search = require('../models/search');
+const broadcast = require('../events/broadcast');
 
 const destination = path.join(process.env.PATH_public, '/images/study');
 
@@ -159,6 +160,7 @@ const leaveStudy = async ({ id, nickname }, { study_id }, authority) => {
       throw customError(400, '스터디 탈퇴 실패');
     }
 
+    broadcast.leave(study_id, nickname);
     redisTrigger(id, RedisEventEnum.leave, { study_id });
   }
 };
