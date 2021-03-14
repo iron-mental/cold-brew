@@ -7,8 +7,8 @@ const Chat = require('../models/chat');
 const register = (io) => {
   const terminal = io.of(process.env.CHAT_nsp);
 
-  broadcast.on('chat', (study_id, message) => {
-    const systemChat = Chat.getInstance({ study_id, message });
+  broadcast.on('chat', (study_id, chatData) => {
+    const systemChat = Chat.getInstance({ study_id, chatData });
     terminal.to(study_id).emit('message', JSON.stringify(systemChat));
     Chat.create(systemChat);
     push.chat(study_id, systemChat);
