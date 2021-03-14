@@ -64,7 +64,7 @@ const updateStudy = async (req, res, next) => {
     sigungu: Joi.string().max(20),
     address_name: Joi.string().max(100),
     place_name: Joi.string().allow('').max(30),
-    location_detail: Joi.string().max(30),
+    location_detail: Joi.string().allow('').max(30),
     study_time: Joi.string().max(100),
     image: Joi.allow(),
   }).min(1);
