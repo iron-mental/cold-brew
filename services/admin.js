@@ -42,10 +42,19 @@ const deleteStudy = async ({ study_id }) => {
   await studyService.deleteStudy({ id: host_id }, { study_id });
 };
 
+const setParticipate_log = async () => {
+  const participateRows = await adminDao.getParticipate();
+
+  for (const participate of participateRows) {
+    await adminDao.setParticipateLog(participate);
+  }
+};
+
 module.exports = {
   resetRedis,
   getRedis,
   deleteEmptyStudy,
   setVersion,
   deleteStudy,
+  setParticipate_log,
 };

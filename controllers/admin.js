@@ -26,10 +26,16 @@ const deleteStudy = async (req, res) => {
   response(res, 200, '스터디 삭제 완료');
 };
 
+const setParticipate_log = async (req, res) => {
+  await adminService.setParticipate_log();
+  response(res, 200, '스터디 참여자 세팅완료');
+};
+
 module.exports = {
   resetRedis,
   getRedis,
   deleteEmptyStudy,
   setVersion,
   deleteStudy,
+  setParticipate_log,
 };
