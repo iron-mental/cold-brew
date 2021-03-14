@@ -112,7 +112,7 @@ const updateUser = async ({ id }, updateData) => {
   }
 
   if (updateData.nickname) {
-    const studyList = studyDao.getMyStudy(id);
+    const studyList = await studyDao.getMyStudy(id);
     studyList.forEach((study) => {
       broadcast.updateUserList(study.id);
     });
@@ -239,7 +239,7 @@ const getAddress = async () => {
 };
 
 const pushTest = async ({ id: user_id }) => {
-  push(PushEventEnum.push_test, 688, user_id);
+  push(PushEventEnum.push_test, 683, user_id);
 };
 
 module.exports = {
