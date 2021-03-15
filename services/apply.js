@@ -1,4 +1,5 @@
 const applyDao = require('../dao/apply');
+const commonService = require('./common');
 
 const { push } = require('./push');
 
@@ -78,6 +79,8 @@ const applyHandler = async ({ study_id, apply_id }, { allow }) => {
     if (allowRows.affectedRows === 0) {
       throw customError(400, '가입 수락에 실패했습니다');
     }
+
+    await commonService.setParticipateLog(study_id, user_id);
     redisTrigger(user_id, RedisEventEnum.participate, { study_id });
     push(PushEventEnum.apply_allow, study_id, user_id);
     broadcast.participate(study_id, nickname);

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const chatSchema = new mongoose.Schema(
   {
+    uuid: Number,
     study_id: Number,
     user_id: Number,
     nickname: String,
@@ -15,13 +16,14 @@ const chatSchema = new mongoose.Schema(
 
 const Chat = mongoose.model('Chat', chatSchema);
 
-Chat.getInstance = ({ study_id, message, user_id = 0, nickname = '__SYSTEM__' }) => {
+Chat.getInstance = ({ study_id, user_id = 0, nickname = '__SYSTEM__', chatData }) => {
+  chatData = JSON.parse(chatData);
   let chat = new Chat({
-    _id: null,
+    uuid: chatData.uuid || 0,
     study_id,
     user_id,
     nickname,
-    message,
+    message: chatData.message,
     date: new Date().getTime(),
   })._doc;
 

@@ -113,6 +113,21 @@ const getParticipatedTime = async (study_id, user_id) => {
   }
 };
 
+const setParticipateLog = async (study_id, user_id) => {
+  const conn = await pool.getConnection();
+  try {
+    const participateLogSql = `
+      INSERT INTO participate_log
+      SET ?`;
+    await conn.query(participateLogSql, [{ study_id, user_id }]);
+    return participateLogSql;
+  } catch (err) {
+    throw databaseError(err);
+  } finally {
+    await conn.release();
+  }
+};
+
 const getParticipateLog = async (study_id) => {
   const conn = await pool.getConnection();
   try {
@@ -138,5 +153,6 @@ module.exports = {
   getUserLocation,
   checkVersion,
   getParticipatedTime,
+  setParticipateLog,
   getParticipateLog,
 };

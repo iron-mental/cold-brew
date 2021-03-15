@@ -4,6 +4,9 @@ const path = require('path');
 const studyDao = require('../dao/study');
 const alertDao = require('../dao/alert');
 const commonDao = require('../dao/common');
+
+const commonService = require('./common');
+
 const { push } = require('./push');
 const { PushEventEnum, AuthEnum, RedisEventEnum } = require('../utils/variables/enum');
 const { rowSplit, toBoolean, locationMerge, cutId, lengthSorting } = require('../utils/query');
@@ -21,10 +24,11 @@ const createStudy = async ({ id: user_id }, createData) => {
   if (checkRows.length > 0) {
     throw customError(400, '중복된 스터디 이름이 존재합니다', 101);
   }
-  const createRows = await studyDao.createStudy(user_id, createData);
+  const { insertId: study_id } = await studyDao.createStudy(user_id, createData);
 
-  redisTrigger(user_id, RedisEventEnum.participate, { study_id: createRows.insertId });
-  return createRows.insertId;
+  await commonService.setParticipateLog(study_id, user_id);
+  redisTrigger(user_id, RedisEventEnum.participate, { study_id });
+  return study_id;
 };
 
 const getStudy = async ({ id: user_id }, { study_id }) => {
