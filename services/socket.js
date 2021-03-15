@@ -12,6 +12,9 @@ const disconnection = (study_id, user_id) => {
 };
 
 const chat = (terminal, study_id, user_id, nickname, chatData) => {
+  if (!chatData.message) {
+    chatData = JSON.parse(chatData);
+  }
   const userChat = Chat.getInstance({ study_id, user_id, nickname, chatData });
   terminal.to(study_id).emit('message', JSON.stringify(userChat));
   Chat.create(userChat);
