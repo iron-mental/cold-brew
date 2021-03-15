@@ -34,24 +34,22 @@ const checkAuthority = async ({ id: user_id }, { study_id }, ...authority) => {
 
 const checkVersion = async ({ version, device }) => {
   const result = {
-    latest_version: null,
-    // force: VersionUpdateEnum.should,
-    force: VersionUpdateEnum.none,
+    force: VersionUpdateEnum.should,
     maintenance: Boolean(process.env.MAINTENANCE === 'true'),
   };
 
   const versionRows = await commonDao.checkVersion(version, device);
   if (versionRows.length === 0) {
-    // result.force = VersionUpdateEnum.none;
-  } else {
-    versionRows.forEach((row) => {
-      if (row.force === 1) {
-        // result.force = VersionUpdateEnum.must;
-      }
-    });
+    result.force = VersionUpdateEnum.none;
   }
 
-  result.latest_version = versionRows.slice(-1)[0] ? versionRows.slice(-1)[0].version : null;
+  versionRows.forEach((row) => {
+    if (row.force === 1) {
+      result.force = VersionUpdateEnum.must;
+    }
+  });
+
+  result.latest_version = versionRows[0] ? versionRows.slice(-1)[0].version : null;
   return result;
 };
 
