@@ -165,8 +165,7 @@ const getStudyListByNew = async (user_id, category) => {
         S.*, count(*) member_count, IF(user_id is not null, true, false) is_member
       FROM (
         SELECT
-          s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
-          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
+          s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image, UNIX_TIMESTAMP(s.created_at) as created_at
         FROM
           study s
           LEFT JOIN participate p
@@ -203,7 +202,7 @@ const getStudyListByLength = async ({ latitude, longitude }, user_id, category) 
       FROM (
         SELECT
           s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
-          DATE_FORMAT(s.created_at, '%y / %c / %d') created_at,
+          UNIX_TIMESTAMP(s.created_at) as created_at,
           (6371*acos(cos(radians( ? ))*cos(radians( s.latitude ))*cos(radians( s.longitude )
           -radians( ? ))+sin(radians( ? ))*sin(radians( s.latitude )))) AS distance
         FROM
@@ -244,7 +243,7 @@ const studyPaging = async (user_id, studyKeys) => {
         FROM (
           SELECT
             s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
-            DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
+            UNIX_TIMESTAMP(s.created_at) as created_at
           FROM
             study s
             LEFT JOIN participate p
@@ -281,7 +280,7 @@ const studyPagingByLength = async ({ latitude, longitude }, user_id, studyKeys) 
         FROM (
           SELECT
             s.id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
-            DATE_FORMAT(s.created_at, '%y / %c / %d') created_at,
+            UNIX_TIMESTAMP(s.created_at) as created_at,
             (6371*acos(cos(radians( ? ))*cos(radians( s.latitude ))*cos(radians( s.longitude )
             -radians( ? ))+sin(radians( ? ))*sin(radians( s.latitude )))) AS distance
           FROM
@@ -373,7 +372,7 @@ const search = async (user_id, word) => {
     FROM (
       SELECT
         s.id id, s.title, s.introduce, s.image, s.sigungu, u.image leader_image,
-        DATE_FORMAT(s.created_at, '%y / %c / %d') created_at
+        UNIX_TIMESTAMP(s.created_at) as created_at
       FROM
         study s
         LEFT JOIN participate p

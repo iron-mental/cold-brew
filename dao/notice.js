@@ -20,7 +20,7 @@ const getNotice = async (study_id, notice_id) => {
     const noticeSQL = `
       SELECT
         n.id, n.study_id, n.title, n.contents, n.pinned, n.user_id leader_id, u.image leader_image, u.nickname leader_nickname,
-        DATE_FORMAT(n.updated_at, "%Y-%c-%d %H:%i:%s") updated_at
+        UNIX_TIMESTAMP(n.updated_at) as updated_at
       FROM notice n
         LEFT JOIN user u
         ON n.user_id = u.id
@@ -73,8 +73,8 @@ const getNoticeList = async (study_id) => {
   try {
     const deleteSQL = `
       SELECT id, title, contents, pinned,
-        DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at,
-        DATE_FORMAT(updated_at, "%Y-%c-%d %H:%i:%s") updated_at
+        UNIX_TIMESTAMP(created_at) as created_at,
+        UNIX_TIMESTAMP(updated_at) as updated_at
       FROM notice
       WHERE study_id = ?
       ORDER BY  pinned DESC, id DESC`;
@@ -93,8 +93,8 @@ const noticePaging = async (noticeKeys) => {
   try {
     const listSql = `
     SELECT id, title, contents, pinned,
-      DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at,
-      DATE_FORMAT(updated_at, "%Y-%c-%d %H:%i:%s") updated_at
+      UNIX_TIMESTAMP(created_at) as created_at,
+      UNIX_TIMESTAMP(updated_at) as updated_at
     FROM notice
     WHERE id in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ORDER BY FIELD(id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

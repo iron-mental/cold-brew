@@ -36,9 +36,7 @@ const getProjectList = async (id) => {
   const conn = await pool.getConnection();
   try {
     const projectSql = `
-      SELECT
-        id, title, contents, sns_github, sns_appstore, sns_playstore,
-        DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") create_at
+      SELECT id, title, contents, sns_github, sns_appstore, sns_playstore, UNIX_TIMESTAMP(created_at) as created_at
       FROM project
       WHERE user_id = ?`;
     const [projectData] = await conn.query(projectSql, [id]);
