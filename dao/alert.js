@@ -5,7 +5,7 @@ const getAlert = async (user_id) => {
   const conn = await pool.getConnection();
   try {
     const alertSql = `
-      SELECT id, study_id, study_title, pushEvent, message, confirm, DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at
+      SELECT id, study_id, study_title, pushEvent, message, confirm, UNIX_TIMESTAMP(created_at) as created_at
       FROM alert
       WHERE user_id = ?
       ORDER BY id DESC

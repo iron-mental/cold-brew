@@ -109,7 +109,7 @@ const getUser = async (id) => {
     const userSql = `
       SELECT 
         id, nickname, email, image, introduce, sido, sigungu, career_title, career_contents, sns_github, sns_linkedin, sns_web, email_verified,
-        DATE_FORMAT(created_at, "%Y-%c-%d %H:%i:%s") created_at
+        UNIX_TIMESTAMP(created_at) as created_at
       FROM user 
       WHERE id = ?`;
     const [userData] = await conn.query(userSql, [id]);
