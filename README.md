@@ -31,9 +31,9 @@
   - Back-End : Rest-API 개발, 서버 기능 구현
     - 전체적인 서버 구조 및 기능 구현, REST API 구현
     - Javascript & Express로 REST API를 활용하여 유저, 스터디 등 전반적인 CRUD 기능 구현
-    - Firebase FCM, Apple APNs를 이용한 푸시알림 전송 모듈 구축
     - JWT 토큰 인증 과정을 Express Middleware로 하는 인증체계 구축
-    - Socket.io를 이용한 스터디 멤버 간 의사소통이 가능한 실시간 채팅 기능 구축 
+    - Firebase FCM, Apple APNs를 이용한 푸시알림 전송 구현
+    - Socket.io를 이용한 스터디 멤버 간 실시간 채팅 구현
     - Redis를 이용하여 Socket.io 클러스터링 및 Push Badge Count 관리
     - Firebase Authentication, Node Mailer를 이용한 이메일 인증 및 계정 비밀번호 관리 구현
     - Sentry를 활용하여 에러로그 수집 및 Slack으로 Message 전송 구현
@@ -42,7 +42,7 @@
   - 배포
     - Server : AWS EC2
     - DB : AWS RDS(MySQL), MongoDB(Atlas), Redis(EC2 내부)
-    - Nginx: Reverse Proxy를 이용하여 요청에 맞게 REST API / Landing Page로 분기
+    - Nginx: Reverse Proxy를 이용하여 요청에  REST API / Landing Page로 분기
 
 **Terminal: study 주요 기능**
 
@@ -77,7 +77,9 @@
 </br>
 
 ## 프로젝트 아키텍쳐
-![alt sampleImage](https://d2908q01vomqb2.cloudfront.net/fc074d501302eb2b93e2554793fcaf50b3bf7291/2018/04/25/overall-ref-arch-1024x581.png)
+
+### 3-tier Architecture
+Controller - Service - Dao
 </br></br>
 
 ### 사용한 기술 스택
