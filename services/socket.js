@@ -12,7 +12,7 @@ const disconnection = (study_id, user_id) => {
 };
 
 const chat = (terminal, study_id, user_id, nickname, chatData) => {
-  if (!chatData.message) {
+  if (typeof chatData === 'string') {
     chatData = JSON.parse(chatData);
   }
   const userChat = Chat.getInstance({ study_id, user_id, nickname, chatData });
