@@ -19,6 +19,47 @@
 
 **프로젝트 참여 인원** : Back-End 1명 / iOS 2명 / Android 2명
 
+## 사용한 기술 스택
+**Back-End**
+
+```Node.js```
+```Javascript```
+```JWT```
+```Socket.io```
+```Express.js```
+```FCM```
+```APNs```
+```Mongoose```
+```Winston```
+```pm2```
+<br />
+
+**Server**
+
+```AWS EC2```
+```Nginx```
+```Route53```
+```MySQL```
+```MongoDB```
+```Redis```
+<br />
+
+**Front-End**
+
+```Next.js```
+```Ant Design Component```
+<br />
+
+**Development Tool**
+
+```Git & Github```
+```Notion```
+```Slack```
+```Postman```
+</br>
+
+[스택쉐어](https://stackshare.io/terminal-study/terminal-study)
+
 ## 개발
 
 - 전체적인 서버 구조 및 기능 구현, REST API 구현
@@ -38,31 +79,6 @@
 - Sentry를 활용하여 에러로그 수집 및 Slack으로 Message 전송 구현
 
 - Next.js & Andt Design Component를 사용하여 랜딩 페이지 개발
-
-## 주요 기능
-
-- 이메일 인증 기반 회원가입 / 로그인 / 로그아웃 / 개인정보 수정 / 회원탈퇴
-
-- 스터디 생성/ 수정/ 위임/ 삭제/ 신고
-
-- 스터디 목록 조회 (거리순/ 최신순/ 검색)
-
-- 스터디 가입 신청/ 취소 및 수락/ 거절
-
-- 공지사항 작성/ 수정/ 삭제
-
-- 참여한 스터디 목록 조회
-
-- 채팅
-
-## 배포
-
-- Server : AWS EC2
-
-- DB : AWS RDS(MySQL), MongoDB(Atlas), Redis(EC2 내부)
-
-- Nginx: Reverse Proxy를 이용하여 요청에  REST API / Landing Page로 분기 
-</br>
 
 
 ## 프로젝트 관리
@@ -89,48 +105,6 @@
 ### 3-tier Architecture
 Controller - Service - Dao
 </br></br>
-
-### 사용한 기술 스택
-[Stackshare](https://stackshare.io/terminal-study/terminal-study)
-
-**Back-End**
-
-```Node.js```
-```Javascript```
-```JWT```
-```Socket.io```
-```Express.js```
-```FCM```
-```APNs```
-```Mongoose```
-```Winston```
-```pm2```
-<br />
-
-**Front-End**
-
-```Next.js```
-```Ant Design Component```
-<br />
-
-**Server**
-
-```AWS EC2```
-```Route53```
-```Redis```
-```MySQL```
-```MongoDB```
-```Nginx - Reverse Proxy```
-<br />
-
-**Development Tool**
-
-```Git & Github```
-```Notion```
-```Slack```
-```Postman```
-</br>
-
 
 ### Directory Structure
 ```
