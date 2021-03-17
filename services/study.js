@@ -209,7 +209,7 @@ const getChatting = async ({ id: user_id }, { study_id }, { date, first }) => {
     const participateRows = await commonDao.getParticipatedTime(study_id, user_id);
     date = participateRows[0].created_at * 1000;
   }
-  const chat = await Chat.find({ study_id, date: { $gt: date } }, { _id: 0, nickname: 0 });
+  const chat = await Chat.find({ study_id, date: { $gt: date } }, { _id: 0, nickname: 0 }).sort({ date: 1 });
 
   const userList = await commonDao.getParticipateLog(study_id);
   await redisTrigger(user_id, RedisEventEnum.chat_read, { study_id });
