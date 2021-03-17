@@ -26,7 +26,6 @@ Chat.getInstance = ({ study_id, user_id = 0, nickname = '__SYSTEM__', chatData }
     date: new Date().getTime(),
   })._doc;
 
-  chat.study_id = study_id + '';
   delete chat._id;
   return chat;
 };

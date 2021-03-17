@@ -26,6 +26,7 @@ class Payload {
 }
 
 const getChatPayload = (chat) => {
+  chat.study_id = chat.study_id + '';
   chat.pushEvent = PushEventEnum.chat;
   const alert = chat.nickname === '__SYSTEM__' ? chat.message : chat.nickname.concat(' ', chat.message);
   const note = new Note(alert, chat);
