@@ -1,23 +1,15 @@
 <!-- ![alt sampleImage](https://camo.githubusercontent.com/720ed473d178f9380291709d2223860ade4f3c7bc368e3fea1ad057b8dc9c6f5/68747470733a2f2f6e6f64656a732e6f72672f7374617469632f696d616765732f6c6f676f2d6c696768742e737667) -->
 
 # Terminal :study
-> **개발자 스터디모집 어플리케이션 프로젝트**
-
-![Node Version](https://img.shields.io/badge/node-v12.19.1-green) ![express Version](https://img.shields.io/badge/express-v4.16.1-blue) ![Socket.io Version](https://img.shields.io/badge/Socket.io-v3.0.3-9cf)
-
-<!-- **Terminal :study** 는 **개발자들을 위한 스터디모임** 모바일 어플리케이션 프로젝트입니다.</br>
-
-카테고리를 통해 스터디의 목록을 조회하거나 검색을 통해 가입할 수 있습니다.
-</br>
-내부 게시판을 통해 스터디의 일정을 조율하고 채팅을 통해 스터디에 참여할 수 있습니다.
+> **개발자 스터디 플랫폼 모바일 앱 프로젝트**
 </br></br>
--->
 
 ## 프로젝트 개요
 
 **프로젝트 기간**  :  2020.08 ~ 2021.03
 
 **프로젝트 참여 인원** : Back-End 1명 / iOS 2명 / Android 2명
+</br></br>
 
 ## 사용한 기술 스택
 **Back-End**
@@ -56,7 +48,8 @@
 ```Notion```
 ```Slack```
 ```Postman```
-</br>
+
+</br></br>
 
 [스택쉐어](https://stackshare.io/terminal-study/terminal-study)
 
@@ -79,7 +72,7 @@
 - Sentry를 활용하여 에러로그 수집 및 Slack으로 Message 전송 구현
 
 - Next.js & Andt Design Component를 사용하여 랜딩 페이지 개발
-
+</br></br>
 
 ## 프로젝트 관리
 
@@ -98,7 +91,7 @@
 - Postman을 이용한 API 테스트 및 문서 공유
 
 - Sentry로 에러로그 수집
-</br>
+</br></br>
 
 ## 프로젝트 아키텍쳐
 
