@@ -14,11 +14,11 @@ class Note {
 class Payload {
   constructor(alert, data) {
     this.notification = {
-      title: '터미널 title',
+      title: '터미널',
       body: alert,
     };
     this.data = {
-      title: '터미널 title',
+      title: '터미널',
       body: alert,
       ...data,
     };
