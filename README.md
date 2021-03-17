@@ -13,47 +13,55 @@
 </br></br>
 -->
 
-## 설치
-- [iOS](https://apps.apple.com/app/id1557178596)
-- [Android](https://play.google.com/store/)
-- [Web](https://www.terminal-study.tk/)
-</br>
-
 ## 프로젝트 개요
 
-**프로젝트 기간**  :  2020.08.11 ~
-
-**서비스 종류** : Mobile Application
+**프로젝트 기간**  :  2020.08 ~ 2021.03
 
 **프로젝트 참여 인원** : Back-End 1명 / iOS 2명 / Android 2명
 
-- 개발내용
-  - Back-End : Rest-API 개발, 서버 기능 구현
-    - 전체적인 서버 구조 및 기능 구현, REST API 구현
-    - Javascript & Express로 REST API를 활용하여 유저, 스터디 등 전반적인 CRUD 기능 구현
-    - JWT 토큰 인증 과정을 Express Middleware로 하는 인증체계 구축
-    - Firebase FCM, Apple APNs를 이용한 푸시알림 전송 구현
-    - Socket.io를 이용한 스터디 멤버 간 실시간 채팅 구현
-    - Redis를 이용하여 Socket.io 클러스터링 및 Push Badge Count 관리
-    - Firebase Authentication, Node Mailer를 이용한 이메일 인증 및 계정 비밀번호 관리 구현
-    - Sentry를 활용하여 에러로그 수집 및 Slack으로 Message 전송 구현
-  - Front-End
-    - Next.js & Andt Design Component를 사용하여 랜딩 페이지 개발
-  - 배포
-    - Server : AWS EC2
-    - DB : AWS RDS(MySQL), MongoDB(Atlas), Redis(EC2 내부)
-    - Nginx: Reverse Proxy를 이용하여 요청에  REST API / Landing Page로 분기
+## 개발
 
-**Terminal: study 주요 기능**
+- 전체적인 서버 구조 및 기능 구현, REST API 구현
+
+- Javascript & Express로 REST API를 활용하여 유저, 스터디 등 전반적인 CRUD 기능 구현
+ 
+- JWT 토큰 인증 과정을 Express Middleware로 하는 인증체계 구축
+
+- Firebase FCM, Apple APNs를 이용한 푸시알림 전송 구현
+
+- Socket.io를 이용한 스터디 멤버 간 실시간 채팅 구현
+
+- Redis를 이용하여 Socket.io 클러스터링 및 Push Badge Count 관리
+
+- Firebase Authentication, Node Mailer를 이용한 이메일 인증 및 계정 비밀번호 관리 구현
+
+- Sentry를 활용하여 에러로그 수집 및 Slack으로 Message 전송 구현
+
+- Next.js & Andt Design Component를 사용하여 랜딩 페이지 개발
+
+## 주요 기능
 
 - 이메일 인증 기반 회원가입 / 로그인 / 로그아웃 / 개인정보 수정 / 회원탈퇴
+
 - 스터디 생성/ 수정/ 위임/ 삭제/ 신고
+
 - 스터디 목록 조회 (거리순/ 최신순/ 검색)
+
 - 스터디 가입 신청/ 취소 및 수락/ 거절
+
 - 공지사항 작성/ 수정/ 삭제
+
 - 참여한 스터디 목록 조회
+
 - 채팅
 
+## 배포
+
+- Server : AWS EC2
+
+- DB : AWS RDS(MySQL), MongoDB(Atlas), Redis(EC2 내부)
+
+- Nginx: Reverse Proxy를 이용하여 요청에  REST API / Landing Page로 분기 
 </br>
 
 
@@ -86,33 +94,41 @@ Controller - Service - Dao
 [Stackshare](https://stackshare.io/terminal-study/terminal-study)
 
 **Back-End**
-- Node.js
-- JavaScript
-- Express.js
-- JWT
-- Multer
-- FCM, APNs
-- Socket.io
-- Mongoose
-- Winston
-- Pm2
+
+```Node.js```
+```Javascript```
+```JWT```
+```Socket.io```
+```Express.js```
+```FCM```
+```APNs```
+```Mongoose```
+```Winston```
+```pm2```
+<br />
 
 **Front-End**
-- Next.js
-- Antd Design Component
+
+```Next.js```
+```Ant Design Component```
+<br />
 
 **Server**
-- AWS EC2, Route53
-- Redis
-- MySQL - RDS
-- MongoDB - Atlas
-- Nginx - Reverse Proxy
+
+```AWS EC2```
+```Route53```
+```Redis```
+```MySQL```
+```MongoDB```
+```Nginx - Reverse Proxy```
+<br />
 
 **Development Tool**
-- Git & Github
-- Notion
-- Slack
-- Postman
+
+```Git & Github```
+```Notion```
+```Slack```
+```Postman```
 </br>
 
 
@@ -140,4 +156,12 @@ cold-brew
     ├─errors
     └─variables
 ```
+</br>
+
+
+
+## 설치
+- [iOS](https://apps.apple.com/app/id1557178596)
+- [Android](https://play.google.com/store/)
+- [Web](https://www.terminal-study.tk/)
 </br>
