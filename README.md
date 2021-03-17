@@ -4,7 +4,7 @@
 >개발자 스터디 플랫폼 모바일 앱 프로젝트
 </br>
 
-### 프로젝트 개요
+## 프로젝트 개요
 
 **프로젝트 기간**  :  2020.08 ~ 2021.03 </br>
 **프로젝트 참여 인원** : Back-End 1명 / iOS 2명 / Android 2명
@@ -51,21 +51,19 @@
 
 ## 개발
 
-전체적인 서버 구조 및 기능 구현, REST API 구현
-
 Javascript & Express로 REST API를 활용하여 유저, 스터디 등 전반적인 CRUD 기능 구현
+
+Socket.io를 이용한 스터디 멤버 간 실시간 채팅 구현
  
 JWT 토큰 인증 과정을 Express Middleware로 하는 인증체계 구축
 
 Firebase FCM, Apple APNs를 이용한 푸시알림 전송 구현
 
-Socket.io를 이용한 스터디 멤버 간 실시간 채팅 구현
+Redis를 이용한 Push Badge Count 관리 및 Socket.io 클러스터링
 
-Redis를 이용하여 Socket.io 클러스터링 및 Push Badge Count 관리
+Firebase Authentication, Node Mailer를 이용한 이메일 인증 및 계정 관리 구현
 
-Firebase Authentication, Node Mailer를 이용한 이메일 인증 및 계정 비밀번호 관리 구현
-
-Sentry를 활용하여 에러로그 수집 및 Slack으로 Message 전송 구현
+Sentry를 활용한 에러로그 수집 및 Slack으로 Message 전송 구현
 
 Next.js & Andt Design Component를 사용하여 랜딩 페이지 개발
 </br></br>
@@ -84,9 +82,9 @@ MySQL Workbench를 이용하여 데이터베이스 설계
 
 ESLint, Prettier를 이용하여 코드 스타일 관리
 
-Postman을 이용한 API 테스트 및 문서 공유
+Postman, Notion을 이용한 API 테스트 및 문서 공유
 
-Sentry로 에러로그 수집
+Sentry, Slack으로 실시간 에러 관리
 </br></br>
 
 ## 프로젝트 아키텍쳐
