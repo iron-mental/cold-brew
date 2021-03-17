@@ -4,10 +4,9 @@
 > **개발자 스터디 플랫폼 모바일 앱 프로젝트**
 </br>
 
-## 프로젝트 개요
+### 프로젝트 개요
 
-**프로젝트 기간**  :  2020.08 ~ 2021.03
-
+**프로젝트 기간**  :  2020.08 ~ 2021.03 </br>
 **프로젝트 참여 인원** : Back-End 1명 / iOS 2명 / Android 2명
 </br></br>
 
@@ -24,23 +23,14 @@
 ```Mongoose```
 ```Winston```
 ```pm2```
-<br />
-
-**Server**
-
+</br>
 ```AWS EC2```
 ```Nginx```
 ```Route53```
 ```MySQL```
 ```MongoDB```
 ```Redis```
-<br />
-
-**Front-End**
-
-```Next.js```
-```Ant Design Component```
-<br />
+</br>
 
 **Development Tool**
 
@@ -48,10 +38,17 @@
 ```Notion```
 ```Slack```
 ```Postman```
+</br>
 
+**Front-End**
+
+```Next.js```
+```Ant Design Component```
 </br></br>
 
 [스택쉐어](https://stackshare.io/terminal-study/terminal-study)
+</br></br>
+
 
 ## 개발
 
