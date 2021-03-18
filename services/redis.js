@@ -33,7 +33,7 @@ const redisTrigger = async (user_id, redisEvent, data) => {
       break;
 
     case RedisEventEnum.chat:
-      userData.chat[data.study_id] += 0;
+      userData.chat[data.study_id] += 1;
       break;
 
     case RedisEventEnum.chat_read:
