@@ -165,8 +165,11 @@ const withdraw = async ({ id }, { email, password }) => {
   }
   await userDao.withdraw(id, email, password);
 
-  const removeImagePath = path.join(destination, path.basename(previousPath[0].image));
-  fs.unlink(removeImagePath, (err) => {});
+  if (previousPath[0].image) {
+    const removeImagePath = path.join(destination, path.basename(previousPath[0].image));
+    fs.unlink(removeImagePath, (err) => {});
+  }
+
   Chat.updateMany({ user_id: id }, { nickname: '(알수없음)' }).exec();
   redisWithdraw(id);
 };
