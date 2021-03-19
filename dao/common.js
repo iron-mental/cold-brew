@@ -132,7 +132,7 @@ const getParticipateLog = async (study_id) => {
   const conn = await pool.getConnection();
   try {
     const participateSql = `
-      SELECT p.user_id, u.nickname 
+      SELECT p.user_id, ifnull(u.nickname, "알수없음") nickname
       FROM participate_log p
         LEFT JOIN user u
         ON p.user_id = u.id
