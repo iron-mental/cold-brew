@@ -78,7 +78,10 @@
 ```Ant Design Component```
 </br></br>
 
-<!--[스택쉐어](https://stackshare.io/terminal-study/terminal-study)</br></br>-->
+
+## 프로젝트 아키텍쳐
+
+</br>
 
 
 ## 개발
@@ -96,6 +99,8 @@ Redis를 이용한 Push Badge Count 관리 및 Socket.io 클러스터링
 Firebase Authentication, Node Mailer를 이용한 이메일 인증 및 계정 관리 구현
 
 Sentry를 활용한 에러로그 수집 및 Slack으로 Message 전송 구현
+
+3-tier Architecture 적용 -> [Controller - Service - Dao]
 
 Next.js & Andt Design Component를 사용하여 랜딩 페이지 개발
 </br></br>
@@ -117,12 +122,6 @@ ESLint, Prettier를 이용하여 코드 스타일 관리
 Postman, Notion을 이용한 API 테스트 및 문서 공유
 
 Sentry, Slack으로 실시간 에러 관리
-</br></br>
-
-## 프로젝트 아키텍쳐
-
-### 3-tier Architecture
-Controller - Service - Dao
 </br></br>
 
 ### Directory Structure
