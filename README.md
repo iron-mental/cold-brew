@@ -1,13 +1,45 @@
 <!-- ![alt sampleImage](https://camo.githubusercontent.com/720ed473d178f9380291709d2223860ade4f3c7bc368e3fea1ad057b8dc9c6f5/68747470733a2f2f6e6f64656a732e6f72672f7374617469632f696d616765732f6c6f676f2d6c696768742e737667) -->
 
 # Terminal :study
->개발자 스터디 플랫폼 모바일 앱 프로젝트
+>개발자 스터디 플랫폼 모바일 앱 프로젝트</br>
+[Appstore](https://apps.apple.com/app/id1557178596)  | 
+[Playstore](https://play.google.com/store/)  | 
+[Landing Page](https://www.terminal-study.tk/)  | 
+[Notion](https://www.notion.so/Main-d0d4c0ecf4d744b180645abca77a9784)
+</br>
+
+```
+2021년은 '개발자 전성시대'
+요즘 핫하게 떠오르는 코딩을 배우고 싶으신가요?
+혼자 코딩 공부하는게 어려우신가요?
+
+터미널의 스터디 모임을 통해서 당신의 꿈을 펼쳐보세요
+
+* 터미널은 개발자들에게 친숙한 리눅스 터미널, 많은 이들이 한데 모여 여정을 떠나는 터미널이라는 뜻을 모아
+개발자들이 한데 모여 같은 목적(스터디, 개발)을 한다는 의미를 담고 있습니다.
+
+1. 스터디 검색
+ - 원하는 키워드로 스터디를 검색해보세요. 당신의 가입을 기다리고 있습니다.
+ - 자신의 지역을 통해 가장 가까운 스터디 모임부터 보여드립니다. 여러분을 기다리는 멤버들이 생각보다 가까이 있어요.
+ - iOS, Android, Back-end, Language, AI 등 개발종류에 따라 스터디 검색이 가능합니다. 입맛대로 골라보세요.
+
+2. 스터디 개설
+ - 원하는 스터디를 못찾겠다면 직접 스터디 모임을 개설해 멤버들을 모집해보세요.
+
+3. 스터디 참여
+ - 채팅, 공지사항, 스터디 정보를 통해 멤버들과 소통해보세요.
+ - 멤버들과 함께 목표를 이루도록 노력해요.
+
+4. 프로필 작성
+ - 경력, 프로젝트, 소개를 통해서 자신의 능력을 어필해보세요. 스터디 승인률이 높아집니다.
+```
+
 </br>
 
 ## 프로젝트 개요
 
 **프로젝트 기간**  :  2020.08 ~ 2021.03 </br>
-**프로젝트 참여 인원** : Back-End 1명 / iOS 2명 / Android 2명
+**프로젝트 참여 인원** : Back-End 1명 , iOS 2명 , Android 2명
 </br></br>
 
 ## 사용한 기술 스택
@@ -119,10 +151,5 @@ cold-brew
 ```
 </br>
 
-
-
-## 설치
-- [iOS](https://apps.apple.com/app/id1557178596)
-- [Android](https://play.google.com/store/)
-- [Web](https://www.terminal-study.tk/)
-</br>
+## 프로젝트 IA
+![터미널 IA](https://user-images.githubusercontent.com/61345745/111910514-08fd7f80-8aa5-11eb-8d11-684bae814802.png)
