@@ -2,11 +2,6 @@
 
 # Terminal :study
 >개발자 스터디 플랫폼 모바일 앱 프로젝트</br>
-[Appstore](https://apps.apple.com/app/id1557178596)  | 
-[Playstore](https://play.google.com/store/)  | 
-[Landing Page](https://www.terminal-study.tk/)  | 
-[Notion](https://www.notion.so/Main-d0d4c0ecf4d744b180645abca77a9784)
-</br>
 
 ```
 2021년은 '개발자 전성시대'
@@ -18,6 +13,11 @@
 * 터미널은 개발자들에게 친숙한 리눅스 터미널, 많은 이들이 한데 모여 여정을 떠나는 터미널이라는 뜻을 모아
 개발자들이 한데 모여 같은 목적(스터디, 개발)을 향한다는 의미를 담고 있습니다.
 ```
+**Link** : 
+[Appstore](https://apps.apple.com/app/id1557178596)  | 
+[Playstore](https://play.google.com/store/)  | 
+[Landing Page](https://www.terminal-study.tk/)  | 
+[Notion](https://www.notion.so/Main-d0d4c0ecf4d744b180645abca77a9784)
 
 </br>
 
