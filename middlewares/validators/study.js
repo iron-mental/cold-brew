@@ -7,7 +7,7 @@ const commonValid = require('./common');
 const createStudy = async (req, res, next) => {
   const bodySchema = Joi.object({
     category: Joi.string().custom(commonValid.categoryValid).required(),
-    title: Joi.string().required().min(2).max(10),
+    title: Joi.string().required().min(2).max(20),
     introduce: Joi.string().required().max(200),
     sns_notion: Joi.string().allow('').custom(commonValid.uriMethod).max(500),
     sns_evernote: Joi.string().allow('').custom(commonValid.uriMethod).max(500),
@@ -52,7 +52,7 @@ const updateStudy = async (req, res, next) => {
   });
   const bodySchema = Joi.object({
     category: Joi.string(),
-    title: Joi.string().min(2).max(10),
+    title: Joi.string().min(2).max(20),
     introduce: Joi.string().max(200),
     sns_notion: Joi.string().allow('').custom(commonValid.uriMethod).max(500),
     sns_evernote: Joi.string().allow('').custom(commonValid.uriMethod).max(500),
