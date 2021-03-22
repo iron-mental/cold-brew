@@ -78,12 +78,6 @@
 ```Ant Design Component```
 </br></br>
 
-
-## 프로젝트 아키텍쳐
-
-</br>
-
-
 ## 개발
 
 Javascript & Express로 REST API를 활용하여 유저, 스터디 등 전반적인 CRUD 기능 구현
@@ -104,6 +98,10 @@ Sentry를 활용한 에러로그 수집 및 Slack으로 Message 전송 구현
 
 Next.js & Andt Design Component를 사용하여 랜딩 페이지 개발
 </br></br>
+
+## 프로젝트 아키텍쳐
+![](https://user-images.githubusercontent.com/61345745/111963769-3a269000-8b37-11eb-8dfd-ff0196b3c978.png)
+</br>
 
 ## 프로젝트 관리
 
