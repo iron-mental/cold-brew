@@ -18,7 +18,7 @@ const CategoryEnum = Object.freeze({
   backend: 'backend',
   bigdata: 'bigdata',
   blockchain: 'blockchain',
-  desktop: 'desktop',
+  project: 'project',
   devops: 'devops',
   embedded: 'embedded',
   etc: 'etc',
