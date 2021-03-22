@@ -194,12 +194,12 @@ const ranking = async () => {
 
 const category = async ({ id }) => {
   const categoryRows = await studyDao.getCategoryRanking(id);
-  const temp = Object.entries(categoryRows[0]);
-  temp.sort((a, b) => {
+  const categoryList = Object.entries(categoryRows[0]);
+  categoryList.sort((a, b) => {
     return b[1] - a[1];
   });
 
-  return temp.map((v) => {
+  return categoryList.map((v) => {
     return v[0];
   });
 };
