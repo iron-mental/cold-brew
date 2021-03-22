@@ -100,8 +100,8 @@ Next.js & Andt Design Component를 사용하여 랜딩 페이지 개발
 </br></br>
 
 ## 프로젝트 아키텍쳐
-![](https://user-images.githubusercontent.com/61345745/111963769-3a269000-8b37-11eb-8dfd-ff0196b3c978.png)
-</br>
+![터미널 아키텍쳐_2](https://user-images.githubusercontent.com/61345745/111966275-13b62400-8b3a-11eb-83c2-acd748375351.png)
+</br></br>
 
 ## 프로젝트 관리
 
