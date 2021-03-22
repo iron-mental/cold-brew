@@ -1,9 +1,10 @@
 {
   "name": "terminal",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
+    "start": "pm2 start -i 4 ./bin/www",
+    "restart": "pm2 kill && npm start",
     "test": "mocha ./test/user.spec.js"
   },
   "dependencies": {
