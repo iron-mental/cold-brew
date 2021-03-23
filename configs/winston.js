@@ -1,33 +1,77 @@
-const { info } = require('console');
-let fs = require('fs');
-let winston = require('winston');
+const fs = require('fs');
+const { format: _format } = require('date-fns');
+const { createLogger, format, transports } = require('winston');
+require('winston-daily-rotate-file');
 
-const logDir = __dirname + './../logs';
+const logDir = __dirname + '/../logs';
 
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
 
-const infoTransport = new winston.transports.File({
-  filename: 'info.log',
+const dailyRotateFileTransport = new transports.DailyRotateFile({
+  level: 'http',
   dirname: logDir,
-  level: 'info',
+  filename: `info_%DATE%.log`,
+  datePattern: 'YYYY-MM-DD',
+  zippedArchive: true,
+  maxSize: '20m',
+  maxFiles: '14d',
 });
 
-const errorTransport = new winston.transports.File({
-  filename: 'error.log',
-  dirname: logDir,
+const errorTransport = new transports.DailyRotateFile({
   level: 'error',
+  dirname: logDir + '/error',
+  filename: 'error_%DATE%.log',
+  datePattern: 'YYYY-MM-DD',
 });
 
-const logger = winston.createLogger({
-  transports: [infoTransport, errorTransport],
+const logger = createLogger({
+  level: 'info',
+  transports: [
+    new transports.Console({
+      level: 'info',
+      format: format.combine(
+        format.colorize(),
+        format.printf((info) => ` ${info.level}: ${info.message}`),
+      ),
+    }),
+    errorTransport,
+    dailyRotateFileTransport,
+  ],
 });
+
+(() => {
+  if (process.env.pm_id === '0') {
+    logger.info(`Server Start: ${_format(new Date(), 'yyyy-MM-dd HH:mm:ss', { timezone: 'GMT-9' })}`);
+  }
+})();
 
 const stream = {
-  write: message => {
+  write: (message) => {
     logger.info(message);
   },
 };
 
-module.exports = { logger, stream };
+const getErrorObject = (req, err) => {
+  return {
+    timestamp: _format(new Date(), 'yyyy-MM-dd HH:mm:ss', { timezone: 'GMT-9' }),
+    url: decodeURI(req.url),
+    body: req.body,
+    error: {
+      status: err.status,
+      message: err.message,
+      stack: err.stack,
+    },
+    user: {
+      id: req.user ? req.user.id : null,
+      'user-agent': req.headers['user-agent'],
+    },
+  };
+};
+
+module.exports = {
+  logger,
+  stream,
+  getErrorObject,
+};

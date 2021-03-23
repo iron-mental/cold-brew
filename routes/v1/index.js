@@ -1,13 +1,20 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
 
-var usersRouter = require('./users');
+const userRouter = require('./user');
+const studyRouter = require('./study');
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
-  res.json({ title: 'Express' });
+const router = express.Router();
+
+/* routing */
+router.use('/user', userRouter);
+router.use('/study', studyRouter);
+
+router.get('/chat/https', (req, res, next) => {
+  res.sendFile(__dirname + '/https.html');
 });
 
-router.use('/users', usersRouter);
+router.get('/chat/http', (req, res, next) => {
+  res.sendFile(__dirname + '/http.html');
+});
 
 module.exports = router;

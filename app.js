@@ -1,73 +1,28 @@
-var createError = require('http-errors');
-var express = require('express');
-var cookieParser = require('cookie-parser');
-var morgan = require('morgan');
-var { stream, logger } = require('./configs/winston');
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 
-var v1Router = require('./routes/v1');
+const router = require('./routes');
+const { verify } = require('./middlewares/auth');
+const { stream } = require('./configs/winston');
+const { parseRequest } = require('./middlewares/validators/common');
 
-var app = express();
+require('./configs/slack');
+require('./configs/morgan');
 
-app.use(morgan('combined', { stream }));
+const app = express();
+
+app.set('trust proxy', true);
+app.use(morgan('customFormat', { stream }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(parseRequest);
+app.use(verify);
 
-app.use('/v1', v1Router);
+app.use('/', router);
+app.use(express.static(__dirname + '/../public'));
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
-
-// error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+require('./middlewares/error_handler')(app);
 
 module.exports = app;
-
-// // error handler
-// app.use(function (err, req, res, next) {
-//   let terminalError = err;
-//   if (!err.status) {
-//     terminalError = createError(err);
-//   }
-
-//   if (process.env.NODE_ENV === 'test') {
-//     const errObj = {
-//       req: {
-//         headers: req.headers,
-//         query: req.query,
-//         body: req.body,
-//         route: req.route,
-//       },
-//       error: {
-//         message: terminalError.message,
-//         stack: terminalError.stack,
-//         status: terminalError.status,
-//       },
-//       user: req.user,
-//     };
-
-//     logger.error(`${moment().format('YYYY-MM-DD HH:mm:ss')}`, errObj);
-//   } else {
-//     // set locals, only providing error in development
-//     res.locals.message = terminalError.message;
-//     res.locals.error = terminalError;
-//   }
-
-//   // render the error page
-//   return response(
-//     res,
-//     {
-//       message: terminalError.message,
-//     },
-//     terminalError.status
-//   );

@@ -1,22 +1,12 @@
-const httpStatus = require('http-status');
-
-module.exports = (res, data = {}, code = httpStatus.OK) => {
-  let result = {
-    success: true,
+module.exports = (res, status = 200, value) => {
+  const response = {
+    result: true,
   };
 
-  if (code > 399) {
-    result.success = false;
+  if (typeof value === 'object') {
+    response.data = value;
+  } else {
+    response.message = value;
   }
-
-  if (typeof data === 'object') {
-    result = Object.assign(
-      {
-        data,
-      },
-      result
-    );
-  }
-
-  return res.status(code).json(result);
+  return res.status(status).json(response);
 };

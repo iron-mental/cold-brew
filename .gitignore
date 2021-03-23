@@ -112,8 +112,7 @@ dist
 .vscode-test
 
 # custom
-static/*
 .env
-
+restart.sh
 
 # End of https://www.toptal.com/developers/gitignore/api/node
