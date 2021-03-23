@@ -126,9 +126,10 @@ const updateUserImage = async ({ id }, updateData, fileData) => {
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-
-  const removeImagePath = path.join(USER_IMAGE_PATH, path.basename(previousPath[0].image));
-  fs.unlink(removeImagePath, (err) => {});
+  if (previousPath[0].image) {
+    const removeImagePath = path.join(USER_IMAGE_PATH, path.basename(previousPath[0].image));
+    fs.unlink(removeImagePath, (err) => {});
+  }
 
   if (fileData) {
     const { uploadedFile, path: _tmpPath } = fileData;
