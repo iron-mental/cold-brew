@@ -16,7 +16,7 @@ const { RedisEventEnum, PushEventEnum } = require('../utils/variables/enum');
 const { redisTrigger, redisSignup, redisWithdraw } = require('./redis');
 const broadcast = require('../events/broadcast');
 
-const destination = path.join(process.env.PATH_public, '/images/user');
+const USER_IMAGE_PATH = path.join(process.env.PATH_public, '/images/user');
 
 const checkNickname = async ({ nickname }) => {
   const checkRows = await userDao.checkNickname(nickname);
@@ -126,13 +126,14 @@ const updateUserImage = async ({ id }, updateData, fileData) => {
   if (updateRows.affectedRows === 0) {
     throw customError(404, '조회된 사용자가 없습니다');
   }
-
-  const removeImagePath = path.join(destination, path.basename(previousPath[0].image));
-  fs.unlink(removeImagePath, (err) => {});
+  if (previousPath[0].image) {
+    const removeImagePath = path.join(USER_IMAGE_PATH, path.basename(previousPath[0].image));
+    fs.unlink(removeImagePath, (err) => {});
+  }
 
   if (fileData) {
     const { uploadedFile, path: _tmpPath } = fileData;
-    const newPath = path.join(destination, uploadedFile.basename);
+    const newPath = path.join(USER_IMAGE_PATH, uploadedFile.basename);
     fs.rename(_tmpPath, newPath, (err) => {});
   }
 };
@@ -166,7 +167,7 @@ const withdraw = async ({ id }, { email, password }) => {
   await userDao.withdraw(id, email, password);
 
   if (previousPath[0].image) {
-    const removeImagePath = path.join(destination, path.basename(previousPath[0].image));
+    const removeImagePath = path.join(USER_IMAGE_PATH, path.basename(previousPath[0].image));
     fs.unlink(removeImagePath, (err) => {});
   }
 

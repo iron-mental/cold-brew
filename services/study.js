@@ -17,7 +17,7 @@ const Chat = require('../models/chat');
 const Search = require('../models/search');
 const broadcast = require('../events/broadcast');
 
-const destination = path.join(process.env.PATH_public, '/images/study');
+const STUDY_IMAGE_PATH = path.join(process.env.PATH_public, '/images/study');
 
 const createStudy = async ({ id: user_id }, createData) => {
   const checkRows = await studyDao.checkTitle(createData.title);
@@ -67,16 +67,16 @@ const updateStudy = async ({ study_id }, updateData, fileData) => {
   }
 
   if (fileData) {
-    const removeImagePath = path.join(destination, path.basename(previousPath[0].image));
+    const removeImagePath = path.join(STUDY_IMAGE_PATH, path.basename(previousPath[0].image));
     fs.unlink(removeImagePath, (err) => {});
 
     const { uploadedFile, path: _tmpPath } = fileData;
-    const newPath = path.join(destination, uploadedFile.basename);
+    const newPath = path.join(STUDY_IMAGE_PATH, uploadedFile.basename);
     fs.rename(_tmpPath, newPath, (err) => {});
   }
 
   if (updateData.image === '') {
-    const removeImagePath = path.join(destination, path.basename(previousPath[0].image));
+    const removeImagePath = path.join(STUDY_IMAGE_PATH, path.basename(previousPath[0].image));
     fs.unlink(removeImagePath, (err) => {});
   }
 
@@ -94,7 +94,7 @@ const deleteStudy = async ({ id: host_id }, { study_id }) => {
   }
   Chat.deleteMany({ study_id }).exec();
 
-  const removeImagePath = path.join(destination, path.basename(imagePath[0].image));
+  const removeImagePath = path.join(STUDY_IMAGE_PATH, path.basename(imagePath[0].image));
   fs.unlink(removeImagePath, (err) => {});
 
   userRows.forEach(({ user_id }) => {
