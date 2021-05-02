@@ -51,7 +51,7 @@
     <script>
       $(function () {
         const jwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJya2RjamYwMTIyQG5hdmVyLmNvbSIsIm5pY2tuYW1lIjoi7J207ZWY7J20IiwiaWF0IjoxNjA5ODQ1MzMyLCJleHAiOjE2MTk4NDUzMzIsImlzcyI6InRlcm1pbmFsLXNlcnZlciIsInN1YiI6InVzZXJJbmZvLWFjY2VzcyJ9.l8kknHHQ4mpOTXwG3KsAFyXKrVsdKjsGu0hpl3QRWa4`;
-        var socket = io('https://www.terminal-study.tk/terminal', {
+        var socket = io('https://www.terminal-study.site/terminal', {
           secure: true,
           query: { token: jwt, study_id: 685 },
           transports: ['websocket'],
